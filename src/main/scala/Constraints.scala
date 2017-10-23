@@ -1,5 +1,5 @@
 /**
-  * Created by aumassart on 13.10.17.
+  * Created by valentin on 13.10.17.
   */
 
 object Constraints {
@@ -85,7 +85,7 @@ object Constraints {
     }
 
   def main(args: Array[String]) {
-    val x = Checker.Generator_List_Of_Variables().sample
+    val x = Checker.Generator_List_Of_Variables(10).sample
     var variables:List[Variable]=null
     x match {
       case Some(i) => variables=i
