@@ -11,15 +11,20 @@ object Checker {
       set <- Generator
     }yield new Variable(set)
   }
-  def Generator_List_Of_Variables(): Gen[List[Variable]]={
-    Gen.containerOfN[List,Variable](10,Generator_variable())
+  def Generator_List_Of_Variables(n:Int): Gen[List[Variable]]={
+    Gen.containerOfN[List,Variable](n,Generator_variable())
   }
 
   def check_AllDifferent(Body : List[Variable] => Unit): Unit = {
-    forAll(Generator_List_Of_Variables()){x =>
+    val n = 10
+    forAll(Generator_List_Of_Variables(n)){x =>
       check_AllDifferent(x,Body)
     }.check
+    
+
   }
+
+
   def check_AllDifferent(variables:List[Variable],Body:List[Variable] => Unit): Boolean ={
     val result = generate_solutions(variables, AllDifferent)
     println(result)
