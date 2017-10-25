@@ -15,7 +15,7 @@ class Halles(val set:Set[Int],first_id:Int) {
         list_ids = v.id :: list_ids
       }
     }
-    def propagate(variables: List[Variable]): Boolean = {
+    def propagate(variables: Array[Variable]): Boolean = {
       if(!check_full){ return false}
       var change: Boolean = false
       for(v<-variables){

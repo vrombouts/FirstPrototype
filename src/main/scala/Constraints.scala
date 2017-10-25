@@ -27,6 +27,8 @@ object Constraints {
   }
 
   def cartesian_product(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]]={
+    // TO DO : generate an error msg and add a try-catch statement
+    if(variables.length < 1) {return Array[Set[Int]]()}
     var stream:Stream[Array[Int]] = instantiate_stream(variables(0))
     for(i<- 1 until variables.length){
       stream = cartesian(stream,variables(i)).filter(constraint)
@@ -36,6 +38,7 @@ object Constraints {
   }
 
   def toDomains(solutions: Array[Array[Int]]): Array[Set[Int]] ={
+    if(solutions.length < 1) return Array[Set[Int]]()
     val variables: Array[Set[Int]] = new Array[Set[Int]](solutions(0).length)
     for(i<-variables.indices){
       var domain = Set.empty[Int]
@@ -47,17 +50,36 @@ object Constraints {
     variables
   }
 
-  def AllDifferent(solution: Array[Int]):Boolean = {
+  def AllDifferent1(solution: Array[Int]):Boolean = {
     val set = solution.toSet
     if(set.size!=solution.length) return false
     true
   }
 
-  def AllDifferent(x:List[Variable]):Unit = {
+  def convert(x:Array[Set[Int]]):Array[Variable]={
+    var res = Array[Variable]()
+    for(i <- 0 until x.length){
+      res :+= new Variable(x(i), i)
+    }
+    return res
+  }
+
+  def convert(x:Array[Variable]):Array[Set[Int]]={
+    var res = Array[Set[Int]]()
+    for(i <- 0 until x.length){
+      res :+= x(i).domain.toSet
+    }
+    return res
+  }
+
+
+
+  def AllDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
     var change=true
     var emptySet = false
+    var variables = convert(x)
     while(change && !emptySet){
-      val y = x.sortWith(_ compare_domain _)
+      val y: Array[Variable] = variables.sortWith(_ compare_domain _)
       change=false
       var halles: List[Halles] = List()
       var i = 0
@@ -79,9 +101,10 @@ object Constraints {
       }
       emptySet = CheckEmptySet(y)
     }
+    return convert(variables)
   }
 
-  def CheckEmptySet(x: List[Variable]): Boolean = {
+  def CheckEmptySet(x: Array[Variable]): Boolean = {
     val y = x.filter(v => v.domain.isEmpty)
     if(y.nonEmpty){
       x.foreach(v => v.domain = v.domain.empty)
@@ -140,7 +163,7 @@ object Constraints {
   def main(args: Array[String]) {
     //val x = Checker.Generator_List_Of_Variables(10).sample
     val variables = Array(Set(0,1,2))
-    val result: Array[Set[Int]] = cartesian_product(variables,AllDifferent)
+    val result: Array[Set[Int]] = cartesian_product(variables,AllDifferent1)
     println("result: [")
     for(i<-result.indices){
       println(result(i))
