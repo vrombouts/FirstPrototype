@@ -58,18 +58,18 @@ object Constraints {
 
   def convert(x:Array[Set[Int]]):Array[Variable]={
     var res = Array[Variable]()
-    for(i <- 0 until x.length){
+    for(i <- x.indices){
       res :+= new Variable(x(i), i)
     }
-    return res
+    res
   }
 
   def convert(x:Array[Variable]):Array[Set[Int]]={
     var res = Array[Set[Int]]()
-    for(i <- 0 until x.length){
+    for(i <- x.indices){
       res :+= x(i).domain.toSet
     }
-    return res
+    res
   }
 
 
@@ -77,7 +77,7 @@ object Constraints {
   def AllDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
     var change=true
     var emptySet = false
-    var variables = convert(x)
+    val variables = convert(x)
     while(change && !emptySet){
       val y: Array[Variable] = variables.sortWith(_ compare_domain _)
       change=false
@@ -101,7 +101,7 @@ object Constraints {
       }
       emptySet = CheckEmptySet(y)
     }
-    return convert(variables)
+    convert(variables)
   }
 
   def CheckEmptySet(x: Array[Variable]): Boolean = {
