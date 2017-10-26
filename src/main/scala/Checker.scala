@@ -5,7 +5,7 @@ import Constraints._
 
 object Checker {
   var j = 0
-  val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](3,Gen.choose(0,20))
+  val Generator: Gen[Set[Int]] =  Gen.nonEmptyContainerOf[Set,Int](Gen.choose(0,20))
   def Generator_variable(): Gen[Variable] ={
     for{
       set <- Generator
@@ -42,10 +42,10 @@ object Checker {
    * This function check if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
    */
-  def check_AllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Boolean = {
-    /*forAll(Gen.containerOf[Array,Set[Int]](Generator)){ x =>
-      check_AllDifferent(x,constraint)
-    }.check*/
+  def check_AllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+    //forAll(Gen.nonEmptyContainerOf[Array,Set[Int]](Generator)){ x =>
+    //  check_AllDifferent(x,constraint)
+    //}.check
 
     val test1 = Array(Set(0,1,2),Set(0))
     check_AllDifferent(test1,constraint)
@@ -57,6 +57,7 @@ object Checker {
     check_AllDifferent(test4,constraint)
     val test5 = Array(Set(0,1,2))
     check_AllDifferent(test5,constraint)
+    println("finish")
 
   }
 
