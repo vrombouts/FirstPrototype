@@ -1,3 +1,5 @@
+package checker
+
 import scala.collection.immutable.Stream.cons
 
 /**

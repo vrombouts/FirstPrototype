@@ -1,11 +1,16 @@
-
+package checker
+import scala.collection.JavaConverters._;
+import checker.Constraints._
 import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
-import Constraints._
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable;
+
 
 object Checker {
   var j = 0
-  val Generator: Gen[Set[Int]] =  Gen.nonEmptyContainerOf[Set,Int](Gen.choose(0,20))
+  val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](2,Gen.choose(0,20))
   def Generator_variable(): Gen[Variable] ={
     for{
       set <- Generator
@@ -38,30 +43,53 @@ object Checker {
   }
 //////////////////////////////////////////////////////////////
 
+
+  def toScala(constraint:Array[java.util.Set[Int]]=>Array[java.util.Set[Int]]): Array[Set[Int]] => Array[Set[Int]] ={
+    my_array =>{
+      var a : Array[java.util.Set[Int]]= new Array[java.util.Set[Int]](my_array.length)
+      for(i <- my_array.indices){
+        var set : java.util.Set[Int]= my_array(i).asJava
+        a(i) = set
+      }
+      var cons = constraint(a)
+      var result = new Array[Set[Int]](my_array.length)
+      for(i <- my_array.indices){
+        var set = cons(i).asScala.toSet
+        result(i) = set
+      }
+      result
+    }
+
+  }
+
+
+  def check_allDifferent_for_Java(constraint:Array[java.util.Set[Int]] => Array[java.util.Set[Int]]):Unit = {
+    val scala_constraint = toScala(constraint)
+    check_AllDifferent(scala_constraint)
+  }
   /*
    * This function check if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
    */
   def check_AllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    //forAll(Gen.nonEmptyContainerOf[Array,Set[Int]](Generator)){ x =>
-    //  check_AllDifferent(x,constraint)
-    //}.check
+    forAll(Gen.containerOfN[Array,Set[Int]](8,Generator)){ x =>
+      x.length == 0 || check_AllDiff(x,constraint)
+    }.check
 
     val test1 = Array(Set(0,1,2),Set(0))
-    check_AllDifferent(test1,constraint)
+    check_AllDiff(test1,constraint)
     val test2 = Array(Set(0,1),Set(0,1),Set(0,1,2))
-    check_AllDifferent(test2,constraint)
+    check_AllDiff(test2,constraint)
     val test3 = Array(Set(0),Set(1),Set(2))
-    check_AllDifferent(test3,constraint)
+    check_AllDiff(test3,constraint)
     val test4 = Array(Set(0,1),Set(1,2),Set(2,3),Set(3,4),Set(4,5),Set(2,4))
-    check_AllDifferent(test4,constraint)
+    check_AllDiff(test4,constraint)
     val test5 = Array(Set(0,1,2))
-    check_AllDifferent(test5,constraint)
+    check_AllDiff(test5,constraint)
     println("finish")
-
   }
 
-  def check_AllDifferent(variables:Array[Set[Int]],constraint_tested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
+  def check_AllDiff(variables:Array[Set[Int]],constraint_tested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
     //We first compute the domains generated after the application of the constraint.
     val reduced_domains: Array[Set[Int]] = constraint_tested(variables)
     // Then we generate the domains that reduced_domains should have

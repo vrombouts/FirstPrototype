@@ -1,3 +1,5 @@
+package checker
+
 /**
   * Created by valentin on 23/10/17.
   * This class is used to help to simulate
