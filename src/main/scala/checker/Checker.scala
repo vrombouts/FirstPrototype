@@ -24,8 +24,8 @@ object Checker {
    * allDifferent constraint with arc consistency.
    */
   def check_AllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    forAll(Gen.containerOfN[Array,Set[Int]](8,Generator)){ x =>
-      x.length == 0 || check_AllDiff(x,constraint)
+    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+      x.length == 0 || check_AllDiff(x.toArray,constraint)
     }.check
 
     val test1 = Array(Set(0,1,2),Set(0))
@@ -43,21 +43,54 @@ object Checker {
 
   def check_AllDiff(variables:Array[Set[Int]],constraint_tested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
     //We first compute the domains generated after the application of the constraint.
-    val reduced_domains: Array[Set[Int]] = constraint_tested(variables)
-    // Then we generate the domains that reduced_domains should have
-    val true_reduced_domains: Array[Set[Int]] = cartesian_product(variables,AllDifferent1)
-
-    //Finally, we compare the two. If they are not equals, the constraint is not correct.
-    for(i<- reduced_domains.indices){
-      if(!true_reduced_domains(i).equals(reduced_domains(i))){
-        println("failed for: "+ variables.toList)
-        println("you should have: "+ true_reduced_domains.toList)
-        println("but you had "+ reduced_domains.toList)
-        return false
-      }
+    var reduced_domains: Array[Set[Int]] = Array()
+    var error: Boolean = false
+    var our_error:Boolean = false
+    try {
+      reduced_domains = constraint_tested(variables)
     }
-    true
-  }
+    catch{
+      case e: Exception => error = true
+    }
+    // Then we generate the domains that reduced_domains should have
+    var true_reduced_domains: Array[Set[Int]] = Array()
+    try {
+      true_reduced_domains = cartesian_product(variables, AllDifferent1)
+    }
+    catch {
+      case e: Exception => our_error = true
+    }
+
+      //Finally, we compare the two. If they are not equals, the constraint is not correct.
+    if(error && our_error) return true
+
+      if(error && !our_error){
+        for(i<- reduced_domains.indices){
+          if(!reduced_domains(i).isEmpty){
+            println("failed for: "+ variables.toList)
+            println("you should have: "+ true_reduced_domains.toList)
+            println("but you returned an exception")
+            return false
+          }
+        }
+        return true
+      }
+      else if(!our_error) {
+        for (i <- true_reduced_domains.indices) {
+          if (!true_reduced_domains(i).equals(reduced_domains(i))) {
+            println("failed for: " + variables.toList)
+            println("you should have: " + true_reduced_domains.toList)
+            println("but you had " + reduced_domains.toList)
+            return false
+          }
+        }
+      }
+    else{
+        return false
+    }
+      true
+    }
+
 
   def main(args: Array[String]): Unit ={
     check_AllDifferent(AllDifferent)
