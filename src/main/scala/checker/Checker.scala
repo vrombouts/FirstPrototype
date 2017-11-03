@@ -19,29 +19,6 @@ object Checker {
   def Generator_List_Of_Variables(n:Int): Gen[List[Variable]]={
     Gen.containerOfN[List,Variable](21,Generator_variable())
   }
-
-  /*def check_AllDifferent(Body : List[Variable] => Unit): Unit = {
-    val n = 10
-    forAll(Generator_List_Of_Variables(n)){x =>
-      check_AllDifferent(x,Body)
-    }.check
-    //add limit cases
-  }*/
-
-  def check_AllDifferent(variables:List[Variable],body:List[Variable] => Unit): Boolean ={
-    val result = generate_solutions(variables, AllDifferent)
-    println(result)
-    println("#################################")
-    body(variables)
-    println(variables)
-    for (i <- result.indices) {
-      if (!result(i).same_domain(variables(i))) {
-        return false
-      }
-    }
-    true
-  }
-
   /*
    * This function check if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
