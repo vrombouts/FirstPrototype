@@ -1,9 +1,12 @@
 package checker
-import scala.collection.JavaConverters._;
+import java.util
+
 import checker.Constraints._
 import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
 
+
+import scala.language.implicitConversions
 import scala.collection.JavaConverters._
 import scala.collection.mutable;
 
@@ -44,11 +47,31 @@ object Checker {
 //////////////////////////////////////////////////////////////
 
 
-  def toScala(constraint:Array[java.util.Set[Int]]=>Array[java.util.Set[Int]]): Array[Set[Int]] => Array[Set[Int]] ={
+  implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
+    var result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
+    var iterator = x.iterator()
+    while(iterator.hasNext){
+      val a: java.lang.Integer = new Integer(iterator.next())
+      result.add(a)
+    }
+    result
+  }
+
+  implicit def Integer2intSet(x: Set[Integer]): Set[Int] ={
+    var result : Set[Int] = Set[Int]()
+    var l = x.toList
+    for (elem <- x){
+      val a: Int = elem.asInstanceOf[Int]
+      result += a
+    }
+    result
+  }
+
+  def toScala(constraint:Array[java.util.Set[Integer]]=>Array[java.util.Set[Integer]]): Array[Set[Int]] => Array[Set[Int]] ={
     my_array =>{
-      var a : Array[java.util.Set[Int]]= new Array[java.util.Set[Int]](my_array.length)
+      var a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](my_array.length)
       for(i <- my_array.indices){
-        var set : java.util.Set[Int]= my_array(i).asJava
+        var set = my_array(i).asJava
         a(i) = set
       }
       var cons = constraint(a)
@@ -63,7 +86,8 @@ object Checker {
   }
 
 
-  def check_allDifferent_for_Java(constraint:Array[java.util.Set[Int]] => Array[java.util.Set[Int]]):Unit = {
+  def check_allDifferent(constraint:Array[java.util.Set[Integer]] => Array[java.util.Set[Integer]]):Unit = {
+
     val scala_constraint = toScala(constraint)
     check_AllDifferent(scala_constraint)
   }
