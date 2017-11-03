@@ -55,26 +55,10 @@ object Checker {
   def jToSc_Set(set: util.Set[java.lang.Integer]):Set[Int] = {
     var a: Set[Int] = Set[Int]()
     val b = set.asScala.toSet
-    for(i <- b){
+    for(i <- b) {
       a += i
     }
     a
-  }
-  def toScala2(constraint: JavaCheck): Array[Set[Int]]=>Array[Set[Int]] = {
-    my_array =>{
-      var a: util.ArrayList[util.Set[java.lang.Integer]] = new java.util.ArrayList[java.util.Set[java.lang.Integer]]();
-      for(i <- my_array.indices){
-        val set: util.Set[java.lang.Integer] = scToJ_Set(my_array(i))
-        a.add(set)
-      }
-      val cons: util.ArrayList[util.Set[Integer]] = constraint.Constraint(a)
-      val result = new Array[Set[Int]](my_array.length)
-      for(i<- result.indices){
-        val s: util.Set[Integer] = cons.get(i)
-        result(i) = jToSc_Set(s)
-      }
-      result
-    }
   }
 
   implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
@@ -115,7 +99,7 @@ object Checker {
 
   }
   def check_allDifferent(constraint:JavaCheck):Unit = {
-    val scala_constraint = toScala2(constraint)
+    val scala_constraint = toScala(constraint)
     check_AllDifferent(scala_constraint)
   }
 
