@@ -1,5 +1,4 @@
 package checker
-import java.util
 
 import checker.Constraints._
 import org.scalacheck.Gen
@@ -7,8 +6,6 @@ import org.scalacheck.Prop.forAll
 
 
 import scala.language.implicitConversions
-import scala.collection.JavaConverters._
-import scala.collection.mutable;
 
 
 object Checker {
