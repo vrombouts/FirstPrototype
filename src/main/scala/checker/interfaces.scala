@@ -7,13 +7,13 @@ import scala.collection.JavaConverters._
 /**
   * Created by valentin on 02/11/17.
   */
-trait JavaCheck {
+trait JCpC {
     def check_allDifferent(): Unit
     def Constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
 
 }
 
-abstract class JC extends JavaCheck {
+abstract class JCpChecker extends JCpC {
 
   def check_allDifferent():Unit = {
         val scala_constraint = toscala()
@@ -55,7 +55,7 @@ abstract class JC extends JavaCheck {
   }
 }
 
-trait SC {
+trait ScCpChecker {
   def check_allDifferent():Unit = {
     check_AllDifferent(Constraint)
   }
