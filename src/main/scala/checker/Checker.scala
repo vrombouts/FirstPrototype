@@ -24,8 +24,8 @@ object Checker {
    * allDifferent constraint with arc consistency.
    */
   def check_AllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    forAll(Gen.containerOfN[Array,Set[Int]](8,Generator)){ x =>
-      x.length == 0 || check_AllDiff(x,constraint)
+    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+      x.isEmpty || check_AllDiff(x.toArray,constraint)
     }.check
 
     val test1 = Array(Set(0,1,2),Set(0))
