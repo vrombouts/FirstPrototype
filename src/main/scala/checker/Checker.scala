@@ -44,70 +44,7 @@ object Checker {
     }
     true
   }
-//////////////////////////////////////////////////////////////
-  def scToJ_Set(set:Set[Int]):util.Set[Integer] = {
-    val a: util.Set[Integer] = new util.HashSet[Integer]()
-    for(i<- set){
-      a.add(i)
-    }
-    a
-  }
-  def jToSc_Set(set: util.Set[java.lang.Integer]):Set[Int] = {
-    var a: Set[Int] = Set[Int]()
-    val b = set.asScala.toSet
-    for(i <- b) {
-      a += i
-    }
-    a
-  }
 
-  implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
-    var result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
-    var iterator = x.iterator()
-    while(iterator.hasNext){
-      val a: java.lang.Integer = new Integer(iterator.next())
-      result.add(a)
-    }
-    result
-  }
-
-  implicit def Integer2intSet(x: Set[Integer]): Set[Int] ={
-    var result : Set[Int] = Set[Int]()
-    var l = x.toList
-    for (elem <- x){
-      val a: Int = elem.asInstanceOf[Int]
-      result += a
-    }
-    result
-  }
-
-  def toScala(constraint:Array[java.util.Set[Integer]]=>Array[java.util.Set[Integer]]): Array[Set[Int]] => Array[Set[Int]] ={
-    my_array =>{
-      var a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](my_array.length)
-      for(i <- my_array.indices){
-        var set = my_array(i).asJava
-        a(i) = set
-      }
-      var cons = constraint(a)
-      var result = new Array[Set[Int]](my_array.length)
-      for(i <- my_array.indices){
-        var set = cons(i).asScala.toSet
-        result(i) = set
-      }
-      result
-    }
-
-  }
-  def check_allDifferent(constraint:JavaCheck):Unit = {
-    val scala_constraint = toScala(constraint)
-    check_AllDifferent(scala_constraint)
-  }
-
-  def check_allDifferent(constraint:Array[java.util.Set[Integer]] => Array[java.util.Set[Integer]]):Unit = {
-
-    val scala_constraint = toScala(constraint)
-    check_AllDifferent(scala_constraint)
-  }
   /*
    * This function check if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
