@@ -1,5 +1,6 @@
 package checker
-import scala.collection.JavaConverters._;
+import java.util
+
 import checker.Constraints._
 import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
@@ -42,7 +43,37 @@ object Checker {
     true
   }
 //////////////////////////////////////////////////////////////
-
+  def scToJ_Set(set:Set[Int]):util.Set[Integer] = {
+    val a: util.Set[Integer] = new util.HashSet[Integer]()
+    for(i<- set){
+      a.add(i)
+    }
+    a
+  }
+  def jToSc_Set(set: util.Set[java.lang.Integer]):Set[Int] = {
+    var a: Set[Int] = Set[Int]()
+    val b = set.asScala.toSet
+    for(i <- b){
+      a += i
+    }
+    a
+  }
+  def toScala2(constraint: JavaCheck): Array[Set[Int]]=>Array[Set[Int]] = {
+    my_array =>{
+      var a: util.ArrayList[util.Set[java.lang.Integer]] = new java.util.ArrayList[java.util.Set[java.lang.Integer]]();
+      for(i <- my_array.indices){
+        val set: util.Set[java.lang.Integer] = scToJ_Set(my_array(i))
+        a.add(set)
+      }
+      val cons: util.ArrayList[util.Set[Integer]] = constraint.Constraint(a)
+      val result = new Array[Set[Int]](my_array.length)
+      for(i<- result.indices){
+        val s: util.Set[Integer] = cons.get(i)
+        result(i) = jToSc_Set(s)
+      }
+      result
+    }
+  }
 
   def toScala(constraint:Array[java.util.Set[Int]]=>Array[java.util.Set[Int]]): Array[Set[Int]] => Array[Set[Int]] ={
     my_array =>{
@@ -61,7 +92,10 @@ object Checker {
     }
 
   }
-
+  def check_allDifferent(constraint:JavaCheck):Unit = {
+    val scala_constraint = toScala2(constraint)
+    check_AllDifferent(scala_constraint)
+  }
 
   def check_allDifferent_for_Java(constraint:Array[java.util.Set[Int]] => Array[java.util.Set[Int]]):Unit = {
     val scala_constraint = toScala(constraint)
