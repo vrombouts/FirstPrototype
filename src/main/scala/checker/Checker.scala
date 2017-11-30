@@ -55,7 +55,7 @@ object Checker {
     // Then we generate the domains that reduced_domains should have
     var true_reduced_domains: Array[Set[Int]] = Array()
     try {
-      true_reduced_domains = cartesian_product(variables, AllDifferent1)
+      true_reduced_domains = apply_AC(variables, AllDifferent1)
     }
     catch {
       case e: Exception => our_error = true

@@ -28,18 +28,30 @@ object Constraints {
     stream
   }
 
-  def cartesian_product(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]]={
+  def cartesian_product(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Array[Int]]={
     // TO DO : generate an error msg and add a try-catch statement
-    if(variables.length < 1) {return Array[Set[Int]]()}
+    if(variables.length < 1) {return Array[Array[Int]]()}
     var stream:Stream[Array[Int]] = instantiate_stream(variables(0))
     for(i<- 1 until variables.length){
       stream = cartesian(stream,variables(i)).filter(constraint)
     }
     val solutions: Array[Array[Int]] = stream.toArray
-    toDomains(solutions)
+    solutions
   }
 
-  def toDomains(solutions: Array[Array[Int]]): Array[Set[Int]] ={
+  def apply_AC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
+    val sol = cartesian_product(variables,constraint)
+    val result=toDomainsAC(sol)
+    result
+  }
+
+  def apply_BC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
+    val sol = cartesian_product(variables,constraint)
+    val result=toDomainsBC(sol,variables)
+    result
+  }
+
+  def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] ={
     if(solutions.length < 1) return Array[Set[Int]]()
     val variables: Array[Set[Int]] = new Array[Set[Int]](solutions(0).length)
     for(i<-variables.indices){
@@ -51,6 +63,21 @@ object Constraints {
     }
     variables
   }
+
+
+  def toDomainsBC(solutions: Array[Array[Int]],variables: Array[Set[Int]]):Array[Set[Int]] ={
+    val ac = toDomainsAC(solutions)
+    var result : Array[Set[Int]] = variables.clone()
+    for(i <- variables.indices){
+      val min = ac(i).min
+      val max = ac(i).max
+      result(i).filter(_ < min)
+      result(i).filter(_ > max)
+    }
+    result
+  }
+
+
 
   def AllDifferent1(solution: Array[Int]):Boolean = {
     val set = solution.toSet
@@ -165,7 +192,7 @@ object Constraints {
   def main(args: Array[String]) {
     //val x = Checker.Generator_List_Of_Variables(10).sample
     val variables = Array(Set(0,1,2))
-    val result: Array[Set[Int]] = cartesian_product(variables,AllDifferent1)
+    val result: Array[Set[Int]] = apply_AC(variables,AllDifferent1)
     println("result: [")
     for(i<-result.indices){
       println(result(i))
