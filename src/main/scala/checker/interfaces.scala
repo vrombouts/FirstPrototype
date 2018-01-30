@@ -1,24 +1,21 @@
 package checker
 
-import checker.Checker.check_AllDifferent
+import checker.Checker.checkAllDifferent
 import scala.collection.JavaConverters._
 
 
-/**
-  * Created by valentin on 02/11/17.
-  */
 trait JCpC {
-    def check_allDifferent(): Unit
+    def checkAllDifferentConstraint(): Unit
     def Constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
 
 }
 
 abstract class JCpChecker extends JCpC {
 
-  def check_allDifferent():Unit = {
-        val scala_constraint = toscala()
-        check_AllDifferent(scala_constraint)
-    }
+  def checkAllDifferentConstraint():Unit = {
+    val scala_constraint = toScala()
+    checkAllDifferent(scala_constraint)
+  }
   implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
     val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
     val iterator = x.iterator()
@@ -36,7 +33,7 @@ abstract class JCpChecker extends JCpC {
     }
     result
   }
-  def toscala(): Array[Set[Int]] => Array[Set[Int]] ={
+  def toScala(): Array[Set[Int]] => Array[Set[Int]] ={
     my_array =>{
       val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](my_array.length)
       for(i <- my_array.indices){
@@ -56,8 +53,8 @@ abstract class JCpChecker extends JCpC {
 }
 
 trait ScCpChecker {
-  def check_allDifferent():Unit = {
-    check_AllDifferent(Constraint)
+  def checkAllDifferentConstraint():Unit = {
+    checkAllDifferent(Constraint)
   }
   def Constraint(vars: Array[Set[Int]]):Array[Set[Int]]
 

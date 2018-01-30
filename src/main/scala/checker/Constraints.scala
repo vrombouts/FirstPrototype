@@ -2,10 +2,6 @@ package checker
 
 import scala.collection.immutable.Stream.cons
 
-/**
-  * Created by valentin on 13.10.17.
-  */
-
 object Constraints {
 
   def cartesian(sol:Stream[Array[Int]],variable: Set[Int]): Stream[Array[Int]] = {
@@ -20,7 +16,7 @@ object Constraints {
     new_stream
   }
 
-  def instantiate_stream(variable:Set[Int]): Stream[Array[Int]]={
+  def instantiateStream(variable:Set[Int]): Stream[Array[Int]]={
     var stream = Stream.empty[Array[Int]]
     for(i<-variable){
       stream = stream.append(cons(Array(i),Stream.empty))
@@ -28,10 +24,10 @@ object Constraints {
     stream
   }
 
-  def cartesian_product(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Array[Int]]={
+  def cartesianProduct(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Array[Int]]={
     // TO DO : generate an error msg and add a try-catch statement
     if(variables.length < 1) {return Array[Array[Int]]()}
-    var stream:Stream[Array[Int]] = instantiate_stream(variables(0))
+    var stream:Stream[Array[Int]] = instantiateStream(variables(0))
     for(i<- 1 until variables.length){
       stream = cartesian(stream,variables(i)).filter(constraint)
     }
@@ -39,14 +35,14 @@ object Constraints {
     solutions
   }
 
-  def apply_AC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
-    val sol = cartesian_product(variables,constraint)
+  def applyAC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
+    val sol = cartesianProduct(variables,constraint)
     val result=toDomainsAC(sol)
     result
   }
 
-  def apply_BC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
-    val sol = cartesian_product(variables,constraint)
+  def applyBC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
+    val sol = cartesianProduct(variables,constraint)
     val result=toDomainsBC(sol,variables)
     result
   }
@@ -79,7 +75,7 @@ object Constraints {
 
 
 
-  def AllDifferent1(solution: Array[Int]):Boolean = {
+  def allDifferent1(solution: Array[Int]):Boolean = {
     val set = solution.toSet
     if(set.size!=solution.length) return false
     true
@@ -103,19 +99,19 @@ object Constraints {
 
 
 
-  def AllDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
+  def allDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
     var change=true
     var emptySet = false
     val variables = convert(x)
     while(change && !emptySet){
-      val y: Array[Variable] = variables.sortWith(_ compare_domain _)
+      val y: Array[Variable] = variables.sortWith(_ compareDomain _)
       change=false
       var halles: List[Halles] = List()
       var i = 0
       while(!change && i<y.length){
         var found = false
         for(hall<- halles){
-          if (hall.possible_add(y(i))){
+          if (hall.possibleAdd(y(i))){
             found = true
             hall.add(y(i))
             change = hall.propagate(y)
@@ -128,12 +124,12 @@ object Constraints {
         }
         i = i+1
       }
-      emptySet = CheckEmptySet(y)
+      emptySet = checkEmptySet(y)
     }
     convert(variables)
   }
 
-  def CheckEmptySet(x: Array[Variable]): Boolean = {
+  def checkEmptySet(x: Array[Variable]): Boolean = {
     val y = x.filter(v => v.domain.isEmpty)
     if(y.nonEmpty){
       x.foreach(v => v.domain = v.domain.empty)
@@ -143,7 +139,7 @@ object Constraints {
   }
 
 
-  def AllDifferent(x:Array[Int],index:Int) : Boolean = {
+  def allDifferent(x:Array[Int],index:Int) : Boolean = {
     for(i<- 0 until index) if(x(index)==x(i)) return false
     true
   }
@@ -177,12 +173,12 @@ object Constraints {
       }
     }
 
-    def generate_solutions(x:List[Variable], constraint:(Array[Int],Int)=>Boolean): List[Variable] ={
-      val sorted = x.sortWith(_ compare_domain _)
+    def generateSolutions(x:List[Variable], constraint:(Array[Int],Int)=>Boolean): List[Variable] ={
+      val sorted = x.sortWith(_ compareDomain _)
       val result: List[Variable] = sorted.map(v => new Variable(Set(),v.id))
       val current_sol: Array[Int] = Array.fill[Int](sorted.length)(0)
       generate_solutions(sorted,0,current_sol,result,constraint)
-      result.sortWith(_ compare_id _)
+      result.sortWith(_ compareID _)
     }
 
 
@@ -192,7 +188,7 @@ object Constraints {
   def main(args: Array[String]) {
     //val x = Checker.Generator_List_Of_Variables(10).sample
     val variables = Array(Set(0,1,2))
-    val result: Array[Set[Int]] = apply_AC(variables,AllDifferent1)
+    val result: Array[Set[Int]] = applyAC(variables,allDifferent1)
     println("result: [")
     for(i<-result.indices){
       println(result(i))

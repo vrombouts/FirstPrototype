@@ -20,28 +20,28 @@ object Checker {
     Gen.containerOfN[List,Variable](21,Generator_variable())
   }
   /*
-   * This function check if the constraint passed in argument apply correctly an
+   * This function checks if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
    */
-  def check_AllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+  def checkAllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || check_AllDiff(x.toArray,constraint)
+      x.isEmpty || checkAllDiff(x.toArray,constraint)
     }.check
 
     val test1 = Array(Set(0,1,2),Set(0))
-    check_AllDiff(test1,constraint)
+    checkAllDiff(test1,constraint)
     val test2 = Array(Set(0,1),Set(0,1),Set(0,1,2))
-    check_AllDiff(test2,constraint)
+    checkAllDiff(test2,constraint)
     val test3 = Array(Set(0),Set(1),Set(2))
-    check_AllDiff(test3,constraint)
+    checkAllDiff(test3,constraint)
     val test4 = Array(Set(0,1),Set(1,2),Set(2,3),Set(3,4),Set(4,5),Set(2,4))
-    check_AllDiff(test4,constraint)
+    checkAllDiff(test4,constraint)
     val test5 = Array(Set(0,1,2))
-    check_AllDiff(test5,constraint)
+    checkAllDiff(test5,constraint)
     println("finish")
   }
 
-  def check_AllDiff(variables:Array[Set[Int]],constraint_tested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
+  def checkAllDiff(variables:Array[Set[Int]],constraint_tested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
     //We first compute the domains generated after the application of the constraint.
     var reduced_domains: Array[Set[Int]] = Array()
     var error: Boolean = false
@@ -55,7 +55,7 @@ object Checker {
     // Then we generate the domains that reduced_domains should have
     var true_reduced_domains: Array[Set[Int]] = Array()
     try {
-      true_reduced_domains = apply_AC(variables, AllDifferent1)
+      true_reduced_domains = applyAC(variables, allDifferent1)
     }
     catch {
       case e: Exception => our_error = true
@@ -93,7 +93,7 @@ object Checker {
 
 
   def main(args: Array[String]): Unit ={
-    check_AllDifferent(AllDifferent)
+    checkAllDifferent(allDifferent)
   }
 
 }
