@@ -5,15 +5,15 @@ package checker
   * a wrong arc consistency with a
   * AllDifferent constraint
   */
-class Halles(val set:Set[Int],first_id:Int) {
-    var list_ids: List[Int] = List(first_id)
+class Halles(val set:Set[Int],firstID:Int) {
+    var listIDs: List[Int] = List(firstID)
 
-    def checkFull:Boolean = list_ids.length == set.size
-    def checkPresent(i:Int): Boolean = list_ids.contains(i)
+    def checkFull:Boolean = listIDs.length == set.size
+    def checkPresent(i:Int): Boolean = listIDs.contains(i)
     def possibleAdd(v:Variable): Boolean = v.domain.equals(set)
     def add(v:Variable): Unit = {
       if(!this.checkPresent(v.id) && !this.checkFull){
-        list_ids = v.id :: list_ids
+        listIDs = v.id :: listIDs
       }
     }
     def propagate(variables: Array[Variable]): Boolean = {
@@ -21,7 +21,7 @@ class Halles(val set:Set[Int],first_id:Int) {
       var change: Boolean = false
       for(v<-variables){
         val size: Int = v.domain.size
-        if (!list_ids.contains(v.id)) set.foreach(elem => v.domain.remove(elem))
+        if (!listIDs.contains(v.id)) set.foreach(elem => v.domain.remove(elem))
         if(size!=v.domain.size) change=true
       }
       change

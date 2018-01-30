@@ -5,15 +5,15 @@ import scala.collection.immutable.Stream.cons
 object Constraints {
 
   def cartesian(sol:Stream[Array[Int]],variable: Set[Int]): Stream[Array[Int]] = {
-    var new_stream : Stream[Array[Int]] = Stream.empty
+    var newStream : Stream[Array[Int]] = Stream.empty
     for(s<-sol) {
       for (value <- variable) {
         val array = Array.concat(s,Array(value))
         val strm: Stream[Array[Int]] = cons(array,Stream.empty)
-        new_stream = new_stream.append(strm)
+        newStream = newStream.append(strm)
       }
     }
-    new_stream
+    newStream
   }
 
   def instantiateStream(variable:Set[Int]): Stream[Array[Int]]={
@@ -154,14 +154,14 @@ object Constraints {
     true
   }
 
-    def generate_solutions(x:List[Variable], index:Int, current_sol:Array[Int], result:List[Variable],constraint:(Array[Int],Int)=>Boolean): Unit ={
+    def generateSol(x:List[Variable], index:Int, currentSol:Array[Int], result:List[Variable],constraint:(Array[Int],Int)=>Boolean): Unit ={
       if(x.length <= index) {
-        union(current_sol, result)
+        union(currentSol, result)
       }else {
         for (set <- x(index).domain) {
-          current_sol(index) = set
-          if(constraint(current_sol,index)){
-            generate_solutions(x, index + 1, current_sol, result,constraint)
+          currentSol(index) = set
+          if(constraint(currentSol,index)){
+            generateSol(x, index + 1, currentSol, result,constraint)
           }
         }
       }
@@ -176,8 +176,8 @@ object Constraints {
     def generateSolutions(x:List[Variable], constraint:(Array[Int],Int)=>Boolean): List[Variable] ={
       val sorted = x.sortWith(_ compareDomain _)
       val result: List[Variable] = sorted.map(v => new Variable(Set(),v.id))
-      val current_sol: Array[Int] = Array.fill[Int](sorted.length)(0)
-      generate_solutions(sorted,0,current_sol,result,constraint)
+      val currentSol: Array[Int] = Array.fill[Int](sorted.length)(0)
+      generateSol(sorted,0,currentSol,result,constraint)
       result.sortWith(_ compareID _)
     }
 

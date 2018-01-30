@@ -11,13 +11,13 @@ import scala.language.implicitConversions
 object Checker {
   var j = 0
   val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](2,Gen.choose(0,20))
-  def Generator_variable(): Gen[Variable] ={
+  def GeneratorVariable(): Gen[Variable] ={
     for{
       set <- Generator
     }yield new Variable(set)
   }
-  def Generator_List_Of_Variables(n:Int): Gen[List[Variable]]={
-    Gen.containerOfN[List,Variable](21,Generator_variable())
+  def GeneratorListOfVariables(n:Int): Gen[List[Variable]]={
+    Gen.containerOfN[List,Variable](21,GeneratorVariable())
   }
   /*
    * This function checks if the constraint passed in argument apply correctly an
@@ -41,46 +41,46 @@ object Checker {
     println("finish")
   }
 
-  def checkAllDiff(variables:Array[Set[Int]],constraint_tested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
+  def checkAllDiff(variables:Array[Set[Int]],constraintTested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
     //We first compute the domains generated after the application of the constraint.
-    var reduced_domains: Array[Set[Int]] = Array()
+    var reducedDomains: Array[Set[Int]] = Array()
     var error: Boolean = false
-    var our_error:Boolean = false
+    var ourError:Boolean = false
     try {
-      reduced_domains = constraint_tested(variables)
+      reducedDomains = constraintTested(variables)
     }
     catch{
       case e: Exception => error = true
     }
-    // Then we generate the domains that reduced_domains should have
-    var true_reduced_domains: Array[Set[Int]] = Array()
+    // Then we generate the domains that reducedDomains should have
+    var trueReducedDomains: Array[Set[Int]] = Array()
     try {
-      true_reduced_domains = applyAC(variables, allDifferent1)
+      trueReducedDomains = applyAC(variables, allDifferent1)
     }
     catch {
-      case e: Exception => our_error = true
+      case e: Exception => ourError = true
     }
 
       //Finally, we compare the two. If they are not equals, the constraint is not correct.
-    if(error && our_error) return true
+    if(error && ourError) return true
 
-      if(error && !our_error){
-        for(i<- reduced_domains.indices){
-          if(!reduced_domains(i).isEmpty){
+      if(error && !ourError){
+        for(i<- reducedDomains.indices){
+          if(!reducedDomains(i).isEmpty){
             println("failed for: "+ variables.toList)
-            println("you should have: "+ true_reduced_domains.toList)
+            println("you should have: "+ trueReducedDomains.toList)
             println("but you returned an exception")
             return false
           }
         }
         return true
       }
-      else if(!our_error) {
-        for (i <- true_reduced_domains.indices) {
-          if (!true_reduced_domains(i).equals(reduced_domains(i))) {
+      else if(!ourError) {
+        for (i <- trueReducedDomains.indices) {
+          if (!trueReducedDomains(i).equals(reducedDomains(i))) {
             println("failed for: " + variables.toList)
-            println("you should have: " + true_reduced_domains.toList)
-            println("but you had " + reduced_domains.toList)
+            println("you should have: " + trueReducedDomains.toList)
+            println("but you had " + reducedDomains.toList)
             return false
           }
         }

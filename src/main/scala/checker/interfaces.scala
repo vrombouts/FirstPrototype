@@ -6,15 +6,15 @@ import scala.collection.JavaConverters._
 
 trait JCpC {
     def checkAllDifferentConstraint(): Unit
-    def Constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
+    def constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
 
 }
 
 abstract class JCpChecker extends JCpC {
 
   def checkAllDifferentConstraint():Unit = {
-    val scala_constraint = toScala()
-    checkAllDifferent(scala_constraint)
+    val scalaConstraint = toScala()
+    checkAllDifferent(scalaConstraint)
   }
   implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
     val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
@@ -34,15 +34,15 @@ abstract class JCpChecker extends JCpC {
     result
   }
   def toScala(): Array[Set[Int]] => Array[Set[Int]] ={
-    my_array =>{
-      val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](my_array.length)
-      for(i <- my_array.indices){
-        val set = my_array(i).asJava
+    myArray =>{
+      val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
+      for(i <- myArray.indices){
+        val set = myArray(i).asJava
         a(i) = set
       }
-      val cons = Constraint(a)
-      val result = new Array[Set[Int]](my_array.length)
-      for(i <- my_array.indices){
+      val cons = constraint(a)
+      val result = new Array[Set[Int]](myArray.length)
+      for(i <- myArray.indices){
         val set = cons(i).asScala.toSet
         result(i) = set
       }
@@ -54,8 +54,8 @@ abstract class JCpChecker extends JCpC {
 
 trait ScCpChecker {
   def checkAllDifferentConstraint():Unit = {
-    checkAllDifferent(Constraint)
+    checkAllDifferent(constraint)
   }
-  def Constraint(vars: Array[Set[Int]]):Array[Set[Int]]
+  def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
 
 }
