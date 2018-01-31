@@ -19,29 +19,38 @@ object Checker {
   def GeneratorListOfVariables(n:Int): Gen[List[Variable]]={
     Gen.containerOfN[List,Variable](21,GeneratorVariable())
   }
+
+  def checkAllDifferentAC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+    checkAllDifferent(true,constraint)
+  }
+  def checkAllDifferentBC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+    checkAllDifferent(false,constraint)
+  }
   /*
    * This function checks if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
    */
-  def checkAllDifferent(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+  private def checkAllDifferent(isAC: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkAllDiff(x.toArray,constraint)
+      x.isEmpty || checkAllDiff(isAC,x.toArray,constraint)
     }.check
 
     val test1 = Array(Set(0,1,2),Set(0))
-    checkAllDiff(test1,constraint)
+    checkAllDiff(isAC,test1,constraint)
     val test2 = Array(Set(0,1),Set(0,1),Set(0,1,2))
-    checkAllDiff(test2,constraint)
+    checkAllDiff(isAC,test2,constraint)
     val test3 = Array(Set(0),Set(1),Set(2))
-    checkAllDiff(test3,constraint)
+    checkAllDiff(isAC,test3,constraint)
     val test4 = Array(Set(0,1),Set(1,2),Set(2,3),Set(3,4),Set(4,5),Set(2,4))
-    checkAllDiff(test4,constraint)
+    checkAllDiff(isAC,test4,constraint)
     val test5 = Array(Set(0,1,2))
-    checkAllDiff(test5,constraint)
+    checkAllDiff(isAC,test5,constraint)
     println("finish")
   }
 
-  def checkAllDiff(variables:Array[Set[Int]],constraintTested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
+
+  private def checkAllDiff(isAC: Boolean, variables:Array[Set[Int]],constraintTested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
     //We first compute the domains generated after the application of the constraint.
     var reducedDomains: Array[Set[Int]] = Array()
     var error: Boolean = false
@@ -55,7 +64,10 @@ object Checker {
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
     try {
-      trueReducedDomains = applyAC(variables, allDifferent1)
+      if(isAC)
+        trueReducedDomains = applyAC(variables, allDifferent1)
+      else
+        trueReducedDomains = applyBC(variables, allDifferent1)
     }
     catch {
       case e: Exception => ourError = true
@@ -93,7 +105,7 @@ object Checker {
 
 
   def main(args: Array[String]): Unit ={
-    checkAllDifferent(allDifferent)
+    checkAllDifferentBC(allDifferent)
   }
 
 }
