@@ -10,7 +10,7 @@ import scala.language.implicitConversions
 
 object Checker {
   var j = 0
-  val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](2,Gen.choose(0,20))
+  val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](4,Gen.choose(0,20))
   def GeneratorVariable(): Gen[Variable] ={
     for{
       set <- Generator
@@ -46,7 +46,17 @@ object Checker {
     checkAllDiff(isAC,test4,constraint)
     val test5 = Array(Set(0,1,2))
     checkAllDiff(isAC,test5,constraint)
-    println("finish")
+    val test6 = Array(Set(0,1,2), Set(1))
+    checkAllDiff(isAC,test6,constraint)
+    val test7 = Array(Set(0,1,2))
+    checkAllDiff(isAC,test7,constraint)
+    val test8 = Array(Set(0,1,2), Set(0), Set(1), Set(2))
+    checkAllDiff(isAC,test8,constraint)
+    val test9 = Array(Set(0,1,2,3,4), Set(1), Set(4), Set(3))
+    checkAllDiff(isAC,test9,constraint)
+    val test10 = Array(Set(0,1,2), Set(0), Set(2))
+    checkAllDiff(isAC,test10,constraint)
+    println("All tests executed.")
   }
 
 
