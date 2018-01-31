@@ -1,6 +1,6 @@
 package checker
 
-import checker.Checker.checkAllDifferentAC
+import checker.Checker.{checkAllDifferentAC, checkAllDifferentBC}
 import scala.collection.JavaConverters._
 
 
@@ -12,9 +12,13 @@ trait JCpC {
 
 abstract class JCpChecker extends JCpC {
 
-  def checkAllDifferentConstraint():Unit = {
+  def checkAllDifferentConstraintAC():Unit = {
     val scalaConstraint = toScala()
     checkAllDifferentAC(scalaConstraint)
+  }
+  def checkAllDifferentConstraintBC():Unit = {
+    val scalaConstraint = toScala()
+    checkAllDifferentBC(scalaConstraint)
   }
   implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
     val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
@@ -53,8 +57,11 @@ abstract class JCpChecker extends JCpC {
 }
 
 trait ScCpChecker {
-  def checkAllDifferentConstraint():Unit = {
+  def checkAllDifferentConstraintAC():Unit = {
     checkAllDifferentAC(constraint)
+  }
+  def checkAllDifferentConstraintBC():Unit = {
+    checkAllDifferentBC(constraint)
   }
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
 
