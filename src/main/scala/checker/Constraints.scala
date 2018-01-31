@@ -67,8 +67,8 @@ object Constraints {
     for(i <- variables.indices){
       val min = ac(i).min
       val max = ac(i).max
-      result(i).filter(_ < min)
-      result(i).filter(_ > max)
+      result(i) = result(i).filter(_ >= min)
+      result(i) = result(i).filter(_ <= max)
     }
     result
   }
