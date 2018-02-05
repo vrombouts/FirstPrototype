@@ -5,7 +5,9 @@ import scala.collection.JavaConverters._
 
 
 trait JCpC {
-    def checkAllDifferentConstraint(): Unit
+    def checkAllDifferentConstraintAC(): Unit
+    def checkAllDifferentConstraintBC(): Unit
+    @throws[Exception]
     def constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
 
 }

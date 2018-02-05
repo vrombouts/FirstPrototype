@@ -41,10 +41,34 @@ object Constraints {
     result
   }
 
+  def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
+    var inters : Array[Interval] = new Array[Interval](variables.length)
+    for(i <- variables.indices){
+      inters(i) = new Interval(variables(i))
+    }
+    return inters
+  }
+
+  def intervalsToVariables(intervals: Array[Interval]) : Array[Set[Int]] = {
+    var result : Array[Set[Int]] = Array.fill[Set[Int]](intervals.length)(Set.empty)
+    for(i <- intervals.indices){
+      result(i) = intervals(i).domain
+    }
+    return result
+  }
+
   def applyBC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
-    val sol = cartesianProduct(variables,constraint)
-    val result=toDomainsBC(sol,variables)
-    result
+    var intervals = getIntervals(variables)
+    var changed:Boolean = true
+    while(changed) {
+      changed = false
+      for (i <- variables.indices) {
+        var modif:Boolean = cartesianBC(intervals, constraint, i, true)
+        var other_modif: Boolean = cartesianBC(intervals, constraint, i, false)
+        if(modif || other_modif) changed=true
+      }
+    }
+    return intervalsToVariables(intervals)
   }
 
   def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] ={
@@ -71,6 +95,63 @@ object Constraints {
       result(i) = result(i).filter(_ <= max)
     }
     result
+  }
+
+  def reinitialize(variables:Array[Interval]) : Unit={
+    for(i <- variables.indices){
+      variables(i).pos=variables(i).min
+    }
+  }
+
+  def cartesianBC(variables:Array[Interval],constraint:Array[Int]=>Boolean, id:Int, minOrMax:Boolean): Boolean ={
+    var inter:Interval = variables(id)
+    var sol:Array[Int] = Array(inter.giveValue(minOrMax))
+    var i:Int=0
+    reinitialize(variables)
+    while(i<variables.length && !sol.isEmpty){
+      if(i!=id && variables(i).pos <= variables(i).max) {
+        sol = sol :+ variables(i).pos
+        variables(i).pos = variables(i).pos + 1
+        var condition: Boolean = true
+        while (!constraint(sol) && condition) {
+          if (variables(i).pos > variables(i).max) {
+            variables(i).pos = variables(i).min
+            condition = false
+            sol = sol.dropRight(2)
+            i = i - 2
+            if(i==id-1)
+              i=i-1
+          }
+          else {
+            sol(sol.length-1) = variables(i).pos
+            variables(i).pos = variables(i).pos + 1
+          }
+         /* println("#########")
+          for(j <- sol.indices){
+            print(sol(j) + " ")
+          }
+          println("#########")*/
+        }
+        /*for(j <- sol.indices){
+          print(sol(j) + " ")
+        }
+        println()*/
+        if (sol.length == variables.length && constraint(sol)) {
+          return false
+        }
+      }
+      else if(i!=id){
+        variables(i).pos=variables(i).min
+        sol=sol.dropRight(1)
+        i=i-2
+        if(i==id-1)
+          i=i-1
+      }
+      i=i+1
+    }
+    inter.update(minOrMax)
+    return true
+
   }
 
 
