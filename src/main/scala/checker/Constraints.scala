@@ -4,7 +4,7 @@ import scala.collection.immutable.Stream.cons
 
 object Constraints {
 
-  def cartesian(sol:Stream[Array[Int]],variable: Set[Int]): Stream[Array[Int]] = {
+  private def cartesian(sol:Stream[Array[Int]],variable: Set[Int]): Stream[Array[Int]] = {
     var newStream : Stream[Array[Int]] = Stream.empty
     for(s<-sol) {
       for (value <- variable) {
@@ -16,7 +16,7 @@ object Constraints {
     newStream
   }
 
-  def instantiateStream(variable:Set[Int]): Stream[Array[Int]]={
+  private def instantiateStream(variable:Set[Int]): Stream[Array[Int]]={
     var stream = Stream.empty[Array[Int]]
     for(i<-variable){
       stream = stream.append(cons(Array(i),Stream.empty))
@@ -24,7 +24,7 @@ object Constraints {
     stream
   }
 
-  def cartesianProduct(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Array[Int]]={
+  private def cartesianProduct(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Array[Int]]={
     // TO DO : generate an error msg and add a try-catch statement
     if(variables.length < 1) {return Array[Array[Int]]()}
     var stream:Stream[Array[Int]] = instantiateStream(variables(0))
@@ -41,7 +41,7 @@ object Constraints {
     result
   }
 
-  def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] ={
+  private def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] ={
     if(solutions.length < 1) return Array[Set[Int]]()
     val variables: Array[Set[Int]] = new Array[Set[Int]](solutions(0).length)
     for(i<-variables.indices){
@@ -54,11 +54,11 @@ object Constraints {
     variables
   }
 
-  def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
+  private def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
    variables.map(x=> new Interval(x))
   }
 
-  def intervalsToVariables(intervals: Array[Interval]) : Array[Set[Int]] = {
+  private def intervalsToVariables(intervals: Array[Interval]) : Array[Set[Int]] = {
     intervals.map(x => x.domain)
   }
 
@@ -73,14 +73,14 @@ object Constraints {
         if(modif || other_modif) changed=true
       }
     }
-    return intervalsToVariables(intervals)
+    intervalsToVariables(intervals)
   }
 
-  def reinitialize(intervals:Array[Interval]) : Unit={
+  private def reinitialize(intervals:Array[Interval]) : Unit={
     intervals.foreach(x => x.resetPos)
   }
 
-  def findingAcceptingValue(sol: Array[Int], interval: Interval, constraint: Array[Int]=>Boolean): Boolean = {
+  private def findingAcceptingValue(sol: Array[Int], interval: Interval, constraint: Array[Int]=>Boolean): Boolean = {
     if(constraint(sol)) true
     else if(interval.posInInterval){
       sol(sol.length-1) = interval.position
@@ -92,7 +92,7 @@ object Constraints {
     }
   }
 
-  def cartesianBC(intervals:Array[Interval],constraint:Array[Int]=>Boolean, id:Int, minOrMax:Boolean): Boolean ={
+  private def cartesianBC(intervals:Array[Interval],constraint:Array[Int]=>Boolean, id:Int, minOrMax:Boolean): Boolean ={
     reinitialize(intervals)
     val interval:Interval = intervals(id)
     var sol:Array[Int] = Array(interval.giveValue(minOrMax))
