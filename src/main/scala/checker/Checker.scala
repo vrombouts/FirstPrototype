@@ -120,7 +120,7 @@ object Checker {
   def main(args: Array[String]): Unit ={
     checkAllDifferentBC(allDifferent)
 
-    //checkAllDiff(false,Array(Set(12,14), Set(18,3), Set(1,7), Set(7,1), Set(1,10), Set(4,11), Set(16,13), Set(10)),allDifferent)
+    checkAllDiff(false,Array(Set(18, 14), Set(12, 13), Set(12), Set(12, 19)),allDifferent)
   }
 
 }

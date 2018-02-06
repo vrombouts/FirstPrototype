@@ -41,36 +41,6 @@ object Constraints {
     result
   }
 
-  def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
-    var inters : Array[Interval] = new Array[Interval](variables.length)
-    for(i <- variables.indices){
-      inters(i) = new Interval(variables(i))
-    }
-    return inters
-  }
-
-  def intervalsToVariables(intervals: Array[Interval]) : Array[Set[Int]] = {
-    var result : Array[Set[Int]] = Array.fill[Set[Int]](intervals.length)(Set.empty)
-    for(i <- intervals.indices){
-      result(i) = intervals(i).domain
-    }
-    return result
-  }
-
-  def applyBC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
-    var intervals = getIntervals(variables)
-    var changed:Boolean = true
-    while(changed) {
-      changed = false
-      for (i <- variables.indices) {
-        var modif:Boolean = cartesianBC(intervals, constraint, i, true)
-        var other_modif: Boolean = cartesianBC(intervals, constraint, i, false)
-        if(modif || other_modif) changed=true
-      }
-    }
-    return intervalsToVariables(intervals)
-  }
-
   def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] ={
     if(solutions.length < 1) return Array[Set[Int]]()
     val variables: Array[Set[Int]] = new Array[Set[Int]](solutions(0).length)
@@ -84,72 +54,72 @@ object Constraints {
     variables
   }
 
-
-  def toDomainsBC(solutions: Array[Array[Int]],variables: Array[Set[Int]]):Array[Set[Int]] ={
-    val ac = toDomainsAC(solutions)
-    var result : Array[Set[Int]] = variables.clone()
-    for(i <- variables.indices){
-      val min = ac(i).min
-      val max = ac(i).max
-      result(i) = result(i).filter(_ >= min)
-      result(i) = result(i).filter(_ <= max)
-    }
-    result
+  def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
+   variables.map(x=> new Interval(x))
   }
 
-  def reinitialize(variables:Array[Interval]) : Unit={
-    for(i <- variables.indices){
-      variables(i).pos=variables(i).min
+  def intervalsToVariables(intervals: Array[Interval]) : Array[Set[Int]] = {
+    intervals.map(x => x.domain)
+  }
+
+  def applyBC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
+    val intervals = getIntervals(variables)
+    var changed:Boolean = true
+    while(changed) {
+      changed = false
+      for (i <- variables.indices) {
+        val modif:Boolean = cartesianBC(intervals, constraint, i, true)
+        val other_modif: Boolean = cartesianBC(intervals, constraint, i, false)
+        if(modif || other_modif) changed=true
+      }
+    }
+    return intervalsToVariables(intervals)
+  }
+
+  def reinitialize(intervals:Array[Interval]) : Unit={
+    intervals.foreach(x => x.resetPos)
+  }
+
+  def findingAcceptingValue(sol: Array[Int], interval: Interval, constraint: Array[Int]=>Boolean): Boolean = {
+    if(constraint(sol)) true
+    else if(interval.posInInterval){
+      sol(sol.length-1) = interval.position
+      interval.incrementPos
+      findingAcceptingValue(sol,interval, constraint)
+    }else{
+      interval.resetPos
+      false
     }
   }
 
-  def cartesianBC(variables:Array[Interval],constraint:Array[Int]=>Boolean, id:Int, minOrMax:Boolean): Boolean ={
-    var inter:Interval = variables(id)
-    var sol:Array[Int] = Array(inter.giveValue(minOrMax))
+  def cartesianBC(intervals:Array[Interval],constraint:Array[Int]=>Boolean, id:Int, minOrMax:Boolean): Boolean ={
+    reinitialize(intervals)
+    val interval:Interval = intervals(id)
+    var sol:Array[Int] = Array(interval.giveValue(minOrMax))
     var i:Int=0
-    reinitialize(variables)
-    while(i<variables.length && !sol.isEmpty){
-      if(i!=id && variables(i).pos <= variables(i).max) {
-        sol = sol :+ variables(i).pos
-        variables(i).pos = variables(i).pos + 1
-        var condition: Boolean = true
-        while (!constraint(sol) && condition) {
-          if (variables(i).pos > variables(i).max) {
-            variables(i).pos = variables(i).min
-            condition = false
-            sol = sol.dropRight(2)
-            i = i - 2
-            if(i==id-1)
-              i=i-1
-          }
-          else {
-            sol(sol.length-1) = variables(i).pos
-            variables(i).pos = variables(i).pos + 1
-          }
-         /* println("#########")
-          for(j <- sol.indices){
-            print(sol(j) + " ")
-          }
-          println("#########")*/
-        }
-        /*for(j <- sol.indices){
-          print(sol(j) + " ")
-        }
-        println()*/
-        if (sol.length == variables.length && constraint(sol)) {
+    while(i<intervals.length && sol.nonEmpty) {
+      if (i == id) i = i + 1
+      val currentInter = intervals(i)
+      if (currentInter.posInInterval) {
+        sol = sol :+ currentInter.position
+        currentInter.incrementPos
+        if (!findingAcceptingValue(sol, currentInter, constraint)) {
+          //backtrack
+          sol = sol.dropRight(2)
+          i = if (i == id + 1) i - 3 else i - 2
+        } else if (sol.length == intervals.length)
+          //one element of the cartesian product respect the constraint.
+          //Therefore, no update of the interval's min/max is required
           return false
-        }
+      } else {
+        //backtrack
+        currentInter.resetPos
+        sol = sol.dropRight(1)
+        i = if (i == id + 1) i - 3 else i - 2
       }
-      else if(i!=id){
-        variables(i).pos=variables(i).min
-        sol=sol.dropRight(1)
-        i=i-2
-        if(i==id-1)
-          i=i-1
-      }
-      i=i+1
+      i = i + 1
     }
-    inter.update(minOrMax)
+    interval.update(minOrMax)
     return true
 
   }

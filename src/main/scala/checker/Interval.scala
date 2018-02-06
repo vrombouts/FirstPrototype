@@ -5,9 +5,14 @@ package checker
   */
 class Interval(var domain:Set[Int]) {
 
-  var min:Int=domain.min
-  var max:Int=domain.max
-  var pos:Int=min
+  private var min:Int=domain.min
+  private var max:Int=domain.max
+  private var pos:Int=min
+
+  def position: Int = pos
+  def incrementPos(): Unit = pos = pos+1
+  def resetPos()    : Unit = pos = min
+  def posInInterval():Boolean = pos<=max
 
   def update_min(): Unit ={
     domain = domain - min
