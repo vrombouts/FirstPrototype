@@ -1,9 +1,7 @@
 package checker
 
-/**
-  * Created by aumassart on 31.01.18.
-  */
-class Interval(var domain:Set[Int]) {
+
+class Interval(private var dom:Set[Int]) {
 
   private var min:Int=domain.min
   private var max:Int=domain.max
@@ -13,14 +11,15 @@ class Interval(var domain:Set[Int]) {
   def incrementPos(): Unit = pos = pos+1
   def resetPos()    : Unit = pos = min
   def posInInterval():Boolean = pos<=max
+  def domain() : Set[Int] =  dom
 
   def update_min(): Unit ={
-    domain = domain - min
+    dom = domain - min
     min=domain.min
   }
 
   def update_max(): Unit ={
-    domain = domain - max
+    dom = domain - max
     max=domain.max
   }
 
