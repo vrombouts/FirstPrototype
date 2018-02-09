@@ -1,6 +1,9 @@
 package checker
 
 class BranchingConstraint(private val variable:Int,private val constant: Int,private val operation: Int) {
+  def this(variable: Int, operation:Int) = this(variable,0,operation) //for constraint without constants
+  def this(operation:Int) = this(0,operation) //for global constraint
+  def this() = this(0,0,-1) //for True constraint
 
   def applyOn(variables: Array[Set[Int]]): Unit = {
     variables(variable) = applyOnDomain(variables(variable))
