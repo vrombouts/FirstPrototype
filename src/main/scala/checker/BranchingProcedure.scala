@@ -5,7 +5,8 @@ class BranchingProcedure(operation: Int) {
 
   def branch(variables: Array[Set[Int]]): List[BranchingConstraint] = {
     variable = variables.indexWhere(x => x.size>1)
-    branch(variables(variable))
+    if (variable >= variables.length) return List()
+    else branch(variables(variable))
   }
 
   def branch(domain: Set[Int]) : List[BranchingConstraint] ={

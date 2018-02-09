@@ -21,7 +21,7 @@ class CBT {
       var nodeIndex: Int = nVisitedNodes
       var c = branchingCtrs.length
       S = S :+ new CBTNode(b, c)
-      for (i <- 1 to c) {
+      for (i <- 1 until c) {
         val domainCopy = domains.clone()
         visit(domainCopy, branchingProc, branchingCtrs(i))
       }
@@ -42,7 +42,7 @@ class CBT {
 object Main{
   def main(args: Array[String]): Unit ={
     var cbt:CBT = new CBT()
-    cbt.generate(Array(Set(0,1,2), Set(0,5)), new BranchingProcedure(1,2,Op.equal))
+    cbt.generate(Array(Set(0,1,2), Set(0,5)), new BranchingProcedure(Op.equal))
     println(cbt.toString())
   }
 }

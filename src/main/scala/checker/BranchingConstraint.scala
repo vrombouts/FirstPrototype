@@ -19,6 +19,19 @@ class BranchingConstraint(private val variable:Int,private val constant: Int,pri
       case _ => domain //default case is True constraint
     }
   }
+
+  override def toString: String = {
+    var str = "( x"+variable
+    operation match{
+      case Op.equal             =>  str += " = "
+      case Op.different         =>  str += " != "
+      case Op.lesserThanOrEqual =>  str += " <= "
+      case Op.greaterThan       =>  str += " > "
+      case _ => str += " T " //default case is True constraint
+    }
+    str += constant + " )"
+    str
+  }
   private def applyEqual(domain: Set[Int]): Set[Int] = domain.filter(x => x==constant)
   private def applyLesserThanOrEqual(domain: Set[Int]): Set[Int] = domain.filter(x => x<=constant)
   private def applyDifferent(domain: Set[Int]): Set[Int] = domain.filter(x => x!=constant)
