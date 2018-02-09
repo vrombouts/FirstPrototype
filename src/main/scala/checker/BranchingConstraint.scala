@@ -5,8 +5,9 @@ class BranchingConstraint(private val variable:Int,private val constant: Int,pri
   def this(operation:Int) = this(0,operation) //for global constraint
   def this() = this(0,0,-1) //for True constraint
 
-  def applyOn(variables: Array[Set[Int]]): Unit = {
+  def applyOn(variables: Array[Set[Int]]): Boolean = {
     variables(variable) = applyOnDomain(variables(variable))
+    variables(variable).nonEmpty
   }
 
   def applyOnDomain(domain: Set[Int]): Set[Int] = {
