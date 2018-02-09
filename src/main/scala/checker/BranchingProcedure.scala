@@ -31,9 +31,9 @@ class BranchingProcedure(variable: Int, constant: Int, operation: Int) {
 }
 
 object Op {
-  def equal = 0
-  def different = 1
-  def lesserThanOrEqual = 2
-  def greaterThan = 3
-  def values = 4
+  val equal = 0
+  val different = 1
+  val lesserThanOrEqual = 2
+  val greaterThan = 3
+  val values = 4
 }
