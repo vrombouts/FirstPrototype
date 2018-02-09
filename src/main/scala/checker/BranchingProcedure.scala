@@ -1,8 +1,10 @@
 package checker
 
-class BranchingProcedure(variable: Int, constant: Int, operation: Int) {
+class BranchingProcedure(operation: Int) {
+  private var variable = 0
 
   def branch(variables: Array[Set[Int]]): List[BranchingConstraint] = {
+    variable = variables.indexWhere(x => x.size>1)
     branch(variables(variable))
   }
 
@@ -16,13 +18,14 @@ class BranchingProcedure(variable: Int, constant: Int, operation: Int) {
 
   }
   private def branchEqual(domain : Set[Int]): List[BranchingConstraint] = {
-    val bEqual = new BranchingConstraint(variable,constant,Op.equal)
-    val bDifferent = new BranchingConstraint(variable,constant,Op.different)
+    val bEqual = new BranchingConstraint(variable,domain.min,Op.equal)
+    val bDifferent = new BranchingConstraint(variable,domain.min,Op.different)
     List(bEqual,bDifferent)
   }
   private def branchLesserThanOrEqual(domain: Set[Int]): List[BranchingConstraint] = {
-    val bLesserThanOrEqual = new BranchingConstraint(variable,constant,Op.lesserThanOrEqual)
-    val bGreaterThan = new BranchingConstraint(variable,constant,Op.greaterThan)
+    val middle = (domain.max+domain.min)/2
+    val bLesserThanOrEqual = new BranchingConstraint(variable,middle,Op.lesserThanOrEqual)
+    val bGreaterThan = new BranchingConstraint(variable,middle,Op.greaterThan)
     List(bLesserThanOrEqual,bGreaterThan)
   }
   private def branchValues(domain: Set[Int]): List[BranchingConstraint] = {
