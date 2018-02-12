@@ -31,35 +31,34 @@ object Checker {
    * allDifferent constraint with arc consistency.
    */
   private def checkAllDifferent(isAC: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-
+    val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(isAC,_,constraint,allDifferent)
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkConstraint(isAC,x.toArray,constraint, allDifferent)
+      x.isEmpty || checkAllDiff(x.toArray)
     }.check
-
     val test1 = Array(Set(0,1,2),Set(0))
-    checkConstraint(isAC,test1,constraint,allDifferent)
+    checkAllDiff(test1)
     val test2 = Array(Set(0,1),Set(0,1),Set(0,1,2))
-    checkConstraint(isAC,test2,constraint, allDifferent)
+    checkAllDiff(test2)
     val test3 = Array(Set(0),Set(1),Set(2))
-    checkConstraint(isAC,test3,constraint, allDifferent)
+    checkAllDiff(test3)
     val test4 = Array(Set(0,1),Set(1,2),Set(2,3),Set(3,4),Set(4,5),Set(2,4))
-    checkConstraint(isAC,test4,constraint, allDifferent)
+    checkAllDiff(test4)
     val test5 = Array(Set(0,1,2))
-    checkConstraint(isAC,test5,constraint, allDifferent)
+    checkAllDiff(test5)
     val test6 = Array(Set(0,1,2), Set(1))
-    checkConstraint(isAC,test6,constraint, allDifferent)
+    checkAllDiff(test6)
     val test7 = Array(Set(0,1,2))
-    checkConstraint(isAC,test7,constraint, allDifferent)
+    checkAllDiff(test7)
     val test8 = Array(Set(0,1,2), Set(0), Set(1), Set(2))
-    checkConstraint(isAC,test8,constraint, allDifferent)
+    checkAllDiff(test8)
     val test9 = Array(Set(0,1,2,3,4), Set(1), Set(4), Set(3))
-    checkConstraint(isAC,test9,constraint, allDifferent)
+    checkAllDiff(test9)
     val test10 = Array(Set(0,1,2), Set(0), Set(2))
-    checkConstraint(isAC,test10,constraint, allDifferent)
+    checkAllDiff(test10)
     val test11 = Array(Set(1), Set(1), Set(5,6))
-    checkConstraint(isAC,test11,constraint, allDifferent)
+    checkAllDiff(test11)
     val test12 = Array(Set(8,16), Set(16,11), Set(7,8), Set(16), Set(15,8), Set(11,7))
-    checkConstraint(isAC,test12,constraint, allDifferent)
+    checkAllDiff(test12)
     println("All tests executed.")
   }
 
@@ -113,24 +112,31 @@ object Checker {
         if (!trueReducedDomains(i).equals(reducedDomains(i))) {
           println("failed for: " + variables.toList)
           println("you should have: " + trueReducedDomains.toList)
-          println("but you had " + reducedDomains.toList)
+          println("but you had: " + reducedDomains.toList)
           return false
         }
       }
     }
     else{
-      return false
+      var empty = false
+      reducedDomains.foreach(x => if(!empty) empty=x.isEmpty)
+      if(!empty) {
+        println("failed for: " + variables.toList)
+        println("you should not have any solutions")
+        println("but you had: " + reducedDomains.toList)
+        return false //empty domains accepted as having no solutions
+      }
     }
     true
   }
 
-
   def main(args: Array[String]): Unit ={
-    //checkAllDifferentBC(allDifferent)
-
-    checkConstraint(false,
-      Array(Set(18, 14), Set(12, 13), Set(12), Set(12, 19)),
-      allDifferent, sum(52,Op.greaterThanOrEqual,4))
+    checkAllDifferentBC(allDifferent)
+    //checkAllDifferentAC(allDifferent)
+    //?? not ready yet: checkSum(sum,5,Op.equal)
+    //checkConstraint(false,
+      //Array(Set(18, 14), Set(12, 13), Set(12), Set(12, 19)),
+      //allDifferent, sum(52,Op.greaterThanOrEqual,4))
   }
 
 }
