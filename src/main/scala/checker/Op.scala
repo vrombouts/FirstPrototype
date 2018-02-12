@@ -18,4 +18,19 @@ object Op {
       case Op.greaterThanOrEqual => Op.lesserThan
     }
   }
+
+
+
+
+  def respectOp(operation:Int, sum:Int, constant:Int) :Boolean= {
+    operation match {
+      case Op.equal => sum == constant
+      case Op.different => sum != constant
+      case Op.lesserThan => sum < constant
+      case Op.lesserThanOrEqual => sum <= constant
+      case Op.greaterThan => sum > constant
+      case Op.greaterThanOrEqual => sum >= constant
+      case _ => sum == constant
+    }
+  }
 }

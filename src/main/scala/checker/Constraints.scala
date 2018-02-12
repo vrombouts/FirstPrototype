@@ -96,6 +96,10 @@ object Constraints {
     reinitialize(intervals)
     val interval:Interval = intervals(id)
     var sol:Array[Int] = Array(interval.giveValue(minOrMax))
+    if(intervals.length==1){
+      if(constraint(sol))
+        return false
+    }
     var i:Int=0
     while(i<intervals.length && sol.nonEmpty) {
       if (i == id) i = i + 1
@@ -139,6 +143,31 @@ object Constraints {
       case Op.greaterThanOrEqual=> sum >=constant
       case _ => sum==constant
     }
+  }
+
+  def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Int] = {
+    val oppositeOp= Op.Opposite(operation)
+    var changed:Boolean=true
+    while(changed){
+      changed=false
+      for(i <- variables.indices){
+        var s:Int=0
+        for(j<-variables.indices){
+          if(j!=i){
+            s += variables(j).min
+          }
+        }
+        if(Op.respectOp(oppositeOp, variables(i).min + s, constant)) {
+          variables(i) = variables(i) - variables(i).min
+          changed = true
+        }
+        if(Op.respectOp(oppositeOp, variables(i).max + s, constant)){
+          variables(i)=variables(i) - variables(i).max
+          changed=true
+        }
+      }
+    }
+
   }
 
   def allDifferent(solution: Array[Int]):Boolean = {
