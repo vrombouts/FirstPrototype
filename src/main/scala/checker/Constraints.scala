@@ -125,8 +125,23 @@ object Constraints {
   }
 
 
+  def sum(constant:Int,operation:Int,nbVar:Int): Array[Int] => Boolean = sum(constant,operation,nbVar,_)
+  def sum(constant:Int,operation:Int,nbVar: Int, solution: Array[Int]):Boolean = {
+    if(solution.length<nbVar-1) return true
+    var sum:Int = 0
+    solution.foreach(x => sum += x)
+    operation match{
+      case Op.equal             => sum ==constant
+      case Op.different         => sum !=constant
+      case Op.lesserThan        => sum < constant
+      case Op.lesserThanOrEqual => sum <=constant
+      case Op.greaterThan       => sum > constant
+      case Op.greaterThanOrEqual=> sum >=constant
+      case _ => sum==constant
+    }
+  }
 
-  def allDifferent1(solution: Array[Int]):Boolean = {
+  def allDifferent(solution: Array[Int]):Boolean = {
     val set = solution.toSet
     if(set.size!=solution.length) return false
     true
@@ -239,7 +254,7 @@ object Constraints {
   def main(args: Array[String]) {
     //val x = Checker.Generator_List_Of_Variables(10).sample
     val variables = Array(Set(0,1,2))
-    val result: Array[Set[Int]] = applyAC(variables,allDifferent1)
+    val result: Array[Set[Int]] = applyAC(variables,allDifferent)
     println("result: [")
     for(i<-result.indices){
       println(result(i))
