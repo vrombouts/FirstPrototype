@@ -145,29 +145,31 @@ object Constraints {
     }
   }
 
-  def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Int] = {
-    val oppositeOp= Op.Opposite(operation)
+  def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Set[Int]] = {
+    //val oppositeOp= Op.opposite(operation)
     var changed:Boolean=true
     while(changed){
       changed=false
       for(i <- variables.indices){
-        var s:Int=0
+        var sMin:Int=0
+        var sMax:Int=0
         for(j<-variables.indices){
           if(j!=i){
-            s += variables(j).min
+            sMin += variables(j).min
+            sMax += variables(j).min
           }
         }
-        if(Op.respectOp(oppositeOp, variables(i).min + s, constant)) {
+        if(Op.condition(operation, sMin, sMax, constant,variables(i).min)) {
           variables(i) = variables(i) - variables(i).min
           changed = true
         }
-        if(Op.respectOp(oppositeOp, variables(i).max + s, constant)){
+        if(Op.condition(operation, sMin, sMax, constant,variables(i).max)){
           variables(i)=variables(i) - variables(i).max
           changed=true
         }
       }
     }
-
+    variables
   }
 
   def allDifferent(solution: Array[Int]):Boolean = {
