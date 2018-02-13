@@ -68,8 +68,8 @@ object Constraints {
     while(changed) {
       changed = false
       for (i <- variables.indices) {
-        val modif:Boolean = cartesianBC(intervals, constraint, i, true)
-        val other_modif: Boolean = cartesianBC(intervals, constraint, i, false)
+        val modif:Boolean = cartesianBC(intervals, constraint, i, minOrMax = true)
+        val other_modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = false)
         if(modif || other_modif) changed=true
       }
     }
@@ -77,17 +77,17 @@ object Constraints {
   }
 
   private def reinitialize(intervals:Array[Interval]) : Unit={
-    intervals.foreach(x => x.resetPos)
+    intervals.foreach(x => x.resetPos())
   }
 
   private def findingAcceptingValue(sol: Array[Int], interval: Interval, constraint: Array[Int]=>Boolean): Boolean = {
     if(constraint(sol)) true
     else if(interval.posInInterval){
       sol(sol.length-1) = interval.position
-      interval.incrementPos
+      interval.incrementPos()
       findingAcceptingValue(sol,interval, constraint)
     }else{
-      interval.resetPos
+      interval.resetPos()
       false
     }
   }
@@ -106,7 +106,7 @@ object Constraints {
       val currentInter = intervals(i)
       if (currentInter.posInInterval) {
         sol = sol :+ currentInter.position
-        currentInter.incrementPos
+        currentInter.incrementPos()
         if (!findingAcceptingValue(sol, currentInter, constraint)) {
           //backtrack
           sol = sol.dropRight(2)
@@ -117,14 +117,14 @@ object Constraints {
           return false
       } else {
         //backtrack
-        currentInter.resetPos
+        currentInter.resetPos()
         sol = sol.dropRight(1)
         i = if (i == id + 1) i - 3 else i - 2
       }
       i = i + 1
     }
     interval.update(minOrMax)
-    return true
+    true
 
   }
 
@@ -146,26 +146,24 @@ object Constraints {
   }
 
   def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Set[Int]] = {
-    //val oppositeOp= Op.opposite(operation)
     var changed:Boolean=true
+    val cond = Op.condition(operation,_,_,constant,_)
     while(changed){
       changed=false
       for(i <- variables.indices){
-        var sMin:Int=0
-        var sMax:Int=0
-        for(j<-variables.indices){
-          if(j!=i){
-            sMin += variables(j).min
-            sMax += variables(j).min
-          }
-        }
-        if(Op.condition(operation, sMin, sMax, constant,variables(i).min)) {
-          variables(i) = variables(i) - variables(i).min
+        val min: Int= variables(i).min
+        val max: Int= variables(i).max
+        var sMin:Int= -min
+        var sMax:Int= -max
+        variables.foreach(x=>{sMin+=x.min ; sMax+=x.max})
+        //Sum is BC so check min and max values
+        if(!cond(sMin, sMax, min)) {
+          variables(i) = variables(i) - min
           changed = true
         }
-        if(Op.condition(operation, sMin, sMax, constant,variables(i).max)){
-          variables(i)=variables(i) - variables(i).max
-          changed=true
+        if(!cond(sMin, sMax, max)){
+          variables(i) = variables(i) - max
+          changed = true
         }
       }
     }

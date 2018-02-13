@@ -32,15 +32,15 @@ object Op {
     }
   }
 
-  def condition(operation:Int, s_min:Int, s_max:Int, constant:Int, value:Int) : Boolean = {
+  def condition(operation:Int, sMin:Int, sMax:Int, constant:Int, value:Int) : Boolean = {
     operation match {
-      case Op.equal => Op.respectOp(Op.lesserThan, value + s_min, constant) && Op.respectOp(Op.greaterThan, value + s_max, constant)
-      case Op.different => !(s_max==s_min && s_min+value==constant)
-      case Op.lesserThan => Op.respectOp(Op.opposite(operation), value + s_min, constant)
-      case Op.lesserThanOrEqual => Op.respectOp(Op.opposite(operation), value + s_min, constant)
-      case Op.greaterThan => Op.respectOp(Op.opposite(operation), value + s_max, constant)
-      case Op.greaterThanOrEqual => Op.respectOp(Op.opposite(operation), value + s_max, constant)
-      case _ => Op.respectOp(Op.lesserThan, value + s_min, constant) && Op.respectOp(Op.greaterThan, value + s_max, constant)
+      case Op.equal => Op.respectOp(Op.lesserThan, value + sMin, constant) && Op.respectOp(Op.greaterThan, value + sMax, constant)
+      case Op.different => !(sMax==sMin && sMin+value==constant)
+      case Op.lesserThan => Op.respectOp(Op.opposite(operation), value + sMin, constant)
+      case Op.lesserThanOrEqual => Op.respectOp(Op.opposite(operation), value + sMin, constant)
+      case Op.greaterThan => Op.respectOp(Op.opposite(operation), value + sMax, constant)
+      case Op.greaterThanOrEqual => Op.respectOp(Op.opposite(operation), value + sMax, constant)
+      case _ => Op.respectOp(Op.lesserThan, value + sMin, constant) && Op.respectOp(Op.greaterThan, value + sMax, constant)
     }
   }
 }
