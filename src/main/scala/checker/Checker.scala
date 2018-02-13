@@ -118,13 +118,12 @@ object Checker {
       }
     }
     else{
-      var empty = false
-      reducedDomains.foreach(x => if(!empty) empty=x.isEmpty)
-      if(!empty) {
+      //empty domains accepted as having no solutions
+      if(reducedDomains.nonEmpty && reducedDomains.forall(x=> x.nonEmpty)){
         println("failed for: " + variables.toList)
         println("you should not have any solutions")
         println("but you had: " + reducedDomains.toList)
-        return false //empty domains accepted as having no solutions
+        return false
       }
     }
     true
