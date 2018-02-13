@@ -21,10 +21,10 @@ object Checker {
   }
 
   def checkAllDifferentAC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    checkAllDifferent(true,constraint)
+    checkAllDifferent(isAC = true,constraint)
   }
   def checkAllDifferentBC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    checkAllDifferent(false,constraint)
+    checkAllDifferent(isAC = false,constraint)
   }
   /*
    * This function checks if the constraint passed in argument apply correctly an
@@ -64,7 +64,7 @@ object Checker {
 
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkConstraint(false,x.toArray,constraint,sum(constant,Op.equal,x.size))
+      x.isEmpty || checkConstraint(isAC = false,x.toArray,constraint,sum(constant,Op.equal,x.size))
     }.check
   }
 
@@ -98,7 +98,7 @@ object Checker {
 
     if(error && !ourError){
       for(i<- reducedDomains.indices){
-        if(!reducedDomains(i).isEmpty){
+        if(reducedDomains(i).nonEmpty){
           println("failed for: "+ variables.toList)
           println("you should have: "+ trueReducedDomains.toList)
           println("but you returned an exception")

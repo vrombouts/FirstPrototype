@@ -10,8 +10,8 @@ class Interval(private var dom:Set[Int]) {
   def position: Int = pos
   def incrementPos(): Unit = pos = pos+1
   def resetPos()    : Unit = pos = min
-  def posInInterval():Boolean = pos<=max
-  def domain() : Set[Int] =  dom
+  def posInInterval:Boolean = pos<=max
+  def domain : Set[Int] =  dom
 
   def update_min(): Unit ={
     dom = domain - min
@@ -29,8 +29,8 @@ class Interval(private var dom:Set[Int]) {
   }
 
   def giveValue(minOrMax : Boolean): Int ={
-    if(minOrMax) return min
-    else return max
+    if(minOrMax) min
+    else max
   }
 
 }
