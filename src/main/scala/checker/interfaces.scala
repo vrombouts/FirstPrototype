@@ -5,32 +5,13 @@ import scala.collection.JavaConverters._
 
 
 trait JCpC {
-    def checkAllDifferentConstraintAC(): Unit
-    def checkAllDifferentConstraintBC(): Unit
     @throws[Exception]
     def constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
-
 }
 
-abstract class JCpChecker extends JCpC {
+abstract class JCpChecker extends JCpC
+  with AllDifferentConstraint with SumConstraint {
 
-  def checkAllDifferentConstraintAC():Unit = {
-    checkAllDifferentAC(scalaConstraint)
-  }
-  def checkAllDifferentConstraintBC():Unit = {
-    checkAllDifferentBC(scalaConstraint)
-  }
-
-  def checkSumEqual(constant:Int):Unit =              checkSumConstraint(constant, Op.equal)
-  def checkSumDifferent(constant:Int):Unit =          checkSumConstraint(constant, Op.different)
-  def checkSumLesserThan(constant:Int):Unit =         checkSumConstraint(constant, Op.lesserThan)
-  def checkSumLesserThanOrEqual(constant:Int):Unit =  checkSumConstraint(constant, Op.lesserThanOrEqual)
-  def checkSumGreaterThan(constant:Int):Unit =        checkSumConstraint(constant, Op.greaterThan)
-  def checkSumGreaterThanOrEqual(constant:Int):Unit = checkSumConstraint(constant, Op.greaterThanOrEqual)
-
-  def checkSumConstraint(constant:Int, operation:Int):Unit = {
-    checkSummation(scalaConstraint, constant, operation)
-  }
   implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
     val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
     val iterator = x.iterator()
@@ -65,16 +46,12 @@ abstract class JCpChecker extends JCpC {
     }
 
   }
+  def constraint(vars: Array[Set[Int]]): Array[Set[Int]] = scalaConstraint(vars)
 }
 
-trait ScCpChecker {
-  def checkAllDifferentConstraintAC():Unit = {
-    checkAllDifferentAC(constraint)
-  }
-  def checkAllDifferentConstraintBC():Unit = {
-    checkAllDifferentBC(constraint)
-  }
+trait ScCpChecker extends AllDifferentConstraint with SumConstraint{}
 
+trait SumConstraint extends Constraint{
   def checkSumEqual(constant:Int):Unit =              checkSumConstraint(constant, Op.equal)
   def checkSumDifferent(constant:Int):Unit =          checkSumConstraint(constant, Op.different)
   def checkSumLesserThan(constant:Int):Unit =         checkSumConstraint(constant, Op.lesserThan)
@@ -85,7 +62,17 @@ trait ScCpChecker {
   def checkSumConstraint(constant:Int, operation:Int):Unit = {
     checkSummation(constraint,constant,operation)
   }
+}
 
+trait AllDifferentConstraint extends Constraint{
+  def checkAllDifferentConstraintAC():Unit = {
+    checkAllDifferentAC(constraint)
+  }
+  def checkAllDifferentConstraintBC():Unit = {
+    checkAllDifferentBC(constraint)
+  }
+}
+
+trait Constraint {
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
-
 }
