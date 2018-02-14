@@ -145,29 +145,33 @@ object Constraints {
     }
   }
 
+  @throws[Exception]
   def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Set[Int]] = {
     var changed:Boolean=true
-    val cond = Op.condition(operation,_,_,constant,_)
+    var result=variables.clone()
+    val cond: (Int, Int, Int) => Boolean = Op.condition(operation,_,_,constant,_)
     while(changed){
       changed=false
-      for(i <- variables.indices){
-        val min: Int= variables(i).min
-        val max: Int= variables(i).max
+      for(i <- result.indices){
+        val min: Int= result(i).min
+        val max: Int= result(i).max
         var sMin:Int= -min
         var sMax:Int= -max
-        variables.foreach(x=>{sMin+=x.min ; sMax+=x.max})
+        result.foreach(x=>{sMin+=x.min ; sMax+=x.max})
         //Sum is BC so check min and max values
-        if(!cond(sMin, sMax, min)) {
-          variables(i) = variables(i) - min
+        if(cond(sMin, sMax, min)) {
+          result(i) = result(i) - min
           changed = true
         }
-        if(!cond(sMin, sMax, max)){
-          variables(i) = variables(i) - max
+        if(cond(sMin, sMax, max)){
+          result(i) = result(i) - max
           changed = true
         }
+        if(result(i).isEmpty)
+          throw new Exception
       }
     }
-    variables
+    result
   }
 
   def allDifferent(solution: Array[Int]):Boolean = {

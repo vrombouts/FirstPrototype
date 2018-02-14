@@ -34,8 +34,8 @@ object Op {
 
   def condition(operation:Int, sMin:Int, sMax:Int, constant:Int, value:Int) : Boolean = {
     operation match {
-      case Op.equal => Op.respectOp(Op.lesserThan, value + sMin, constant) && Op.respectOp(Op.greaterThan, value + sMax, constant)
-      case Op.different => !(sMax==sMin && sMin+value==constant)
+      case Op.equal => Op.respectOp(Op.greaterThan, value + sMin, constant) || Op.respectOp(Op.lesserThan, value + sMax, constant)
+      case Op.different => sMax==sMin && sMin+value==constant
       case Op.lesserThan => Op.respectOp(Op.opposite(operation), value + sMin, constant)
       case Op.lesserThanOrEqual => Op.respectOp(Op.opposite(operation), value + sMin, constant)
       case Op.greaterThan => Op.respectOp(Op.opposite(operation), value + sMax, constant)

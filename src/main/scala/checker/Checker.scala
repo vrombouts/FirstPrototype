@@ -31,9 +31,9 @@ object Checker {
    * allDifferent constraint with arc consistency.
    */
   private def checkAllDifferent(isAC: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    var propagation = applyBC(_,_)
-    if(isAC) propagation=applyAC(_,_)
-    val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint,allDifferent)
+    var propagation: (Array[Set[Int]]) => Array[Set[Int]] = applyBC(_,allDifferent)
+    if(isAC) propagation=applyAC(_,allDifferent)
+    val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint)
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
       x.isEmpty || checkAllDiff(x.toArray)
     }.check
@@ -65,21 +65,27 @@ object Checker {
   }
 
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
+
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkConstraint(x.toArray,applyBC,constraint,sum(constant,Op.equal,x.size))
+      x.isEmpty || checkConstraint(x.toArray,applyBC(_,sum(constant,Op.equal,x.size)),constraint)
     }.check
   }
 
+  def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],constant:Int,operation:Int):Unit={
+    val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,constant,operation)
+    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+      x.isEmpty || checkConstraint(x.toArray,sum,constraint)
+    }.check
+  }
   private def checkConstraint(variables:Array[Set[Int]],
-                              constraint : (Array[Set[Int]],Array[Int]=>Boolean)=> Array[Set[Int]],
-                              constraintTested:Array[Set[Int]]=>Array[Set[Int]],
-                              checkerOfConstraint:Array[Int]=>Boolean): Boolean ={
+                              constraint : (Array[Set[Int]])=> Array[Set[Int]],
+                              constraintTested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
     //We first compute the domains generated after the application of the constraint.
     var reducedDomains: Array[Set[Int]] = Array()
     var error: Boolean = false
     var ourError:Boolean = false
     try {
-      reducedDomains = constraintTested(variables)
+      reducedDomains = constraintTested(variables.clone())
     }
     catch{
       case e: Exception => error = true
@@ -87,7 +93,7 @@ object Checker {
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
     try {
-      trueReducedDomains = constraint(variables, checkerOfConstraint)
+      trueReducedDomains = constraint(variables.clone())
     }
     catch {
       case e: Exception => ourError = true
@@ -135,8 +141,9 @@ object Checker {
     //checkConstraint(false,
       //Array(Set(18, 14), Set(12, 13), Set(12), Set(12, 19)),
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
-    var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
-    println(res.toList)
+    //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
+    //println(res.toList)
+    checkSummation(allDifferent, Op.greaterThan,200)
   }
 
 }
