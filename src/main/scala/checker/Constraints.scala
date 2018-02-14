@@ -142,7 +142,7 @@ object Constraints {
       if(Integer.MIN_VALUE-value>sum) Integer.MIN_VALUE
       else sum+value
     }else{
-      if(Integer.MAX_VALUE+value<sum) Integer.MAX_VALUE
+      if(Integer.MAX_VALUE-value<sum) Integer.MAX_VALUE
       else sum+value
     }
   }
