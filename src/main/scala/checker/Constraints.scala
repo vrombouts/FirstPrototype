@@ -137,7 +137,7 @@ object Constraints {
     Op.respectOp(operation,sum,constant)
   }
 
-  def addWithoutOverflow(sum:Int, value:Int)={
+  def addWithoutOverflow(sum:Int, value:Int):Int={
     if(value<0){
       if(Integer.MIN_VALUE-value>sum) Integer.MIN_VALUE
       else sum+value
@@ -159,8 +159,8 @@ object Constraints {
         var sMin:Int= -min
         var sMax:Int= -max
         variables.foreach(x=>{
-          sMin =addWithoutOverflow(sMin,x.min)
-          sMax =addWithoutOverflow(sMax,x.max)})
+          sMin = addWithoutOverflow(sMin,x.min)
+          sMax = addWithoutOverflow(sMax,x.max)})
 
         //Sum is BC so check min and max values
         if(cond(addWithoutOverflow(sMin,min), addWithoutOverflow(sMax,min))) {
