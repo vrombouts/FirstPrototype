@@ -134,15 +134,7 @@ object Constraints {
     if(solution.length<nbVar-1) return true
     var sum:Int = 0
     solution.foreach(x => sum += x)
-    operation match{
-      case Op.equal             => sum ==constant
-      case Op.different         => sum !=constant
-      case Op.lesserThan        => sum < constant
-      case Op.lesserThanOrEqual => sum <=constant
-      case Op.greaterThan       => sum > constant
-      case Op.greaterThanOrEqual=> sum >=constant
-      case _ => sum==constant
-    }
+    Op.respectOp(operation,sum,constant)
   }
 
   @throws[Exception]

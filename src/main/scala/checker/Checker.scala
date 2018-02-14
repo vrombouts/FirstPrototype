@@ -143,7 +143,9 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    checkSummation(allDifferent, Op.greaterThan,200)
+    //checkSummation(allDifferent, Op.greaterThan,200)
+
+    println(sumBC(Array(Set(15, 7), Set(4), Set(15, 12), Set(7, 0), Set(15, 16), Set(13, 7), Set(4, 18), Set(0, 7)),200,Op.greaterThan).toList)
   }
 
 }
