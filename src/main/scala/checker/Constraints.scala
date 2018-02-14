@@ -137,39 +137,49 @@ object Constraints {
     Op.respectOp(operation,sum,constant)
   }
 
+  def addWithoutOverflow(sum:Int, value:Int)={
+    if(value<0){
+      if(Integer.MIN_VALUE-value>sum) Integer.MIN_VALUE
+      else sum+value
+    }else{
+      if(Integer.MAX_VALUE+value<sum) Integer.MAX_VALUE
+      else sum+value
+    }
+  }
+
   @throws[Exception]
   def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Set[Int]] = {
     var changed:Boolean=true
-    var result=variables.clone()
-    val cond: (Int, Int, Int) => Boolean = Op.condition(operation,_,_,constant,_)
+    val cond: (Int, Int) => Boolean = Op.condition(operation,_,_,constant)
     while(changed){
       changed=false
-      for(i <- result.indices){
-        val min: Int= result(i).min
-        val max: Int= result(i).max
+      for(i <- variables.indices){
+        val min: Int= variables(i).min
+        val max: Int= variables(i).max
         var sMin:Int= -min
         var sMax:Int= -max
-        result.foreach(x=>{sMin+=x.min ; sMax+=x.max})
+        variables.foreach(x=>{
+          sMin =addWithoutOverflow(sMin,x.min)
+          sMax =addWithoutOverflow(sMax,x.max)})
+
         //Sum is BC so check min and max values
-        if(cond(sMin, sMax, min)) {
-          result(i) = result(i) - min
+        if(cond(addWithoutOverflow(sMin,min), addWithoutOverflow(sMax,min))) {
+          variables(i) = variables(i) - min
           changed = true
         }
-        if(cond(sMin, sMax, max)){
-          result(i) = result(i) - max
+        if(cond(addWithoutOverflow(sMin,max), addWithoutOverflow(sMax,max))){
+          variables(i) = variables(i) - max
           changed = true
         }
-        if(result(i).isEmpty)
+        if(variables(i).isEmpty)
           throw new Exception
       }
     }
-    result
+    variables
   }
 
   def allDifferent(solution: Array[Int]):Boolean = {
-    val set = solution.toSet
-    if(set.size!=solution.length) return false
-    true
+    solution.toSet.size==solution.length
   }
 
   def convert(x:Array[Set[Int]]):Array[Variable]={
@@ -188,7 +198,10 @@ object Constraints {
     res
   }
 
-
+  /*
+   * This constraint is used to test. It does absolutely nothing.
+   */
+  def dummyConstraint(x:Array[Set[Int]]): Array[Set[Int]] = x
 
   def allDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
     var change=true
@@ -228,52 +241,6 @@ object Constraints {
     }
     false
   }
-
-
-  def allDifferent(x:Array[Int],index:Int) : Boolean = {
-    for(i<- 0 until index) if(x(index)==x(i)) return false
-    true
-  }
-
-  def compareSets(s1:Set[Int], s2:Set[Int]): Boolean ={
-    if(s1.size != s2.size) return false
-    val sorted1 = collection.mutable.SortedSet(s1.toList: _*)
-    val sorted2 = collection.mutable.SortedSet(s2.toList: _*)
-    for(i <- 1 to s1.size){
-      if(sorted1(i) != sorted2(i)) return false
-    }
-    true
-  }
-
-    def generateSol(x:List[Variable], index:Int, currentSol:Array[Int], result:List[Variable],constraint:(Array[Int],Int)=>Boolean): Unit ={
-      if(x.length <= index) {
-        union(currentSol, result)
-      }else {
-        for (set <- x(index).domain) {
-          currentSol(index) = set
-          if(constraint(currentSol,index)){
-            generateSol(x, index + 1, currentSol, result,constraint)
-          }
-        }
-      }
-    }
-
-    def union(l:Array[Int], v:List[Variable]): Unit={
-      for(i <- l.indices){
-        v(i).domain += l(i)
-      }
-    }
-
-    def generateSolutions(x:List[Variable], constraint:(Array[Int],Int)=>Boolean): List[Variable] ={
-      val sorted = x.sortWith(_ compareDomain _)
-      val result: List[Variable] = sorted.map(v => new Variable(Set(),v.id))
-      val currentSol: Array[Int] = Array.fill[Int](sorted.length)(0)
-      generateSol(sorted,0,currentSol,result,constraint)
-      result.sortWith(_ compareID _)
-    }
-
-
-
 
 
   def main(args: Array[String]) {

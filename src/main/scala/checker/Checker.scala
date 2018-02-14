@@ -73,9 +73,12 @@ object Checker {
 
   def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],constant:Int,operation:Int):Unit={
     val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,constant,operation)
-    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
       x.isEmpty || checkConstraint(x.toArray,sum,constraint)
     }.check
+
+    //val limitCase = Array(Set(Integer.MAX_VALUE), Set(2))
+    //checkConstraint(limitCase,sumBC(_,Integer.MAX_VALUE-2, Op.greaterThan), constraint)
   }
   private def checkConstraint(variables:Array[Set[Int]],
                               constraint : (Array[Set[Int]])=> Array[Set[Int]],
@@ -143,9 +146,9 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    //checkSummation(allDifferent, Op.greaterThan,200)
+    checkSummation(dummyConstraint,50, Op.equal)
 
-    println(sumBC(Array(Set(15, 7), Set(4), Set(15, 12), Set(7, 0), Set(15, 16), Set(13, 7), Set(4, 18), Set(0, 7)),200,Op.greaterThan).toList)
+    //println(sumBC(Array(Set(15, 7), Set(4), Set(15, 12), Set(7, 0), Set(15, 16), Set(13, 7), Set(4, 18), Set(0, 7)),200,Op.greaterThan).toList)
   }
 
 }
