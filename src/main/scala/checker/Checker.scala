@@ -73,10 +73,10 @@ object Checker {
 
   def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],constant:Int,operation:Int):Unit={
     val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,constant,operation)
-    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
-      x.isEmpty || checkConstraint(x.toArray,sum,constraint)
-    }.check
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,sum,constraint)
+    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
+      x.isEmpty || check(x.toArray)
+    }.check
     val limitCase1 = Array(Set(Integer.MAX_VALUE), Set(2))
     check(limitCase1)
     val limitCase2 = Array(Set(Integer.MIN_VALUE), Set(-2))
