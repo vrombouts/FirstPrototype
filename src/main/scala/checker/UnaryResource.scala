@@ -21,6 +21,33 @@ class UnaryResource {
     true
   }
 
+  def notLast(activities: Array[Activity]): Array[Activity] = {
+    //TODO: check map is used
+    //TODO: check sort activities in correct order
+    val ectMap: mutable.Map[Array[Activity], Int] = mutable.Map[Array[Activity],Int]()
+    val lctPrime = activities.map(x => x.lct)
+    val sortedActivities = activities.sortWith(_.lst  < _.lst)
+    var indexQueue: Int = 0
+    var theta: Array[Activity] = Array()
+    sortedActivities.foreach { activity =>
+      while(activity.lct>sortedActivities(indexQueue).lst){
+        if(activity!=sortedActivities(indexQueue))
+          theta = theta :+ sortedActivities(indexQueue)
+        indexQueue += 1
+      }
+      if(theta.nonEmpty && earliestCompletionTime(theta, ectMap)>activity.lst){
+        theta = theta :+ activity
+        val index:Int = activities.indexOf(activity)
+        val lst = sortedActivities(indexQueue-1).lst
+        if(lst < lctPrime(index)) lctPrime(index) = lst
+      }else if(theta.isEmpty) theta = theta :+ activity
+    }
+    for(i <- lctPrime.indices){
+      activities(i).lctReduce(lctPrime(i))
+    }
+    activities
+  }
+
   def earliestCompletionTime(activities: Array[Activity],ectMap:mutable.Map[Array[Activity],Int]): Int = {
     if(ectMap.keySet.contains(activities)) ectMap(activities)
     var max = Integer.MIN_VALUE
@@ -33,7 +60,7 @@ class UnaryResource {
     }
     val estPlusDuration = sumOfEstAndDuration(activities)
     ectMap(activities)=if(estPlusDuration>max) estPlusDuration else max
-    return ectMap(activities)
+    ectMap(activities)
   }
 
   def sumOfEstAndDuration(activities: Array[Activity]): Int = {
