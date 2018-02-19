@@ -3,6 +3,7 @@ package checker
 import checker.Constraints._
 import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
+import checker.UnaryResource
 
 
 import scala.language.implicitConversions
@@ -166,8 +167,11 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    checkSummation(dummyConstraint,50, Op.equal)
+    //checkSummation(dummyConstraint,50, Op.equal)
 
+    var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
+    val un = new UnaryResource
+    println(un.overloadChecking(acts))
     //println(sumBC(Array(Set(2), Set(2),Set(46)), 50,Op.equal).toList)
   }
 
