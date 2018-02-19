@@ -31,14 +31,16 @@ class UnaryResource {
     var theta: Array[Activity] = Array()
     sortedActivities.foreach { activity =>
       while(activity.lct>sortedActivities(indexQueue).lst){
-        theta = theta :+ sortedActivities(indexQueue)
+        if(activity!=sortedActivities(indexQueue))
+          theta = theta :+ sortedActivities(indexQueue)
         indexQueue += 1
       }
-      if(earliestCompletionTime(theta, ectMap)>activity.lst){
+      if(theta.nonEmpty && earliestCompletionTime(theta, ectMap)>activity.lst){
+        theta = theta :+ activity
         val index:Int = activities.indexOf(activity)
         val lst = sortedActivities(indexQueue-1).lst
         if(lst < lctPrime(index)) lctPrime(index) = lst
-      }
+      }else if(theta.isEmpty) theta = theta :+ activity
     }
     for(i <- lctPrime.indices){
       activities(i).lctReduce(lctPrime(i))
