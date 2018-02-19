@@ -24,9 +24,9 @@ object Constraints {
     stream
   }
 
+  @throws[NoSolutionException]
   private def cartesianProduct(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Array[Int]]={
-    // TO DO : generate an error msg and add a try-catch statement
-    if(variables.length < 1) {return Array[Array[Int]]()}
+    if(variables.length < 1) {throw new NoSolutionException}
     var stream:Stream[Array[Int]] = instantiateStream(variables(0))
     for(i<- 1 until variables.length){
       stream = cartesian(stream,variables(i)).filter(constraint)
@@ -35,8 +35,10 @@ object Constraints {
     solutions
   }
 
+  @throws[NoSolutionException]
   def applyAC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
     val sol = cartesianProduct(variables,constraint)
+    if(sol.isEmpty) throw new NoSolutionException
     val result=toDomainsAC(sol)
     result
   }
