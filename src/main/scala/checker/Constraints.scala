@@ -62,6 +62,7 @@ object Constraints {
     intervals.map(x => x.domain)
   }
 
+  @throws[NoSolutionException]
   def applyBC(variables:Array[Set[Int]],constraint:Array[Int]=>Boolean) : Array[Set[Int]] = {
     val intervals = getIntervals(variables)
     var changed:Boolean = true
@@ -92,6 +93,7 @@ object Constraints {
     }
   }
 
+  @throws[NoSolutionException]
   private def cartesianBC(intervals:Array[Interval],constraint:Array[Int]=>Boolean, id:Int, minOrMax:Boolean): Boolean ={
     reinitialize(intervals)
     val interval:Interval = intervals(id)
@@ -123,6 +125,8 @@ object Constraints {
       }
       i = i + 1
     }
+    //no solution if we remove the last element of the domain of a variable
+    if(interval.domain.size==1) throw new NoSolutionException
     interval.update(minOrMax)
     true
 
@@ -147,13 +151,15 @@ object Constraints {
     }
   }
 
-  @throws[Exception]
+  @throws[NoSolutionException]
   def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Set[Int]] = {
     var changed:Boolean=true
     val cond: (Int, Int) => Boolean = Op.condition(operation,_,_,constant)
     while(changed){
       changed=false
       for(i <- variables.indices){
+        if(variables(i).isEmpty)
+          throw new NoSolutionException
         val min: Int= variables(i).min
         val max: Int= variables(i).max
         var sMin:Int= -min
@@ -165,14 +171,14 @@ object Constraints {
         //Sum is BC so check min and max values
         if(cond(addWithoutOverflow(sMin,min), addWithoutOverflow(sMax,min))) {
           variables(i) = variables(i) - min
+          if(variables(i).isEmpty) throw new NoSolutionException
           changed = true
         }
         if(cond(addWithoutOverflow(sMin,max), addWithoutOverflow(sMax,max))){
           variables(i) = variables(i) - max
+          if(variables(i).isEmpty) throw new NoSolutionException
           changed = true
         }
-        if(variables(i).isEmpty)
-          throw new Exception
       }
     }
     variables

@@ -120,7 +120,7 @@ object Checker {
       trueReducedDomains = constraint(variables.clone())
     }
     catch {
-      case e: Exception => ourError = true
+      case e: NoSolutionException => ourError = true
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true
@@ -167,11 +167,11 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    //checkSummation(dummyConstraint,50, Op.equal)
+    checkSummation(dummyConstraint,50, Op.equal)
 
-    var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
-    val un = new UnaryResource
-    println(un.overloadChecking(acts))
+    //var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
+    //val un = new UnaryResource
+    //println(un.overloadChecking(acts))
     //println(sumBC(Array(Set(2), Set(2),Set(46)), 50,Op.equal).toList)
   }
 
