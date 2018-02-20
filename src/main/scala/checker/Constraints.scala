@@ -56,8 +56,9 @@ object Constraints {
     variables
   }
 
+  @throws[NoSolutionException]
   private def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
-   variables.map(x=> new Interval(x))
+   variables.map(x=>if(x.nonEmpty) new Interval(x) else throw new NoSolutionException)
   }
 
   private def intervalsToVariables(intervals: Array[Interval]) : Array[Set[Int]] = {
