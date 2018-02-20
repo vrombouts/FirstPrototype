@@ -19,6 +19,10 @@ object Checker {
   def GeneratorListOfVariables(n:Int): Gen[List[Variable]]={
     Gen.containerOfN[List,Variable](21,GeneratorVariable())
   }
+  def checkEmpty(variables: List[Set[Int]]): Boolean = {
+    variables.foreach{x => if(x.isEmpty) return true}
+    false
+  }
 
   def checkAllDifferentAC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
     checkAllDifferent(isAC = true,constraint)
@@ -35,7 +39,7 @@ object Checker {
     if(isAC) propagation=applyAC(_,allDifferent)
     val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint)
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkAllDiff(x.toArray)
+      x.isEmpty || checkEmpty(x) || checkAllDiff(x.toArray)
     }.check
     val test1 = Array(Set(0,1,2),Set(0))
     checkAllDiff(test1)
@@ -67,7 +71,7 @@ object Checker {
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
 
     forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkConstraint(x.toArray,applyBC(_,sum(constant,Op.equal,x.size)),constraint)
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,applyBC(_,sum(constant,Op.equal,x.size)),constraint)
     }.check
   }
 
@@ -75,7 +79,7 @@ object Checker {
     val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,constant,operation)
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,sum,constraint)
     forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
-      x.isEmpty || check(x.toArray)
+      x.isEmpty || checkEmpty(x) || check(x.toArray)
     }.check
     val limitCase1 = Array(Set(Integer.MAX_VALUE), Set(2))
     check(limitCase1)
