@@ -2,16 +2,47 @@ package checker
 
 import checker.Checker._
 import scala.collection.JavaConverters._
+import java.util.function.Function
 
+class JCpChecker {
+  def checkAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
+              checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
+    val scalaFilter = filterToScalaFunction(filtering)
+    val scalaChecker= checkerToScalaFunction(checker)
+    Checker.checkAC(scalaFilter,scalaChecker)
+  }
+  def checkBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
+              checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
+    val scalaFilter = filterToScalaFunction(filtering)
+    val scalaChecker= checkerToScalaFunction(checker)
+    Checker.checkBC(scalaFilter,scalaChecker)
+  }
 
-trait JCpC {
-    @throws[Exception]
-    def constraint(tab: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
-}
-
-abstract class JCpChecker extends JCpC
-  with AllDifferentConstraint with SumConstraint {
-
+  def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):
+  Array[Set[Int]] => Array[Set[Int]] = {
+    myArray =>{
+      val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
+      for(i <- myArray.indices){
+        val set = myArray(i).asJava
+        a(i) = set
+      }
+      val cons = fun.apply(a)
+      val result = new Array[Set[Int]](myArray.length)
+      for(i <- myArray.indices){
+        val set = cons(i).asScala.toSet
+        result(i) = set
+      }
+      result
+    }
+  }
+  def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]):
+  Array[Int] => Boolean = {
+    myArray =>{
+      val ar: Array[Integer] = myArray.map(x => new Integer(x))
+      val bool: Boolean = fun.apply(ar)
+      bool
+    }
+  }
   implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
     val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
     val iterator = x.iterator()
@@ -29,27 +60,15 @@ abstract class JCpChecker extends JCpC
     }
     result
   }
-  def scalaConstraint: Array[Set[Int]] => Array[Set[Int]] ={
-    myArray =>{
-      val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
-      for(i <- myArray.indices){
-        val set = myArray(i).asJava
-        a(i) = set
-      }
-      val cons = constraint(a)
-      val result = new Array[Set[Int]](myArray.length)
-      for(i <- myArray.indices){
-        val set = cons(i).asScala.toSet
-        result(i) = set
-      }
-      result
-    }
-
-  }
-  def constraint(vars: Array[Set[Int]]): Array[Set[Int]] = scalaConstraint(vars)
 }
-
-trait ScCpChecker extends AllDifferentConstraint with SumConstraint{}
+object ScCpChecker{
+  def checkAC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
+    Checker.checkAC(filteringTested, checker)
+  }
+  def checkBC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
+    Checker.checkBC(filteringTested, checker)
+  }
+}
 
 trait SumConstraint extends Constraint{
   def checkSumEqual(constant:Int):Unit =              checkSumConstraint(constant, Op.equal)
@@ -75,4 +94,5 @@ trait AllDifferentConstraint extends Constraint{
 
 trait Constraint {
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
+  //def checkConstraint(solution: Array[Int]): Boolean //= throw new checkUnimplementedException()
 }

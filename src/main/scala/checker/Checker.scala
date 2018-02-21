@@ -24,6 +24,22 @@ object Checker {
     false
   }
 
+  def checkAC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
+    val filteringAC: Array[Set[Int]] => Array[Set[Int]] = applyAC(_,checker)
+    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringAC, filteringTested)
+    }.check
+    //TODO: add simple case limit possible for all constraints
+  }
+
+  def checkBC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
+    val filteringBC: Array[Set[Int]] => Array[Set[Int]] = applyBC(_,checker)
+    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringBC, filteringTested)
+    }.check
+    //TODO: add simple case limit possible for all constraints
+  }
+
   def checkAllDifferentAC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
     checkAllDifferent(isAC = true,constraint)
   }
