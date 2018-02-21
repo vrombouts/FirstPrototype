@@ -17,8 +17,16 @@ class JCpChecker {
     val scalaChecker= checkerToScalaFunction(checker)
     Checker.checkBC(scalaFilter,scalaChecker)
   }
+  def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
+    val scalaFilter = filterToScalaFunction(filtering)
+    Checker.checkAllDifferent(isAC = true, scalaFilter)
+  }
+  def checkAllDifferentBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
+    val scalaFilter = filterToScalaFunction(filtering)
+    Checker.checkAllDifferent(isAC = false, scalaFilter)
+  }
 
-  def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):
+  private def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):
   Array[Set[Int]] => Array[Set[Int]] = {
     myArray =>{
       val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
@@ -35,7 +43,7 @@ class JCpChecker {
       result
     }
   }
-  def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]):
+  private def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]):
   Array[Int] => Boolean = {
     myArray =>{
       val ar: Array[Integer] = myArray.map(x => new Integer(x))
@@ -68,6 +76,12 @@ object ScCpChecker{
   def checkBC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
     Checker.checkBC(filteringTested, checker)
   }
+  def checkAllDifferentAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
+    Checker.checkAllDifferent(isAC = true, filteringTested)
+  }
+  def checkAllDifferentBC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
+    Checker.checkAllDifferent(isAC = false, filteringTested)
+  }
 }
 
 trait SumConstraint extends Constraint{
@@ -83,14 +97,6 @@ trait SumConstraint extends Constraint{
   }
 }
 
-trait AllDifferentConstraint extends Constraint{
-  def checkAllDifferentConstraintAC():Unit = {
-    checkAllDifferentAC(constraint)
-  }
-  def checkAllDifferentConstraintBC():Unit = {
-    checkAllDifferentBC(constraint)
-  }
-}
 
 trait Constraint {
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]

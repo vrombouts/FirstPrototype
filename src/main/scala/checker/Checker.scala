@@ -40,47 +40,19 @@ object Checker {
     //TODO: add simple case limit possible for all constraints
   }
 
-  def checkAllDifferentAC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    checkAllDifferent(isAC = true,constraint)
-  }
-  def checkAllDifferentBC(constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    checkAllDifferent(isAC = false,constraint)
-  }
   /*
    * This function checks if the constraint passed in argument apply correctly an
    * allDifferent constraint with arc consistency.
    */
-  private def checkAllDifferent(isAC: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+  def checkAllDifferent(isAC: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
     var propagation: (Array[Set[Int]]) => Array[Set[Int]] = applyBC(_,allDifferent)
-    if(isAC) propagation=applyAC(_,allDifferent)
+    if(isAC) {
+      checkAC(constraint,allDifferent)
+      propagation = applyAC(_,allDifferent)
+    }
+    else checkBC(constraint,allDifferent)
     val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint)
-    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
-      x.isEmpty || checkEmpty(x) || checkAllDiff(x.toArray)
-    }.check
-    val test1 = Array(Set(0,1,2),Set(0))
-    checkAllDiff(test1)
-    val test2 = Array(Set(0,1),Set(0,1),Set(0,1,2))
-    checkAllDiff(test2)
-    val test3 = Array(Set(0),Set(1),Set(2))
-    checkAllDiff(test3)
-    val test4 = Array(Set(0,1),Set(1,2),Set(2,3),Set(3,4),Set(4,5),Set(2,4))
-    checkAllDiff(test4)
-    val test5 = Array(Set(0,1,2))
-    checkAllDiff(test5)
-    val test6 = Array(Set(0,1,2), Set(1))
-    checkAllDiff(test6)
-    val test7 = Array(Set(0,1,2))
-    checkAllDiff(test7)
-    val test8 = Array(Set(0,1,2), Set(0), Set(1), Set(2))
-    checkAllDiff(test8)
-    val test9 = Array(Set(0,1,2,3,4), Set(1), Set(4), Set(3))
-    checkAllDiff(test9)
-    val test10 = Array(Set(0,1,2), Set(0), Set(2))
-    checkAllDiff(test10)
-    val test11 = Array(Set(1), Set(1), Set(5,6))
-    checkAllDiff(test11)
-    val test12 = Array(Set(8,16), Set(16,11), Set(7,8), Set(16), Set(15,8), Set(11,7))
-    checkAllDiff(test12)
+    LimitCases.allDifferentLimitCases().foreach(x => checkAllDiff(x))
     println("All tests executed.")
   }
 
