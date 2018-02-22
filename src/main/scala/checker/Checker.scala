@@ -91,9 +91,11 @@ object Checker {
   }
 
   def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+    val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,elementAC,constraint)
     forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,elementAC,constraint)
+      x.isEmpty || checkEmpty(x) || check(x.toArray)
     }.check
+    LimitCases.elementLimitCases.foreach(limitCase => {println("initial "+limitCase.toList); println("solution found "+constraint(limitCase).toList); println("our sol "+ elementAC(limitCase).toList)})
   }
 
   private def checkConstraint(variables:Array[Set[Int]],

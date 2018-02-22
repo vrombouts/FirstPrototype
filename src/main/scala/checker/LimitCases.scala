@@ -48,7 +48,7 @@ object LimitCases {
       Array(Set(1,2,3),Set(1,2),Set(4),Set(2)), // test with no sol because of i
       Array(Set(1,2,3),Set(1,2),Set(1,2),Set(4,5,6)), // test with no sol because of v
       Array(Set(1,2,3),Set(1,2),Set(1,2,4),Set(1,2,3),Set(1,2)), // normal case with more than one match
-      Array(Set(1),Set(1),Set(1),Set(1),Set(1,2,3,4),Set(1)), //test with all matches the element constraint
+      Array(Set(1),Set(1),Set(1),Set(1),Set(1,2,3,4),Set(1)) //test with all matches the element constraint
     )
   }
 }
