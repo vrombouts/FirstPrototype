@@ -88,6 +88,8 @@ object Checker {
       val table = list._2
       variables.isEmpty || checkEmpty(variables) || checkConstraint(variables.toArray, tableAC(_, table), constraint(_, table))
     }.check
+    LimitCases.tableLimitCases.foreach(x =>
+      checkConstraint(x._1, tableAC(_,x._2), constraint(_,x._2)))
   }
 
   def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
