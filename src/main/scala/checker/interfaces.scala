@@ -112,6 +112,9 @@ object ScCpChecker{
   def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     Checker.checkElementAC(filteringTested)
   }
+  def checkTableAC(filteringWithTableTested: (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]]):Unit={
+    Checker.checkTable(filteringWithTableTested)
+  }
 }
 trait Constraint {
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
