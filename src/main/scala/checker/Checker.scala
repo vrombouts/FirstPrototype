@@ -14,7 +14,7 @@ object Checker {
   def arrayGen(size: Int):Gen[Array[Int]] =  Gen.containerOfN[Array,Int](size,Gen.choose(0,20))
   val tableGenerator: Gen[(List[Set[Int]], Set[Array[Int]])] = for {
     variables <- Gen.containerOfN[List,Set[Int]](8,Generator)
-    table <- Gen.containerOf[Set,Array[Int]](arrayGen(variables.size))
+    table <- Gen.nonEmptyContainerOf[Set,Array[Int]](arrayGen(variables.size))
   } yield (variables,table)
   def GeneratorVariable(): Gen[Variable] ={
     for{
@@ -82,14 +82,29 @@ object Checker {
     LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
   }
 
+  def printTable(table: Set[Array[Int]]):Unit = {
+    println("With Table : ")
+    for(x <- table){
+      print("[ ")
+      x.foreach(y=>print(" "+y))
+      println("]")
+    }
+    println()
+  }
+
   def checkTable(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit= {
     forAll(tableGenerator) { list =>
       val variables = list._1
       val table = list._2
-      variables.isEmpty || checkEmpty(variables) || checkConstraint(variables.toArray, tableAC(_, table), constraint(_, table))
+      if(variables.isEmpty || checkEmpty(variables) || table.isEmpty) true
+      else if(!checkConstraint(variables.toArray, tableAC(_, table), constraint(_, table))){
+        printTable(table)
+        false
+      }else true
     }.check
     LimitCases.tableLimitCases.foreach(x =>
-      checkConstraint(x._1, tableAC(_,x._2), constraint(_,x._2)))
+      if(!checkConstraint(x._1, tableAC(_,x._2), constraint(_,x._2)))
+        printTable(x._2))
   }
 
   def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
@@ -166,7 +181,7 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    checkSummation(dummyConstraint, Op.lesserThanOrEqual)
+    checkTable({(vari,seti) => vari})
 
     //var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
     //val un = new UnaryResource
