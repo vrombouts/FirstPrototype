@@ -36,6 +36,9 @@ class JCpChecker {
   def checkSumGE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
     Checker.checkSummation(filtering,Op.greaterThanOrEqual)
   }
+  def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+    Checker.checkElementAC(filteringTested)
+  }
 
   implicit private def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
     myArray =>{
