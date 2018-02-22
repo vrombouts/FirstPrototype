@@ -1,11 +1,10 @@
 package checker
-import Checker.checkConstraint
 /*
  * This class is intended to contains functions defining limit cases for some constraints.
  */
 object LimitCases {
 
-  def allDifferentLimitCases(): Array[Array[Set[Int]]] ={
+  def allDifferentLimitCases: Array[Array[Set[Int]]] ={
     Array(
       Array(Set(0,1,2),Set(0)),
       Array(Set(0,1),Set(0,1),Set(0,1,2)),

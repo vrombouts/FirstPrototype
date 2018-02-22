@@ -11,6 +11,11 @@ import scala.language.implicitConversions
 object Checker {
   var j = 0
   val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](2,Gen.choose(0,20))
+  def arrayGen(size: Int):Gen[Array[Int]] =  Gen.containerOfN[Array,Int](size,Gen.choose(0,20))
+  val tableGenerator: Gen[(List[Set[Int]], Set[Array[Int]])] = for {
+    variables <- Gen.containerOfN[List,Set[Int]](8,Generator)
+    table <- Gen.containerOf[Set,Array[Int]](arrayGen(variables.size))
+  } yield (variables,table)
   def GeneratorVariable(): Gen[Variable] ={
     for{
       set <- Generator
@@ -52,7 +57,7 @@ object Checker {
     }
     else checkBC(constraint,allDifferent)
     val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint)
-    LimitCases.allDifferentLimitCases().foreach(x => checkAllDiff(x))
+    LimitCases.allDifferentLimitCases.foreach(x => checkAllDiff(x))
     println("All tests executed.")
   }
 
@@ -75,6 +80,14 @@ object Checker {
       }
     }.check
     LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
+  }
+
+  def checkTable(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit={
+    forAll(tableGenerator){list =>
+      val variables = list._1
+      val table = list._2
+      variables.isEmpty||checkEmpty(variables)||checkConstraint(variables.toArray,tableAC(_,table),constraint(_,table))
+    }.check
   }
 
   private def checkConstraint(variables:Array[Set[Int]],

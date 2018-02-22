@@ -189,6 +189,20 @@ object Constraints {
     variables :+ Set(constant)
   }
 
+  def impossibleWith(variables: Array[Set[Int]], solution: Array[Int]): Boolean = {
+    for(i <- solution.indices){
+      if(!variables(i).contains(solution(i))) false
+    }
+    true
+  }
+
+  def tableAC(variables: Array[Set[Int]], table: Set[Array[Int]]): Array[Set[Int]] = {
+    var solutions: Set[Array[Int]] = Set.empty
+    table.foreach(solution => if(impossibleWith(variables,solution)) solutions += solution)
+    if(solutions.isEmpty) throw new NoSolutionException
+    toDomainsAC(solutions.toArray)
+  }
+
   def allDifferent(solution: Array[Int]):Boolean = {
     solution.toSet.size==solution.length
   }
