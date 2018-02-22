@@ -190,16 +190,16 @@ object Constraints {
     variables :+ Set(constant)
   }
 
-  def impossibleWith(variables: Array[Set[Int]], solution: Array[Int]): Boolean = {
+  def possibleWith(variables: Array[Set[Int]], solution: Array[Int]): Boolean = {
     for(i <- solution.indices){
-      if(!variables(i).contains(solution(i))) false
+      if(!variables(i).contains(solution(i))) return false
     }
     true
   }
 
   def tableAC(variables: Array[Set[Int]], table: Set[Array[Int]]): Array[Set[Int]] = {
     var solutions: Set[Array[Int]] = Set.empty
-    table.foreach(solution => if(impossibleWith(variables,solution)) solutions += solution)
+    table.foreach(solution => if(possibleWith(variables,solution)) solutions += solution)
     if(solutions.isEmpty) throw new NoSolutionException
     toDomainsAC(solutions.toArray)
   }

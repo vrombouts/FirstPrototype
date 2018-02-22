@@ -51,4 +51,14 @@ object LimitCases {
       Array(Set(1),Set(1),Set(1),Set(1),Set(0,1,2,3),Set(1)) //test with all matches the element constraint
     )
   }
+
+  def tableLimitCases: Array[(Array[Set[Int]],Set[Array[Int]])] = {
+    Array(
+      (Array(Set(1,2,3),Set(1,2,3), Set(1,2,3)),
+        Set(Array(1,2,3),Array(2,3,1))),
+      (Array(Set(1,2,3),Set(1,2,3),Set(1,2,3)),
+        Set(Array(1,1,1),Array(2,2,2),Array(3,3,3),Array(4,4,4)))
+      //TODO: add more cases
+    )
+  }
 }
