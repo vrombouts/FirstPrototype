@@ -82,11 +82,17 @@ object Checker {
     LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
   }
 
-  def checkTable(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit={
-    forAll(tableGenerator){list =>
+  def checkTable(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit= {
+    forAll(tableGenerator) { list =>
       val variables = list._1
       val table = list._2
-      variables.isEmpty||checkEmpty(variables)||checkConstraint(variables.toArray,tableAC(_,table),constraint(_,table))
+      variables.isEmpty || checkEmpty(variables) || checkConstraint(variables.toArray, tableAC(_, table), constraint(_, table))
+    }.check
+  }
+
+  def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,elementAC,constraint)
     }.check
   }
 
