@@ -230,9 +230,7 @@ object Constraints {
    */
   @throws[NoSolutionException]
   def elementAC(x:Array[Set[Int]]): Array[Set[Int]] ={
-    println(x.length)
     val X:Array[Set[Int]] = x.dropRight(2)
-    println("size "+X.length)
     val i:Set[Int] = x(x.length-2)
     val v:Set[Int]=x(x.length-1)
 

@@ -38,17 +38,17 @@ object LimitCases {
 
   def elementLimitCases: Array[Array[Set[Int]]] = {
     Array(
-      Array(Set(1,2,3),Set(1,2,3),Set(1,2,3),Set(1,2,3,4),Set(1,2)), // test with one i > x.size
-      Array(Set(1,2,3),Set(1,2,3),Set(1,2,3),Set(1,2,3)), // test with nothing to remove
-      Array(Set(1,2,3),Set(1,2),Set(4,5),Set(1,2,3),Set(4,5)), // test with only one variable s.t. x(i)=v
-      Array(Set(1,2,3),Set(1,2),Set(1,2,3),Set(1,2,4)), // test with values of v to remove
+      Array(Set(1,2,3),Set(1,2,3),Set(1,2,3),Set(0,1,2,3),Set(1,2)), // test with one i > x.size
+      Array(Set(1,2,3),Set(1,2,3),Set(0,1,2),Set(1,2,3)), // test with nothing to remove
+      Array(Set(1,2,3),Set(1,2),Set(4,5),Set(0,1,2),Set(4,5)), // test with only one variable s.t. x(i)=v
+      Array(Set(1,2,3),Set(1,2),Set(0,1,2),Set(1,2,4)), // test with values of v to remove
       Array(Set(1,2,3),Set(1,2),Set(1,2),Set(1),Set(1,2,3)),//test with i of size 1
-      Array(Set(1,2,3),Set(1,2),Set(1,2),Set(1,2,3),Set(2)),//test with v of size 1
-      Array(Set(1,2,3),Set(1,2),Set(1,2),Set(1),Set(2)), //test with v and i of size 1
+      Array(Set(1,2,3),Set(1,2),Set(1,2),Set(0,1,2),Set(2)),//test with v of size 1
+      Array(Set(1,2,3),Set(1,2),Set(1,2),Set(0),Set(2)), //test with v and i of size 1
       Array(Set(1,2,3),Set(1,2),Set(4),Set(2)), // test with no sol because of i
-      Array(Set(1,2,3),Set(1,2),Set(1,2),Set(4,5,6)), // test with no sol because of v
-      Array(Set(1,2,3),Set(1,2),Set(1,2,4),Set(1,2,3),Set(1,2)), // normal case with more than one match
-      Array(Set(1),Set(1),Set(1),Set(1),Set(1,2,3,4),Set(1)) //test with all matches the element constraint
+      Array(Set(1,2,3),Set(1,2),Set(0,1),Set(4,5,6)), // test with no sol because of v
+      Array(Set(1,2,3),Set(1,2),Set(1,2,4),Set(0,1,2),Set(1,2)), // normal case with more than one match
+      Array(Set(1),Set(1),Set(1),Set(1),Set(0,1,2,3),Set(1)) //test with all matches the element constraint
     )
   }
 }

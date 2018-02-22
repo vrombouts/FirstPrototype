@@ -93,9 +93,9 @@ object Checker {
   def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,elementAC,constraint)
     forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
-      x.isEmpty || checkEmpty(x) || check(x.toArray)
+      x.isEmpty || checkEmpty(x) || x.length>2 || check(x.toArray)
     }.check
-    LimitCases.elementLimitCases.foreach(limitCase => {println("initial "+limitCase.toList); println("solution found "+constraint(limitCase).toList); println("our sol "+ elementAC(limitCase).toList)})
+    LimitCases.elementLimitCases.foreach(limitCase => {check(limitCase)})
   }
 
   private def checkConstraint(variables:Array[Set[Int]],
@@ -109,6 +109,7 @@ object Checker {
       reducedDomains = constraintTested(variables.clone())
     }
     catch{
+      //TODO check if it is not better to have a case of NoSolutionException instead
       case e: Exception => error = true
     }
     // Then we generate the domains that reducedDomains should have
