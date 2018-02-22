@@ -77,6 +77,12 @@ object Checker {
     LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
   }
 
+  def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,elementAC(_),constraint)
+    }.check
+  }
+
   private def checkConstraint(variables:Array[Set[Int]],
                               constraint : (Array[Set[Int]])=> Array[Set[Int]],
                               constraintTested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={

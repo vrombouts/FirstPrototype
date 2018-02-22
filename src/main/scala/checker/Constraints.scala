@@ -1,6 +1,7 @@
 package checker
 
 import scala.collection.immutable.Stream.cons
+import scala.collection.mutable
 
 object Constraints {
 
@@ -208,6 +209,54 @@ object Constraints {
     }
     res
   }
+
+  /*
+   * element constraint : element(X,i,v). Here, the i and v are put at the end of the vector for convenient purposes
+   * The variables x in argument represents the set of variables and x(x.length-1) = v while x(x.length-2) = i
+   */
+  @throws[NoSolutionException]
+  def elementAC(x:Array[Set[Int]]): Array[Set[Int]] ={
+    println(x.length)
+    val X:Array[Set[Int]] = x.dropRight(2)
+    println("size "+X.length)
+    val i:Set[Int] = x(x.length-2)
+    val v:Set[Int]=x(x.length-1)
+
+    var reducedDomainv:mutable.Set[Int]=mutable.Set()
+    var reducedDomaini:mutable.Set[Int]=mutable.Set()
+
+    for(value <- v){
+      for(index <- i){
+        if(index < X.length && X(index).contains(value)){
+          reducedDomainv += value
+          reducedDomaini += index
+        }
+      }
+    }
+
+    if(reducedDomainv.isEmpty || reducedDomaini.isEmpty)
+      throw new NoSolutionException
+
+    if(reducedDomaini.size == 1) {
+      val set:mutable.Set[Int]=reducedDomainv.clone()
+      X(reducedDomaini.head) = set.toSet
+    }
+
+    return X ++ Array(reducedDomaini.toSet,reducedDomainv.toSet)
+  }
+
+  /*
+   * element(x,i,v) constraint
+   * Important to note that the solution array contains the variables x followed by i and v
+   */
+  def elementConstraint(solution:Array[Int]):Boolean = {
+    val X:Array[Int]=solution.dropRight(2)
+    val i:Int=solution(solution.length-2)
+    val v:Int=solution(solution.length-1)
+    if(i>X.length) return false
+    X(i) == v
+  }
+
 
   /*
    * This constraint is used to test. It does absolutely nothing.

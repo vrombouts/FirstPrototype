@@ -109,6 +109,9 @@ object ScCpChecker{
   def checkSumGE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
     Checker.checkSummation(filteringTested, Op.greaterThanOrEqual)
   }
+  def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+    Checker.checkElementAC(filteringTested)
+  }
 }
 trait Constraint {
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
