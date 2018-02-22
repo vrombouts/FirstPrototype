@@ -1,33 +1,43 @@
 package checker
 
-import checker.Checker._
 import scala.collection.JavaConverters._
 import java.util.function.Function
 
 class JCpChecker {
   def checkAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
               checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
-    val scalaFilter = filterToScalaFunction(filtering)
-    val scalaChecker= checkerToScalaFunction(checker)
-    Checker.checkAC(scalaFilter,scalaChecker)
+    Checker.checkAC(filtering,checker)
   }
   def checkBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
               checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
-    val scalaFilter = filterToScalaFunction(filtering)
-    val scalaChecker= checkerToScalaFunction(checker)
-    Checker.checkBC(scalaFilter,scalaChecker)
+    Checker.checkBC(filtering,checker)
   }
   def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
-    val scalaFilter = filterToScalaFunction(filtering)
-    Checker.checkAllDifferent(isAC = true, scalaFilter)
+    Checker.checkAllDifferent(isAC = true, filtering)
   }
   def checkAllDifferentBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
-    val scalaFilter = filterToScalaFunction(filtering)
-    Checker.checkAllDifferent(isAC = false, scalaFilter)
+    Checker.checkAllDifferent(isAC = false, filtering)
+  }
+  def checkSumEQ(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkSummation(filtering,Op.equal)
+  }
+  def checkSumNE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkSummation(filtering,Op.different)
+  }
+  def checkSumLT(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkSummation(filtering,Op.lesserThan)
+  }
+  def checkSumLE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkSummation(filtering,Op.lesserThanOrEqual)
+  }
+  def checkSumGT(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkSummation(filtering,Op.greaterThan)
+  }
+  def checkSumGE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkSummation(filtering,Op.greaterThanOrEqual)
   }
 
-  private def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):
-  Array[Set[Int]] => Array[Set[Int]] = {
+  implicit private def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
     myArray =>{
       val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
       for(i <- myArray.indices){
@@ -43,15 +53,14 @@ class JCpChecker {
       result
     }
   }
-  private def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]):
-  Array[Int] => Boolean = {
+  implicit private def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]): Array[Int] => Boolean = {
     myArray =>{
       val ar: Array[Integer] = myArray.map(x => new Integer(x))
       val bool: Boolean = fun.apply(ar)
       bool
     }
   }
-  implicit def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
+  implicit private def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
     val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
     val iterator = x.iterator()
     while(iterator.hasNext){
@@ -60,7 +69,7 @@ class JCpChecker {
     }
     result
   }
-  implicit def Integer2intSet(x: Set[Integer]): Set[Int] ={
+  implicit private def Integer2intSet(x: Set[Integer]): Set[Int] ={
     var result : Set[Int] = Set[Int]()
     for (elem <- x){
       val a: Int = elem.asInstanceOf[Int]
@@ -82,22 +91,25 @@ object ScCpChecker{
   def checkAllDifferentBC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
     Checker.checkAllDifferent(isAC = false, filteringTested)
   }
-}
-
-trait SumConstraint extends Constraint{
-  def checkSumEqual(constant:Int):Unit =              checkSumConstraint(constant, Op.equal)
-  def checkSumDifferent(constant:Int):Unit =          checkSumConstraint(constant, Op.different)
-  def checkSumLesserThan(constant:Int):Unit =         checkSumConstraint(constant, Op.lesserThan)
-  def checkSumLesserThanOrEqual(constant:Int):Unit =  checkSumConstraint(constant, Op.lesserThanOrEqual)
-  def checkSumGreaterThan(constant:Int):Unit =        checkSumConstraint(constant, Op.greaterThan)
-  def checkSumGreaterThanOrEqual(constant:Int):Unit = checkSumConstraint(constant, Op.greaterThanOrEqual)
-
-  def checkSumConstraint(constant:Int, operation:Int):Unit = {
-    checkSummation(constraint,constant,operation)
+  def checkSumEQ(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
+    Checker.checkSummation(filteringTested, Op.equal)
+  }
+  def checkSumNE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
+    Checker.checkSummation(filteringTested, Op.different)
+  }
+  def checkSumLT(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
+    Checker.checkSummation(filteringTested, Op.lesserThan)
+  }
+  def checkSumLE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
+    Checker.checkSummation(filteringTested, Op.lesserThanOrEqual)
+  }
+  def checkSumGT(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
+    Checker.checkSummation(filteringTested, Op.greaterThan)
+  }
+  def checkSumGE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
+    Checker.checkSummation(filteringTested, Op.greaterThanOrEqual)
   }
 }
-
-
 trait Constraint {
   def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
   //def checkConstraint(solution: Array[Int]): Boolean //= throw new checkUnimplementedException()

@@ -155,7 +155,9 @@ object Constraints {
   }
 
   @throws[NoSolutionException]
-  def sumBC(variables:Array[Set[Int]], constant:Int,operation:Int) : Array[Set[Int]] = {
+  def sumBC(vars:Array[Set[Int]],operation:Int) : Array[Set[Int]] = {
+    val constant:Int = vars.last.last
+    val variables = vars.dropRight(1)
     var changed:Boolean=true
     val cond: (Int, Int) => Boolean = Op.condition(operation,_,_,constant)
     while(changed){
@@ -184,7 +186,7 @@ object Constraints {
         }
       }
     }
-    variables
+    variables :+ Set(constant)
   }
 
   def allDifferent(solution: Array[Int]):Boolean = {

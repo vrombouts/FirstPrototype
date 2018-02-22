@@ -58,40 +58,25 @@ object Checker {
 
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
 
-    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+    forAll(Gen.containerOfN[List,Set[Int]](10,Generator)){ x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,applyBC(_,sum(constant,Op.equal,x.size)),constraint)
     }.check
   }
 
-  def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],constant:Int,operation:Int):Unit={
-    val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,constant,operation)
+  def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],operation:Int):Unit={
+    val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,operation)
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,sum,constraint)
     forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
-      x.isEmpty || checkEmpty(x) || check(x.toArray)
+      if(x.isEmpty || checkEmpty(x)) true
+      else{
+        val array = x.toArray
+        array(array.length-1)= Set(x.last.last)
+        check(array)
+      }
     }.check
-    val limitCase1 = Array(Set(Integer.MAX_VALUE), Set(2))
-    check(limitCase1)
-    val limitCase2 = Array(Set(Integer.MIN_VALUE), Set(-2))
-    check(limitCase2)
-    val limitCase3 = Array(Set(2), Set(constant-2))
-    check(limitCase3)
-    val limitCase4 = Array(Set(2,constant-2),Set(2,constant-2))
-    check(limitCase4)
-    val limitCase5 = Array(Set(1,2), Set(2,4),Set(constant-6)) // constant == sMax
-    check(limitCase5)
-    val limitCase6 = Array(Set(1,2), Set(2,4),Set(constant-5)) //constant > sMax
-    check(limitCase6)
-    val limitCase7 = Array(Set(1,2), Set(2,4),Set(constant-7)) // constant < sMax
-    check(limitCase7)
-    val limitCase8 = Array(Set(1,2), Set(2,4),Set(constant-3)) // constant == sMin
-    check(limitCase8)
-    val limitCase9 = Array(Set(1,2), Set(2,4),Set(constant-2))   //constant > sMin
-    check(limitCase9)
-    val limitCase10 = Array(Set(1,2), Set(2,4),Set(constant-4)) // constant < sMin
-    check(limitCase10)
-    val limitCase11 = Array(Set(2), Set(2),Set(constant-4)) // constant == sMin == sMax
-    check(limitCase11)
+    LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
   }
+
   private def checkConstraint(variables:Array[Set[Int]],
                               constraint : (Array[Set[Int]])=> Array[Set[Int]],
                               constraintTested:Array[Set[Int]]=>Array[Set[Int]]): Boolean ={
@@ -158,11 +143,11 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    //checkSummation(dummyConstraint,50, Op.equal)
+    checkSummation(dummyConstraint, Op.lesserThanOrEqual)
 
-    var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
-    val un = new UnaryResource
-    println(un.overloadChecking(acts))
+    //var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
+    //val un = new UnaryResource
+    //println(un.overloadChecking(acts))
     //println(sumBC(Array(Set(2), Set(2),Set(46)), 50,Op.equal).toList)
   }
 
