@@ -1,7 +1,6 @@
 package checker
 
 import checker.Constraints._
-import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
 
 
@@ -9,28 +8,6 @@ import scala.language.implicitConversions
 
 
 object Checker {
-  var j = 0
-  val Generator: Gen[Set[Int]] =  Gen.containerOfN[Set,Int](2,Gen.choose(0,20))
-  def arrayGen(size: Int):Gen[Array[Int]] =  Gen.containerOfN[Array,Int](size,Gen.choose(0,20))
-  val tableGenerator: Gen[(List[Set[Int]], Set[Array[Int]])] = for {
-    variables <- Gen.containerOfN[List,Set[Int]](8,Generator)
-    table <- Gen.nonEmptyContainerOf[Set,Array[Int]](arrayGen(variables.size))
-  } yield (variables,table)
-  val elementGenerator: Gen[(List[Set[Int]],Set[Int],Set[Int])] = for {
-    variables <- Gen.containerOfN[List,Set[Int]](20,Gen.containerOfN[Set,Int](3,Gen.choose(0,20)))
-    k <- Gen.choose(5,15)
-    l <- Gen.choose(1,7)
-    i <- Gen.containerOfN[Set,Int](k,Gen.choose(0,20))
-    v <-  Gen.containerOfN[Set,Int](l,Gen.choose(0,20))
-  }yield (variables,i,v)
-  def GeneratorVariable(): Gen[Variable] ={
-    for{
-      set <- Generator
-    }yield new Variable(set)
-  }
-  def GeneratorListOfVariables(n:Int): Gen[List[Variable]]={
-    Gen.containerOfN[List,Variable](21,GeneratorVariable())
-  }
   def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach{x => if(x.isEmpty) return true}
     false
@@ -38,7 +15,7 @@ object Checker {
 
   def checkAC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
     val filteringAC: Array[Set[Int]] => Array[Set[Int]] = applyAC(_,checker)
-    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+    forAll(Generators.basic){ x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringAC, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
@@ -46,7 +23,7 @@ object Checker {
 
   def checkBC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
     val filteringBC: Array[Set[Int]] => Array[Set[Int]] = applyBC(_,checker)
-    forAll(Gen.containerOfN[List,Set[Int]](8,Generator)){ x =>
+    forAll(Generators.basic){ x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringBC, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
@@ -70,7 +47,7 @@ object Checker {
 
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
 
-    forAll(Gen.containerOfN[List,Set[Int]](10,Generator)){ x =>
+    forAll(Generators.basic){ x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,applyBC(_,sum(constant,Op.equal,x.size)),constraint)
     }.check
   }
@@ -78,7 +55,7 @@ object Checker {
   def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],operation:Int):Unit={
     val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,operation)
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,sum,constraint)
-    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
+    forAll(Generators.sum){ x =>
       if(x.isEmpty || checkEmpty(x)) true
       else{
         val array = x.toArray
@@ -100,7 +77,7 @@ object Checker {
   }
 
   def checkTable(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit= {
-    forAll(tableGenerator) { list =>
+    forAll(Generators.table) { list =>
       val variables = list._1
       val table = list._2
       if(variables.isEmpty || checkEmpty(variables) || table.isEmpty) true
@@ -116,7 +93,7 @@ object Checker {
 
   def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,elementAC,constraint)
-    forAll(elementGenerator){ x =>
+    forAll(Generators.element){ x =>
       val X :Array[Set[Int]] = x._1.toArray
       val i:Set[Int] = x._2
       val v:Set[Int] = x._3
