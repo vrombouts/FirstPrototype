@@ -1,7 +1,7 @@
 package checker
 
 import scala.collection.JavaConverters._
-import java.util.function.Function
+import java.util.function.{Function,BiFunction}
 
 class JCpChecker {
   def checkAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
@@ -39,7 +39,35 @@ class JCpChecker {
   def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     Checker.checkElementAC(filteringTested)
   }
+  def checkTableAC(tableFiltering: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]]):Unit = {
+    Checker.checkTable(tableFiltering)
+  }
 
+  implicit private def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]])
+  : (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]] = {
+    (myArray,myTable) =>{
+      val javaArray : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
+      for(i <- myArray.indices){
+        val set = myArray(i).asJava
+        javaArray(i) = set
+      }
+      val javaTable : java.util.Set[Array[Integer]] = new java.util.HashSet[Array[Integer]]()
+      for(tableElement<- myTable){
+        val javaTableElement:Array[Integer] = new Array[Integer](tableElement.length)
+        for(i<- tableElement.indices){
+          javaTableElement(i)=tableElement(i)
+        }
+        javaTable.add(javaTableElement)
+      }
+      val cons = fun.apply(javaArray,javaTable)
+      val result = new Array[Set[Int]](myArray.length)
+      for(i <- myArray.indices){
+        val set = cons(i).asScala.toSet
+        result(i) = set
+      }
+      result
+    }
+  }
   implicit private def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
     myArray =>{
       val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
