@@ -115,7 +115,7 @@ object Checker {
     }
     catch{
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case e: Exception => {error = true}
+      case e: Exception => error = true
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
@@ -123,7 +123,7 @@ object Checker {
       trueReducedDomains = constraint(variables.clone())
     }
     catch {
-      case e: NoSolutionException => {ourError = true}
+      case e: NoSolutionException => ourError = true
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true
