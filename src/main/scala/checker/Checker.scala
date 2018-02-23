@@ -16,6 +16,13 @@ object Checker {
     variables <- Gen.containerOfN[List,Set[Int]](8,Generator)
     table <- Gen.nonEmptyContainerOf[Set,Array[Int]](arrayGen(variables.size))
   } yield (variables,table)
+  val elementGenerator: Gen[(List[Set[Int]],Set[Int],Set[Int])] = for {
+    variables <- Gen.containerOfN[List,Set[Int]](20,Gen.containerOfN[Set,Int](3,Gen.choose(0,20)))
+    k <- Gen.choose(5,15)
+    l <- Gen.choose(1,7)
+    i <- Gen.containerOfN[Set,Int](k,Gen.choose(0,20))
+    v <-  Gen.containerOfN[Set,Int](l,Gen.choose(0,20))
+  }yield (variables,i,v)
   def GeneratorVariable(): Gen[Variable] ={
     for{
       set <- Generator
@@ -109,8 +116,12 @@ object Checker {
 
   def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,elementAC,constraint)
-    forAll(Gen.containerOfN[List,Set[Int]](20,Generator)){ x =>
-      x.isEmpty || checkEmpty(x) || x.length>2 || check(x.toArray)
+    forAll(elementGenerator){ x =>
+      val X :Array[Set[Int]] = x._1.toArray
+      val i:Set[Int] = x._2
+      val v:Set[Int] = x._3
+      val variables:Array[Set[Int]] = X ++ Array(i,v)
+       checkEmpty(variables.toList) || check(variables) //x.length<2
     }.check
     LimitCases.elementLimitCases.foreach(limitCase => {check(limitCase)})
   }
@@ -127,7 +138,7 @@ object Checker {
     }
     catch{
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case e: Exception => error = true
+      case e: Exception => {error = true}
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
@@ -135,14 +146,14 @@ object Checker {
       trueReducedDomains = constraint(variables.clone())
     }
     catch {
-      case e: NoSolutionException => ourError = true
+      case e: NoSolutionException => {ourError = true}
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true
 
     if(error && !ourError){
-      for(i<- reducedDomains.indices){
-        if(reducedDomains(i).nonEmpty){
+      for(i<- trueReducedDomains.indices){
+        if(trueReducedDomains(i).nonEmpty){
           println("failed for: "+ variables.toList)
           println("you should have: "+ trueReducedDomains.toList)
           println("but you returned an exception")
@@ -182,12 +193,13 @@ object Checker {
       //allDifferent, sum(52,Op.greaterThanOrEqual,4))
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
-    checkTable({(vari,seti) => vari})
+    //checkTable({(vari,seti) => vari})
 
     //var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
     //val un = new UnaryResource
     //println(un.overloadChecking(acts))
     //println(sumBC(Array(Set(2), Set(2),Set(46)), 50,Op.equal).toList)
+    checkElementAC(elementAC)
   }
 
 }

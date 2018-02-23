@@ -239,7 +239,7 @@ object Constraints {
 
     for(value <- v){
       for(index <- i){
-        if(index < X.length && X(index).contains(value)){
+        if(index >= 0 && index < X.length && X(index).contains(value)){
           reducedDomainv += value
           reducedDomaini += index
         }
