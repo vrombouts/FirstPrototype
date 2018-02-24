@@ -37,7 +37,7 @@ object Checker {
     var propagation: (Array[Set[Int]]) => Array[Set[Int]] = applyBC(_,allDifferent)
     if(isAC) {
       checkAC(constraint,allDifferent)
-      propagation = applyAC(_,allDifferent)
+      propagation = applyACWithoutPruning(_,allDifferent)
     }
     else checkBC(constraint,allDifferent)
     val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint)
@@ -163,7 +163,7 @@ object Checker {
 
   def main(args: Array[String]): Unit ={
     //checkAllDifferentBC(allDifferent)
-    //checkAllDifferentAC(allDifferent)
+    checkAllDifferent(true,allDifferent)
     //?? not ready yet: checkSum(sum,5,Op.equal)
     //checkConstraint(false,
       //Array(Set(18, 14), Set(12, 13), Set(12), Set(12, 19)),
@@ -176,7 +176,7 @@ object Checker {
     //val un = new UnaryResource
     //println(un.overloadChecking(acts))
     //println(sumBC(Array(Set(2), Set(2),Set(46)), 50,Op.equal).toList)
-    checkElementAC(elementAC)
+    //checkElementAC(elementAC)
   }
 
 }

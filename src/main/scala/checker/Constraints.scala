@@ -57,6 +57,27 @@ object Constraints {
     variables
   }
 
+  private def solutions(variables:Array[Set[Int]]):Array[Array[Int]] = {
+    val currentSol: Array[Int] = Array.fill(variables.length)(0)
+    val result: mutable.Set[Array[Int]]= mutable.Set()
+    setIthVariable(variables,0,currentSol,result)
+    result.toArray
+  }
+  private def setIthVariable(variables:Array[Set[Int]],index : Int, currentSol:Array[Int], result:mutable.Set[Array[Int]]):Unit={
+    for(i <- variables(index)){
+      currentSol(index) = i
+      if(index==variables.length-1){
+        result += currentSol.clone()
+      }else{
+        setIthVariable(variables,index+1,currentSol,result)
+      }
+    }
+  }
+  def applyACWithoutPruning(variables:Array[Set[Int]], constraint: Array[Int]=>Boolean) : Array[Set[Int]]={
+    val sols: Array[Array[Int]] = solutions(variables).filter(x => constraint(x))
+    toDomainsAC(sols)
+  }
+
   @throws[NoSolutionException]
   private def getIntervals(variables:Array[Set[Int]]) : Array[Interval]= {
    variables.map(x=>if(x.nonEmpty) new Interval(x) else throw new NoSolutionException)
@@ -202,6 +223,56 @@ object Constraints {
     table.foreach(solution => if(possibleWith(variables,solution)) solutions += solution)
     if(solutions.isEmpty) throw new NoSolutionException
     toDomainsAC(solutions.toArray)
+  }
+
+  /*
+   * TODO ask if count variables should be incremental in their representing value or not
+   * This function checks the solution respect the gcc constraint when
+   *  solution[0..solution.length-values.length-1] correspond to the assignment variables
+   *  solution[solution.length-values.length..solution.length] corespond to the count variables
+   *  where values represent the value corresponding to their respective count variable.
+   *  each count variable correspond to the value of the previous count variable's value +1
+   *  this function cannot be used to test an incomplete solution
+   */
+  def gccChecker(solution: Array[Int], values:Array[Int], count:Array[Set[Int]]):Boolean={
+    var valuesCount: Map[Int, Int] = Map()
+    values.foreach{v => valuesCount = valuesCount + (v -> 0)}
+    solution.foreach{ x => if(valuesCount.contains(x)){
+        valuesCount= valuesCount.updated(x,valuesCount(x)+1)
+      }
+    }
+    for(i <- values.indices) {
+      if (!count(i).contains(valuesCount(values(i)))) return false
+    }
+    true
+  }
+
+  def gccToDomainsAC(solutions: Array[Array[Int]], values:Array[Int], count:Array[Set[Int]]): Array[Set[Int]]={
+    if(solutions.length==0) throw NoSolutionException()
+    val n:Int = solutions(0).length
+    val variables:Array[Set[Int]] = Array.fill(n+count.length)(Set.empty)
+    solutions.foreach{sol =>
+      var valuesCount: Map[Int, Int] = Map()
+      values.foreach{v => valuesCount = valuesCount + (v -> 0)}
+      for(i <- sol.indices){
+        variables(i) += sol(i)
+        if (valuesCount.contains(sol(i))) {
+          valuesCount = valuesCount.updated(sol(i), valuesCount(sol(i)) + 1)
+        }
+      }
+      for(i<- count.indices){
+        variables(i+n) += valuesCount(values(i))
+      }
+    }
+    variables
+  }
+
+  def gcc(variables:Array[Set[Int]], values:Array[Int]): Array[Set[Int]]={
+    val n: Int = values.length
+    val assignments: Array[Set[Int]] = variables.dropRight(n)
+    val count: Array[Set[Int]] = variables.drop(variables.length-n)
+    val sols:Array[Array[Int]] = solutions(assignments).filter(x => gccChecker(x,values,count))
+    gccToDomainsAC(sols,values,count)
   }
 
   def allDifferent(solution: Array[Int]):Boolean = {
