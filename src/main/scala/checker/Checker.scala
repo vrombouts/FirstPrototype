@@ -45,12 +45,15 @@ object Checker {
     println("All tests executed.")
   }
 
-  
+
   def checkGcc(constraint: (Array[Set[Int]],Array[Int])=>Array[Set[Int]]): Unit = {
     val check: Array[Set[Int]] => Boolean = checkConstraint(_,gcc(_,Array(0,1,2)),constraint(_, Array(0,1,2)))
     forAll(Generators.gcc) { variables =>
       variables.isEmpty || checkEmpty(variables) || variables.length<4 || check(variables.toArray)
     }.check
+    LimitCases.gccLimitCases.foreach{limit =>
+      checkConstraint(limit._1,gcc(_,limit._2), constraint(_,limit._2))
+    }
   }
 
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {

@@ -70,4 +70,13 @@ object LimitCases {
         Set(Array(1,2,10,40),Array(40,10,2,1), Array(0,0,0,0)))// No problem with single value and ordering
     )
   }
+
+  def gccLimitCases: Array[(Array[Set[Int]],Array[Int])] = {
+    Array(
+      (Array(Set(0,1),Set(0,1),Set(0,1,2),Set(0,1)),Array(0,1)),//pruning count correctly
+      (Array(Set(0,1,2),Set(0,1,2),Set(0,1,2),Set(0,1),Set(0,1),Set(0,1)),Array(0,1,2)),//alldifferent
+      (Array(Set(1,2,3,4),Set(1,2),Set(2,1),Set(3,4),Set(1),Set(1),Set(1),Set(1)),Array(1,2,3,4))//permutation
+    //TODO add limit cases
+    )
+  }
 }
