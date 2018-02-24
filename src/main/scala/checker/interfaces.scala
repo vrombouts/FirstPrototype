@@ -36,7 +36,7 @@ class JCpChecker {
   def checkSumGE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
     Checker.checkSummation(filtering,Op.greaterThanOrEqual)
   }
-  def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+  def checkElementAC(filteringTested: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]) : Unit={
     Checker.checkElementAC(filteringTested)
   }
   def checkTableAC(tableFiltering: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]]):Unit = {

@@ -98,7 +98,7 @@ object Checker {
       val i:Set[Int] = x._2
       val v:Set[Int] = x._3
       val variables:Array[Set[Int]] = X ++ Array(i,v)
-       checkEmpty(variables.toList) || check(variables) //x.length<2
+       checkEmpty(variables.toList) || X.length <= 0 || i.size <= 0 || v.size <=0 || check(variables) //x.length<2
     }.check
     LimitCases.elementLimitCases.foreach(limitCase => {check(limitCase)})
   }
@@ -115,7 +115,7 @@ object Checker {
     }
     catch{
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case e: Exception => {error = true}
+      case e: Exception =>  error = true
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
