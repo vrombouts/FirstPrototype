@@ -37,12 +37,20 @@ object Checker {
     var propagation: (Array[Set[Int]]) => Array[Set[Int]] = applyBC(_,allDifferent)
     if(isAC) {
       checkAC(constraint,allDifferent)
-      propagation = applyACWithoutPruning(_,allDifferent)
+      propagation = applyAC(_,allDifferent)
     }
     else checkBC(constraint,allDifferent)
     val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_,propagation,constraint)
     LimitCases.allDifferentLimitCases.foreach(x => checkAllDiff(x))
     println("All tests executed.")
+  }
+
+  
+  def checkGcc(constraint: (Array[Set[Int]],Array[Int])=>Array[Set[Int]]): Unit = {
+    val check: Array[Set[Int]] => Boolean = checkConstraint(_,gcc(_,Array(0,1,2)),constraint(_, Array(0,1,2)))
+    forAll(Generators.gcc) { variables =>
+      variables.isEmpty || checkEmpty(variables) || variables.length<4 || check(variables.toArray)
+    }.check
   }
 
   def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
@@ -162,7 +170,7 @@ object Checker {
 
   def main(args: Array[String]): Unit ={
     //checkAllDifferentBC(allDifferent)
-    checkAllDifferent(true,allDifferent)
+    //checkAllDifferent(isAC = true,allDifferent)
     //?? not ready yet: checkSum(sum,5,Op.equal)
     //checkConstraint(false,
       //Array(Set(18, 14), Set(12, 13), Set(12), Set(12, 19)),
@@ -170,7 +178,7 @@ object Checker {
     //var res=sumBC(Array(Set(1,5), Set(12), Set(1,2)), 25, Op.greaterThan)
     //println(res.toList)
     //checkTable({(vari,seti) => vari})
-
+    checkGcc({(v,s)=>v})
     //var acts:Array[Activity] = Array(new Activity(Set(0), Set(2), Set(2)), new Activity(Set(0),Set(2), Set(2)))
     //val un = new UnaryResource
     //println(un.overloadChecking(acts))
