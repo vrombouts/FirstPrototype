@@ -32,7 +32,29 @@ object Generators {
     v <-  Gen.containerOfN[Set,Int](l,Gen.choose(-10,10))
   }yield (variables,i,v)
 
-  val sum: Gen[List[Set[Int]]] = Gen.containerOfN[List,Set[Int]](20,triDomain)
+  def computeMin(l:List[Set[Int]]) : (Int)={
+    var resMin:Int=0
+    for(l1 <- l){
+      resMin+=l1.min
+    }
+    return resMin
+  }
+
+  def computeMax(l:List[Set[Int]]) : (Int)={
+    var resMax:Int=0
+    for(l1 <- l){
+      resMax+=l1.max
+    }
+    return resMax
+  }
+
+  val sum: Gen[(List[Set[Int]], Int)] = for{
+    variables <- Gen.containerOfN[List,Set[Int]](20,Gen.containerOfN[Set,Int](3,Gen.choose(0,10)))
+    sumMin <- Gen.choose(computeMin(variables),computeMin(variables))
+    sumMax <- Gen.choose(computeMax(variables),computeMax(variables))
+    s <- Gen.choose(sumMin-5,sumMax+5) suchThat( s => s<sumMin+(sumMax-sumMin)/6 || s>sumMax-(sumMax-sumMin)/6)
+  }yield (variables,s)
+  // maybe test with variables of different domains lengths (1,2,3...)
 
   //useless
   def GeneratorVariable(): Gen[Variable] ={
