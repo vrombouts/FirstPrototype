@@ -22,8 +22,8 @@ object LimitCases {
   }
   def sumLimitCases: Array[Array[Set[Int]]] = {
     Array(
-      Array(Set(Integer.MAX_VALUE), Set(1), Set(Integer.MIN_VALUE)),
-      Array(Set(Integer.MIN_VALUE), Set(-1),Set(Integer.MAX_VALUE)),
+      //Array(Set(Integer.MAX_VALUE), Set(1), Set(Integer.MIN_VALUE)),
+      //Array(Set(Integer.MIN_VALUE), Set(-1),Set(Integer.MAX_VALUE)),
       Array(Set(2), Set(48),Set(50)),
       Array(Set(2,50-2),Set(2,50-2), Set(50)),
       Array(Set(1,2), Set(2,4),Set(50-6), Set(50)),// 50 == sMax

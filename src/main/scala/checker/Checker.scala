@@ -56,11 +56,10 @@ object Checker {
     val sum: (Array[Set[Int]]) => Array[Set[Int]] = sumBC(_,operation)
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,sum,constraint)
     forAll(Generators.sum){ x =>
-      if(x.isEmpty || checkEmpty(x)) true
+      if(x._1.isEmpty || checkEmpty(x._1)) true
       else{
-        val array = x.toArray
-        array(array.length-1)= Set(x.last.last)
-        check(array)
+        val array = x._1.toArray
+        check(array++Array(Set(x._2)))
       }
     }.check
     LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
@@ -115,7 +114,7 @@ object Checker {
     }
     catch{
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case e: Exception => error = true
+      case e: NoSolutionException => error = true
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
