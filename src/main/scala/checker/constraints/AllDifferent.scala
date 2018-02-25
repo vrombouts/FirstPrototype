@@ -1,6 +1,6 @@
 package checker.constraints
 import checker.{Checker, Halles, LimitCases, Variable}
-import checker.constraints.Constraint
+
 object AllDifferent extends Checker{
 
   private var isAC:Boolean = true
@@ -12,7 +12,14 @@ object AllDifferent extends Checker{
   * This function checks if the constraint passed in argument apply correctly an
   * allDifferent constraint with arc consistency.
   */
-  def checkAllDifferent(isAc: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+
+  def checkAC( constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+    check(true,constraint)
+  }
+  def checkBC( constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
+    check(false,constraint)
+  }
+  private def check(isAc: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
     isAC=isAc
     if(isAc) {
       Constraint.checkAC(constraint,allDifferent)
@@ -27,7 +34,7 @@ object AllDifferent extends Checker{
     solution.toSet.size==solution.length
   }
 
-  def allDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
+  /*def allDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
     var change=true
     var emptySet = false
     val variables = convert(x)
@@ -82,5 +89,5 @@ object AllDifferent extends Checker{
     }
     res
   }
-
+*/
 }

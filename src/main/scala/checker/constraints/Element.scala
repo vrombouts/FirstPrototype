@@ -8,7 +8,8 @@ import scala.collection.mutable
 object Element extends Checker{
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = elementAC(variables)
-  def checkElementAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
+
+  def checkAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,constraint)
     forAll(Generators.element){ x =>
       val X :Array[Set[Int]] = x._1.toArray

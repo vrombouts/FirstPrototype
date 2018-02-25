@@ -195,15 +195,4 @@ object Constraint extends Checker{
    */
   def dummyConstraint(x:Array[Set[Int]]): Array[Set[Int]] = x
 
-
-  def main(args: Array[String]) {
-    //val x = Checker.Generator_List_Of_Variables(10).sample
-    val variables = Array(Set(0,1,2))
-    val result: Array[Set[Int]] = applyAC(variables,AllDifferent.allDifferent)
-    println("result: [")
-    for(i<-result.indices){
-      println(result(i))
-    }
-    print("]")
-  }
 }

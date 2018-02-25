@@ -16,7 +16,7 @@ object Table extends checker.Checker {
     println()
   }
 
-  def checkTable(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit= {
+  def checkAC(constraint: (Array[Set[Int]],Set[Array[Int]])=>Array[Set[Int]]): Unit= {
     forAll(Generators.table) { list =>
       val variables = list._1
       table = list._2

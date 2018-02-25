@@ -15,34 +15,34 @@ class JCpChecker {
     Constraint.checkBC(filtering,checker)
   }
   def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
-    AllDifferent.checkAllDifferent(isAC = true, filtering)
+    AllDifferent.checkAC(filtering)
   }
   def checkAllDifferentBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
-    AllDifferent.checkAllDifferent(isAC = false, filtering)
+    AllDifferent.checkBC(filtering)
   }
   def checkSumEQ(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Sum.checkSummation(filtering,Op.equal)
+    Sum.checkBC(filtering,Op.equal)
   }
   def checkSumNE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Sum.checkSummation(filtering,Op.different)
+    Sum.checkBC(filtering,Op.different)
   }
   def checkSumLT(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Sum.checkSummation(filtering,Op.lesserThan)
+    Sum.checkBC(filtering,Op.lesserThan)
   }
   def checkSumLE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Sum.checkSummation(filtering,Op.lesserThanOrEqual)
+    Sum.checkBC(filtering,Op.lesserThanOrEqual)
   }
   def checkSumGT(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Sum.checkSummation(filtering,Op.greaterThan)
+    Sum.checkBC(filtering,Op.greaterThan)
   }
   def checkSumGE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Sum.checkSummation(filtering,Op.greaterThanOrEqual)
+    Sum.checkBC(filtering,Op.greaterThanOrEqual)
   }
   def checkElementAC(filteringTested: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]) : Unit={
-    Element.checkElementAC(filteringTested)
+    Element.checkAC(filteringTested)
   }
   def checkTableAC(tableFiltering: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Table.checkTable(tableFiltering)
+    Table.checkAC(tableFiltering)
   }
 
   implicit private def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]])
@@ -119,33 +119,33 @@ object ScCpChecker{
     Constraint.checkBC(filteringTested, checker)
   }
   def checkAllDifferentAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
-    AllDifferent.checkAllDifferent(isAC = true, filteringTested)
+    AllDifferent.checkAC( filteringTested)
   }
   def checkAllDifferentBC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
-    AllDifferent.checkAllDifferent(isAC = false, filteringTested)
+    AllDifferent.checkBC( filteringTested)
   }
   def checkSumEQ(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Sum.checkSummation(filteringTested, Op.equal)
+    Sum.checkBC(filteringTested, Op.equal)
   }
   def checkSumNE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Sum.checkSummation(filteringTested, Op.different)
+    Sum.checkBC(filteringTested, Op.different)
   }
   def checkSumLT(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Sum.checkSummation(filteringTested, Op.lesserThan)
+    Sum.checkBC(filteringTested, Op.lesserThan)
   }
   def checkSumLE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Sum.checkSummation(filteringTested, Op.lesserThanOrEqual)
+    Sum.checkBC(filteringTested, Op.lesserThanOrEqual)
   }
   def checkSumGT(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Sum.checkSummation(filteringTested, Op.greaterThan)
+    Sum.checkBC(filteringTested, Op.greaterThan)
   }
   def checkSumGE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Sum.checkSummation(filteringTested, Op.greaterThanOrEqual)
+    Sum.checkBC(filteringTested, Op.greaterThanOrEqual)
   }
   def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
-    Element.checkElementAC(filteringTested)
+    Element.checkAC(filteringTested)
   }
   def checkTableAC(filteringWithTableTested: (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]]):Unit={
-    Table.checkTable(filteringWithTableTested)
+    Table.checkAC(filteringWithTableTested)
   }
 }

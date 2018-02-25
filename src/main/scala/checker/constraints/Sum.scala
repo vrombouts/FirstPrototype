@@ -19,7 +19,7 @@ object Sum extends Checker{
     }.check
   }*/
 
-  def checkSummation(constraint:Array[Set[Int]] => Array[Set[Int]],operation:Int):Unit={
+  def checkBC(constraint:Array[Set[Int]] => Array[Set[Int]],operation:Int):Unit={
     operator=operation
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,constraint)
     forAll(Generators.sum){ x =>

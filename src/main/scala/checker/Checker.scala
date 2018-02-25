@@ -1,11 +1,6 @@
 package checker
 
-import checker.Constraints._
-import org.scalacheck.Prop.forAll
-
-
 import scala.language.implicitConversions
-
 
 trait Checker {
   def checkEmpty(variables: List[Set[Int]]): Boolean = {
