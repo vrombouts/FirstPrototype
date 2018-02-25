@@ -1,6 +1,6 @@
 package checker.constraints
 
-import checker.{Checker, Generators, Interval, NoSolutionException}
+import checker._
 import org.scalacheck.Prop.forAll
 
 import scala.collection.immutable.Stream.cons
@@ -32,6 +32,16 @@ object Constraint extends Checker{
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
+  }
+
+  def checkAC(init:Array[Set[Int]]=> Array[Set[Int]],
+              filtering:BranchOp => Array[Set[Int]],
+              checker:Array[Int] => Boolean)={
+    checkFunction = checker
+    isAC=true
+    forAll(Generators.basic){ x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init) //|| checkConstraint(x.toArray,filtering)
+    }.check
   }
 
   private def cartesian(sol:Stream[Array[Int]],variable: Set[Int]): Stream[Array[Int]] = {
