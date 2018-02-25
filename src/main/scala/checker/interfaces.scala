@@ -1,46 +1,48 @@
 package checker
 
 import scala.collection.JavaConverters._
-import java.util.function.{Function,BiFunction}
+import java.util.function.{BiFunction, Function}
+
+import checker.constraints._
 
 class JCpChecker {
   def checkAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
               checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
-    Checker.checkAC(filtering,checker)
+    Constraint.checkAC(filtering,checker)
   }
   def checkBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
               checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
-    Checker.checkBC(filtering,checker)
+    Constraint.checkBC(filtering,checker)
   }
   def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
-    Checker.checkAllDifferent(isAC = true, filtering)
+    AllDifferent.checkAllDifferent(isAC = true, filtering)
   }
   def checkAllDifferentBC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
-    Checker.checkAllDifferent(isAC = false, filtering)
+    AllDifferent.checkAllDifferent(isAC = false, filtering)
   }
   def checkSumEQ(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkSummation(filtering,Op.equal)
+    Sum.checkSummation(filtering,Op.equal)
   }
   def checkSumNE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkSummation(filtering,Op.different)
+    Sum.checkSummation(filtering,Op.different)
   }
   def checkSumLT(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkSummation(filtering,Op.lesserThan)
+    Sum.checkSummation(filtering,Op.lesserThan)
   }
   def checkSumLE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkSummation(filtering,Op.lesserThanOrEqual)
+    Sum.checkSummation(filtering,Op.lesserThanOrEqual)
   }
   def checkSumGT(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkSummation(filtering,Op.greaterThan)
+    Sum.checkSummation(filtering,Op.greaterThan)
   }
   def checkSumGE(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkSummation(filtering,Op.greaterThanOrEqual)
+    Sum.checkSummation(filtering,Op.greaterThanOrEqual)
   }
   def checkElementAC(filteringTested: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]) : Unit={
-    Checker.checkElementAC(filteringTested)
+    Element.checkElementAC(filteringTested)
   }
   def checkTableAC(tableFiltering: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]]):Unit = {
-    Checker.checkTable(tableFiltering)
+    Table.checkTable(tableFiltering)
   }
 
   implicit private def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]])
@@ -111,43 +113,39 @@ class JCpChecker {
 }
 object ScCpChecker{
   def checkAC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
-    Checker.checkAC(filteringTested, checker)
+    Constraint.checkAC(filteringTested, checker)
   }
   def checkBC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
-    Checker.checkBC(filteringTested, checker)
+    Constraint.checkBC(filteringTested, checker)
   }
   def checkAllDifferentAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
-    Checker.checkAllDifferent(isAC = true, filteringTested)
+    AllDifferent.checkAllDifferent(isAC = true, filteringTested)
   }
   def checkAllDifferentBC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit = {
-    Checker.checkAllDifferent(isAC = false, filteringTested)
+    AllDifferent.checkAllDifferent(isAC = false, filteringTested)
   }
   def checkSumEQ(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Checker.checkSummation(filteringTested, Op.equal)
+    Sum.checkSummation(filteringTested, Op.equal)
   }
   def checkSumNE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Checker.checkSummation(filteringTested, Op.different)
+    Sum.checkSummation(filteringTested, Op.different)
   }
   def checkSumLT(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Checker.checkSummation(filteringTested, Op.lesserThan)
+    Sum.checkSummation(filteringTested, Op.lesserThan)
   }
   def checkSumLE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Checker.checkSummation(filteringTested, Op.lesserThanOrEqual)
+    Sum.checkSummation(filteringTested, Op.lesserThanOrEqual)
   }
   def checkSumGT(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Checker.checkSummation(filteringTested, Op.greaterThan)
+    Sum.checkSummation(filteringTested, Op.greaterThan)
   }
   def checkSumGE(filteringTested: Array[Set[Int]]=> Array[Set[Int]]) : Unit = {
-    Checker.checkSummation(filteringTested, Op.greaterThanOrEqual)
+    Sum.checkSummation(filteringTested, Op.greaterThanOrEqual)
   }
   def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]) : Unit={
-    Checker.checkElementAC(filteringTested)
+    Element.checkElementAC(filteringTested)
   }
   def checkTableAC(filteringWithTableTested: (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]]):Unit={
-    Checker.checkTable(filteringWithTableTested)
+    Table.checkTable(filteringWithTableTested)
   }
-}
-trait Constraint {
-  def constraint(vars: Array[Set[Int]]):Array[Set[Int]]
-  //def checkConstraint(solution: Array[Int]): Boolean //= throw new checkUnimplementedException()
 }

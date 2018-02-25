@@ -64,8 +64,8 @@ object LimitCases {
         Set(Array(1,3),Array(3,1))), //test if domains not melanged(ex:returning Set(1,2,3),Set(1,2,3))
       (Array(Set(0,1,2), Set(0,1,2), Set(0,1,2)),
         Set(Array(0,1,4),Array(4,2,0), Array(1,4,2))),//one value out of domains per line in table
-      (Array(Set(Integer.MAX_VALUE, Integer.MIN_VALUE),Set(Integer.MAX_VALUE, Integer.MIN_VALUE)),
-        Set(Array(-10,10),Array(-100,100),Array(1000,-1000))),//no problems with overflow,
+      //(Array(Set(Integer.MAX_VALUE, Integer.MIN_VALUE),Set(Integer.MAX_VALUE, Integer.MIN_VALUE)),
+        //Set(Array(-10,10),Array(-100,100),Array(1000,-1000))),//no problems with overflow,
       (Array(Set(1),Set(2),Set(10),Set(40)),
         Set(Array(1,2,10,40),Array(40,10,2,1), Array(0,0,0,0)))// No problem with single value and ordering
     )
