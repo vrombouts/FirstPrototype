@@ -1,5 +1,5 @@
 package checker.constraints
-import checker.{Checker, Halles, LimitCases, Variable}
+import checker._
 
 object AllDifferent extends Checker{
 
@@ -12,12 +12,11 @@ object AllDifferent extends Checker{
   * This function checks if the constraint passed in argument apply correctly an
   * allDifferent constraint with arc consistency.
   */
-
   def checkAC( constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    check(true,constraint)
+    check(isAc = true,constraint)
   }
   def checkBC( constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
-    check(false,constraint)
+    check(isAc = false,constraint)
   }
   private def check(isAc: Boolean, constraint:Array[Set[Int]]=>Array[Set[Int]]): Unit = {
     isAC=isAc
@@ -34,60 +33,4 @@ object AllDifferent extends Checker{
     solution.toSet.size==solution.length
   }
 
-  /*def allDifferent(x:Array[Set[Int]]): Array[Set[Int]] = {
-    var change=true
-    var emptySet = false
-    val variables = convert(x)
-    while(change && !emptySet){
-      val y: Array[Variable] = variables.sortWith(_ compareDomain _)
-      change=false
-      var halles: List[Halles] = List()
-      var i = 0
-      while(!change && i<y.length){
-        var found = false
-        for(hall<- halles){
-          if (hall.possibleAdd(y(i))){
-            found = true
-            hall.add(y(i))
-            change = hall.propagate(y)
-          }
-        }
-        if(!found){
-          val hall = new Halles(y(i).domain.toSet,y(i).id)
-          halles = hall::halles
-          change = hall.propagate(y)
-        }
-        i = i+1
-      }
-      emptySet = checkEmptySet(y)
-    }
-    convert(variables)
-  }
-
-  def checkEmptySet(x: Array[Variable]): Boolean = {
-    val y = x.filter(v => v.domain.isEmpty)
-    if(y.nonEmpty){
-      x.foreach(v => v.domain = v.domain.empty)
-      return true
-    }
-    false
-  }
-
-
-  def convert(x:Array[Set[Int]]):Array[Variable]={
-    var res = Array[Variable]()
-    for(i <- x.indices){
-      res :+= new Variable(x(i), i)
-    }
-    res
-  }
-
-  def convert(x:Array[Variable]):Array[Set[Int]]={
-    var res = Array[Set[Int]]()
-    for(i <- x.indices){
-      res :+= x(i).domain.toSet
-    }
-    res
-  }
-*/
 }

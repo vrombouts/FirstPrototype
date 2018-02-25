@@ -38,7 +38,7 @@ trait Checker {
     }
     catch{
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case e: NoSolutionException => error = true
+      case _: NoSolutionException => error = true
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
@@ -46,7 +46,7 @@ trait Checker {
       trueReducedDomains = applyConstraint(variables.clone())
     }
     catch {
-      case e: NoSolutionException => ourError = true
+      case _: NoSolutionException => ourError = true
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true

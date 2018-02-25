@@ -37,7 +37,7 @@ object Generators {
     for(l1 <- l){
       resMin+=l1.min
     }
-    return resMin
+    resMin
   }
 
   def computeMax(l:List[Set[Int]]) : (Int)={
@@ -45,7 +45,7 @@ object Generators {
     for(l1 <- l){
       resMax+=l1.max
     }
-    return resMax
+    resMax
   }
 
   val sum: Gen[(List[Set[Int]], Int)] = for{

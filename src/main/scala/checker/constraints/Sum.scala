@@ -5,7 +5,7 @@ import org.scalacheck.Prop.forAll
 
 object Sum extends Checker{
 
-  private var constant:Int=0
+  //private var constant:Int=0
   private var operator:Int=Op.equal
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {

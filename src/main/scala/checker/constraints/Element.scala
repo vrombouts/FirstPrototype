@@ -25,24 +25,24 @@ object Element extends Checker{
     val init = initial.dropRight(2).toList
     val initI = initial(initial.length-2)
     val initV = initial(initial.length-1)
-    val tr = trueReduced.dropRight(2)
+    val tr = trueReduced.dropRight(2).toList
     val trI = trueReduced(trueReduced.length-2)
     val trV = trueReduced(trueReduced.length-1)
-    val r = reduced.dropRight(2)
+    val r = reduced.dropRight(2).toList
     val rI = reduced(reduced.length-2)
     val rV = reduced(reduced.length-1)
     if(error && !ourError) {
-      println("failed with X domains: " + initial.toList + "\n i domain: " + initI + "\n v domain: " +initV)
-      println("you should have: " + trueReduced.toList+ "\n i domain: " + trI + "\n v domain: " +trV)
+      println("failed with X domains: " + init + "\n i domain: " + initI + "\n v domain: " +initV)
+      println("you should have: " + tr+ "\n i domain: " + trI + "\n v domain: " +trV)
       println("but you returned an exception")
     }else if(!error && ourError){
-      println("failed with X domains: " + initial.toList+ "\n i domain: " + initI + "\n v domain: " +initV)
+      println("failed with X domains: " + init+ "\n i domain: " + initI + "\n v domain: " +initV)
       println("you should not have any solutions")
-      println("but you had: " + reduced.toList+ "\n i domain: " + rI + "\n v domain: " +rV)
+      println("but you had: " + r+ "\n i domain: " + rI + "\n v domain: " +rV)
     }else if(!error && !ourError){
-      println("failed for: " + initial.toList+ "\n i domain: " + initI + "\n v domain: " +initV)
-      println("you should have: " + trueReduced.toList+ "\n i domain: " + trI + "\n v domain: " +trV)
-      println("but you had: " + reduced.toList+ "\n i domain: " + rI + "\n v domain: " +rV)
+      println("failed for: " + init + "\n i domain: " + initI + "\n v domain: " +initV)
+      println("you should have: " + tr + "\n i domain: " + trI + "\n v domain: " +trV)
+      println("but you had: " + r + "\n i domain: " + rI + "\n v domain: " +rV)
     }
   }
 
@@ -76,7 +76,7 @@ object Element extends Checker{
       X(reducedDomaini.head) = set.toSet
     }
 
-    return X ++ Array(reducedDomaini.toSet,reducedDomainv.toSet)
+    X ++ Array(reducedDomaini.toSet,reducedDomainv.toSet)
   }
 
   /*
