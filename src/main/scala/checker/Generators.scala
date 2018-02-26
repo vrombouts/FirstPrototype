@@ -56,13 +56,4 @@ object Generators {
   }yield (variables,s)
   // maybe test with variables of different domains lengths (1,2,3...)
 
-  //useless
-  def GeneratorVariable(): Gen[Variable] ={
-    for{
-      set <- biDomain
-    }yield new Variable(set)
-  }
-  def GeneratorListOfVariables(n:Int): Gen[List[Variable]]={
-    Gen.containerOfN[List,Variable](21,GeneratorVariable())
-  }
 }
