@@ -1,6 +1,6 @@
 package checker.constraints
 
-import checker.{Checker, Generators, LimitCases, NoSolutionException}
+import checker._
 import org.scalacheck.Prop.forAll
 
 object Gcc extends Checker {
@@ -69,6 +69,5 @@ object Gcc extends Checker {
     gccToDomainsAC(sols,values,count)
   }
 
-
-
+  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
 }

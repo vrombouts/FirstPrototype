@@ -148,4 +148,7 @@ object ScCpChecker{
   def checkTableAC(filteringWithTableTested: (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]]):Unit={
     Table.checkAC(filteringWithTableTested)
   }
+  def checkGCC(filteringWithValuesTested: (Array[Set[Int]],Array[Int])=>Array[Set[Int]]):Unit={
+    Gcc.checkAC(filteringWithValuesTested)
+  }
 }

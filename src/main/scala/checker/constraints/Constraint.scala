@@ -212,11 +212,12 @@ object Constraint extends Checker {
   private var domainsStorage:mutable.Stack[Array[Set[Int]]] = mutable.Stack()
 
   override def applyConstraint(b: BranchOp): Array[Set[Int]] = {
-    b match{
-      case _:Push => push(b.domains)
-      case _:Pop  => pop(b.domains)
-      case restriction:RestrictDomain => restriction.applyRestriction()
+    b match {
+      case _: Push => push(b.domains)
+      case _: Pop => pop(b.domains)
+      case restriction: RestrictDomain => restriction.applyRestriction()
       case _ => b.domains
+    }
   }
 
   def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); return currentDomain}

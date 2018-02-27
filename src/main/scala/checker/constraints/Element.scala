@@ -1,6 +1,6 @@
 package checker.constraints
 
-import checker.{Checker, Generators, LimitCases, NoSolutionException}
+import checker._
 import org.scalacheck.Prop.forAll
 
 import scala.collection.mutable
@@ -8,6 +8,8 @@ import scala.collection.mutable
 object Element extends Checker{
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = elementAC(variables)
+
+  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
 
   def checkAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,constraint)

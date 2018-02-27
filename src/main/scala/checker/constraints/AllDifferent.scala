@@ -8,6 +8,8 @@ object AllDifferent extends Checker{
     if(isAC) Constraint.applyAC(variables,allDifferent)
     else Constraint.applyBC(variables,allDifferent)
   }
+
+  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
   /*
   * This function checks if the constraint passed in argument apply correctly an
   * allDifferent constraint with arc consistency.
