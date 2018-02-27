@@ -45,6 +45,17 @@ object Constraint extends Checker {
     }.check
   }
 
+  def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
+              filtering: BranchOp => Array[Set[Int]],
+              checker: Array[Int] => Boolean) = {
+    checkFunction = checker
+    isAC = false
+    forAll(Generators.basic) { x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
+    }.check
+  }
+
+
   private def cartesian(sol: Stream[Array[Int]], variable: Set[Int]): Stream[Array[Int]] = {
     var newStream: Stream[Array[Int]] = Stream.empty
     for (s <- sol) {
