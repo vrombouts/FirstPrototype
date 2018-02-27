@@ -1,5 +1,5 @@
 package checker
-
+import  scala.util.Random
 import scala.language.implicitConversions
 
 trait Checker {
@@ -28,7 +28,7 @@ trait Checker {
 
   def checkConstraint(variables:Array[Set[Int]],
                       constraintTested:Array[Set[Int]]=>Array[Set[Int]])
-                      : Boolean ={
+  : Boolean ={
     //We first compute the domains generated after the application of the constraint.
     var reducedDomains: Array[Set[Int]] = Array()
     var error: Boolean = false
@@ -78,43 +78,98 @@ trait Checker {
   }
 
   def checkConstraint(variables:Array[Set[Int]],
-                      b:BranchOp,
+                      init:Array[Set[Int]] => Array[Set[Int]],
                       constraintTested:BranchOp=>Array[Set[Int]])
-                      : Boolean ={
+  : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     var reducedDomains: Array[Set[Int]] = Array()
     var error: Boolean = false
-    var ourError:Boolean = false
+    var ourError: Boolean = false
     try {
-      reducedDomains = constraintTested(variables.clone())
+      reducedDomains = init(variables.clone())
     }
-    catch{
+    catch {
       //TODO check if it is not better to have a case of NoSolutionException instead
       case e: NoSolutionException => error = true
     }
     // Then we generate the domains that reducedDomains should have
-    var trueReducedDomains: Array[Set[Int]] = Array()
+    var ourReducedDomains: Array[Set[Int]] = Array()
     try {
-      trueReducedDomains = applyConstraint(variables.clone())
+      ourReducedDomains = applyConstraint(variables.clone())
     }
     catch {
       case e: NoSolutionException => ourError = true
     }
+    if(!comparison(error,ourError,variables,reducedDomains,ourReducedDomains))
+      return false
+    var vars:Array[Set[Int]]=ourReducedDomains.clone()
+    var nPush:Int = 0
+    var nPop:Int = 0
+    val random = new Random
+    val restrictDomainWeight=4
+    for(i<- 0 until 20){
+      // creation of the table of operations with the operations that are allowed
+      // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
+      var operations:Array[BranchOp] = Array(new Push)
+      if(nPush > nPop)
+        operations = operations :+ new Pop
+      if(!allFixed(vars)) {
+        // give more weight to the RestrictDomain operation since it allows multiple operations (<,>,=,!=)
+        for(j <- 0 until restrictDomainWeight)
+          operations = operations :+ new RestrictDomain(vars)
+      }
+      var indexOp = random.nextInt(operations.length)
+      var b:BranchOp=operations(indexOp)
+
+      // apply our constraint and the constraint of the user for the branchOp b and the domains vars
+      var reducedDomains: Array[Set[Int]] = Array()
+      var error: Boolean = false
+      var ourError: Boolean = false
+      try {
+        reducedDomains = constraintTested(b)
+      }
+      catch {
+        //TODO check if it is not better to have a case of NoSolutionException instead
+        case e: NoSolutionException => error = true
+      }
+      // Then we generate the domains that reducedDomains should have
+      var ourReducedDomains: Array[Set[Int]] = Array()
+      try {
+        ourReducedDomains = applyConstraint(vars.clone())
+      }
+      catch {
+        case e: NoSolutionException => ourError = true
+      }
+      // compare our domains filtered with the ones of the user
+      // and if no difference, update the doamains for the next branching operation
+      if(comparison(error,ourError,vars,reducedDomains,ourReducedDomains))
+        vars=ourReducedDomains.clone()
+      else
+        return false
+    }
+    true
+  }
+
+  def allFixed(variables:Array[Set[Int]]) : Boolean = {
+    !variables.exists(x => x.size != 1)
+  }
+
+  def comparison(error:Boolean, ourError:Boolean, variables:Array[Set[Int]], reducedDomains:Array[Set[Int]], ourReducedDomains:Array[Set[Int]]) : Boolean = {
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true
 
     if(error && !ourError){
-      for(i<- trueReducedDomains.indices){
-        if(trueReducedDomains(i).nonEmpty){
-          printer(variables,trueReducedDomains,reducedDomains,error,ourError)
+      for(i<- ourReducedDomains.indices){
+        if(ourReducedDomains(i).nonEmpty){
+          printer(variables,ourReducedDomains,reducedDomains,error,ourError)
           return false
         }
       }
     }
     else if(!ourError) {
-      for (i <- trueReducedDomains.indices) {
-        if (!trueReducedDomains(i).equals(reducedDomains(i))) {
-          printer(variables,trueReducedDomains,reducedDomains,error,ourError)
+      for (i <- ourReducedDomains.indices) {
+        if (!ourReducedDomains(i).equals(reducedDomains(i))) {
+          printer(variables,ourReducedDomains,reducedDomains,error,ourError)
           return false
         }
       }
@@ -122,7 +177,7 @@ trait Checker {
     else{
       //empty domains accepted as having no solutions
       if(reducedDomains.nonEmpty && reducedDomains.forall(x=> x.nonEmpty)){
-        printer(variables,trueReducedDomains,reducedDomains,error,ourError)
+        printer(variables,ourReducedDomains,reducedDomains,error,ourError)
         return false
       }
     }
