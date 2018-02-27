@@ -10,7 +10,7 @@ abstract class BranchOp {}
   *
   */
 class RestrictDomain(private val domains:Array[Set[Int]]) extends BranchOp {
-  private val random = new Random
+  private[this] val random = new Random
   val op: Int = random.nextInt(6)
   var index: Int = random.nextInt(domains.length)
   val constant: Int = randomConstant

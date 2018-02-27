@@ -6,7 +6,7 @@ import oscar.cp._
 import oscar.cp.constraints.AllDiffBC
 import oscar.cp.core.CPPropagStrength
 
-object AllDiffOscaR extends App{
+object AllDifferentBC extends App{
   private def allDifBC(vars:Array[Set[Int]]):Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
     val variables = vars.map(x => CPIntVar(x))
