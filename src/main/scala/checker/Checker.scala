@@ -26,6 +26,8 @@ trait Checker {
 
   def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]]
 
+  def applyConstraint(b:BranchOp): Array[Set[Int]]
+
   def checkConstraint(variables:Array[Set[Int]],
                       constraintTested:Array[Set[Int]]=>Array[Set[Int]])
   : Boolean ={
@@ -110,9 +112,9 @@ trait Checker {
     for(i<- 0 until 20){
       // creation of the table of operations with the operations that are allowed
       // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
-      var operations:Array[BranchOp] = Array(new Push)
+      var operations:Array[BranchOp] = Array(new Push(vars))
       if(nPush > nPop)
-        operations = operations :+ new Pop
+        operations = operations :+ new Pop(vars)
       if(!allFixed(vars)) {
         // give more weight to the RestrictDomain operation since it allows multiple operations (<,>,=,!=)
         for(j <- 0 until restrictDomainWeight)
@@ -120,6 +122,8 @@ trait Checker {
       }
       var indexOp = random.nextInt(operations.length)
       var b:BranchOp=operations(indexOp)
+      if(b.isInstanceOf[Push]) nPush+=1
+      else if(b.isInstanceOf[Pop]) nPop+=1
 
       // apply our constraint and the constraint of the user for the branchOp b and the domains vars
       var reducedDomains: Array[Set[Int]] = Array()
@@ -135,7 +139,7 @@ trait Checker {
       // Then we generate the domains that reducedDomains should have
       var ourReducedDomains: Array[Set[Int]] = Array()
       try {
-        ourReducedDomains = applyConstraint(vars.clone())
+        ourReducedDomains = applyConstraint(b)
       }
       catch {
         case e: NoSolutionException => ourError = true

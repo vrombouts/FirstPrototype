@@ -1,19 +1,23 @@
 package checker
 
-import  scala.util.Random
+import scala.util.Random
 
-abstract class BranchOp {}
+class BranchOp(val domains:Array[Set[Int]]) {
+  override def clone(): BranchOp ={
+    new BranchOp(domains.clone())
+  }
+}
 
 /**
   *domains must not contain all its sets with a size of 1
   * and neither must it have an empty set
   *
   */
-class RestrictDomain(private val domains:Array[Set[Int]]) extends BranchOp {
+class RestrictDomain(private val dom:Array[Set[Int]]) extends BranchOp(dom) {
   private val random = new Random
-  val op: Int = random.nextInt(6)
+  var op: Int = random.nextInt(6)
   var index: Int = random.nextInt(domains.length)
-  val constant: Int = randomConstant
+  var constant: Int = randomConstant
 
   def randomConstant: Int = {
     var dom: Set[Int] = domains(index)
@@ -27,9 +31,30 @@ class RestrictDomain(private val domains:Array[Set[Int]]) extends BranchOp {
     variable(random.nextInt(variable.length))
   }
 
+  def applyRestriction():Array[Set[Int]]={
+    var domainToReduced:Set[Int]=domains(index).toArray.toSet
+    for(i <- domains(index)){
+      if(!Op.respectOp(op,i,constant)){ domainToReduced = domainToReduced - i}
+    }
+    domains(index)=domainToReduced
+    return domains
+  }
+
+  override def clone():RestrictDomain = {
+    var r:RestrictDomain = new RestrictDomain(domains.clone())
+    r.op=this.op
+    r.index=this.index
+    r.constant=this.constant
+    return r
+  }
+
   //type of restriction
   //which variable is touched by the restriction
   //constant
 }
-class Push extends BranchOp {}
-class Pop  extends BranchOp {}
+class Push(private val dom:Array[Set[Int]]) extends BranchOp(dom) {
+  override def clone(): Push = new Push(dom.clone())
+}
+class Pop(private val dom:Array[Set[Int]])  extends BranchOp(dom) {
+  override def clone(): Pop = new Pop(dom.clone())
+}
