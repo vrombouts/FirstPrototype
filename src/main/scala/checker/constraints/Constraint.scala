@@ -37,7 +37,7 @@ object Constraint extends Checker {
 
   def checkAC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
-              checker: Array[Int] => Boolean) = {
+              checker: Array[Int] => Boolean):Unit = {
     checkFunction = checker
     isAC = true
     forAll(Generators.basic) { x =>
@@ -47,7 +47,7 @@ object Constraint extends Checker {
 
   def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
-              checker: Array[Int] => Boolean) = {
+              checker: Array[Int] => Boolean):Unit = {
     checkFunction = checker
     isAC = false
     forAll(Generators.basic) { x =>
@@ -225,12 +225,14 @@ object Constraint extends Checker {
   override def applyConstraint(b: BranchOp): Array[Set[Int]] = {
     var restrictDomain:Array[Set[Int]]=Array()
     b match {
-      case _: Push => restrictDomain = push(b.domains)
-      case _: Pop => restrictDomain = pop(b.domains)
-      case restriction: RestrictDomain => restrictDomain = restriction.applyRestriction()
+      case _: Push => push(b.domains)
+      case _: Pop => pop(b.domains)
+      case restriction: RestrictDomain =>
+        restrictDomain = restriction.applyRestriction()
+        applyConstraint(restrictDomain)
       case _ => b.domains
     }
-    applyConstraint(restrictDomain)
+
   }
 
   def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); currentDomain}
