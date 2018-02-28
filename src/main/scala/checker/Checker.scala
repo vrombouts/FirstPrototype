@@ -92,7 +92,7 @@ trait Checker {
     }
     catch {
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case e: NoSolutionException => error = true
+      case _: NoSolutionException => error = true
     }
     // Then we generate the domains that reducedDomains should have
     var ourReducedDomains: Array[Set[Int]] = Array()
@@ -100,30 +100,19 @@ trait Checker {
       ourReducedDomains = applyConstraint(variables.clone())
     }
     catch {
-      case e: NoSolutionException => ourError = true
+      case _: NoSolutionException => ourError = true
     }
     if(!comparison(error,ourError,variables,reducedDomains,ourReducedDomains))
       return false
+    if(error && ourError) return true
     var vars:Array[Set[Int]]=ourReducedDomains.clone()
     var nPush:Int = 0
-    var nPop:Int = 0
-    val random = new Random
-    val restrictDomainWeight=4
-    for(i<- 0 until 20){
-      // creation of the table of operations with the operations that are allowed
-      // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
-      var operations:Array[BranchOp] = Array(new Push(vars))
-      if(nPush > nPop)
-        operations = operations :+ new Pop(vars)
-      if(!allFixed(vars)) {
-        // give more weight to the RestrictDomain operation since it allows multiple operations (<,>,=,!=)
-        for(j <- 0 until restrictDomainWeight)
-          operations = operations :+ new RestrictDomain(vars)
-      }
-      var indexOp = random.nextInt(operations.length)
-      var b:BranchOp=operations(indexOp)
+    var branches: List[BranchOp] = List()
+    for(_<- 0 until 20){
+      val b:BranchOp=getBranch(nPush,vars)
+      branches ::= b
       if(b.isInstanceOf[Push]) nPush+=1
-      else if(b.isInstanceOf[Pop]) nPop+=1
+      else if(b.isInstanceOf[Pop]) nPush-=1
 
       // apply our constraint and the constraint of the user for the branchOp b and the domains vars
       var reducedDomains: Array[Set[Int]] = Array()
@@ -134,7 +123,7 @@ trait Checker {
       }
       catch {
         //TODO check if it is not better to have a case of NoSolutionException instead
-        case e: NoSolutionException => error = true
+        case _: NoSolutionException => error = true
       }
       // Then we generate the domains that reducedDomains should have
       var ourReducedDomains: Array[Set[Int]] = Array()
@@ -142,15 +131,16 @@ trait Checker {
         ourReducedDomains = applyConstraint(b)
       }
       catch {
-        case e: NoSolutionException => ourError = true
+        case _: NoSolutionException => ourError = true
       }
       // compare our domains filtered with the ones of the user
-      // and if no difference, update the doamains for the next branching operation
-      if(comparison(error,ourError,vars,reducedDomains,ourReducedDomains))
+      // and if no difference, update the domains for the next branching operation
+      if(comparison(error,ourError,variables,reducedDomains,ourReducedDomains,branches))
         vars=ourReducedDomains.clone()
       else
         return false
     }
+    println(branches)
     true
   }
 
@@ -160,31 +150,81 @@ trait Checker {
 
   def comparison(error:Boolean, ourError:Boolean, variables:Array[Set[Int]], reducedDomains:Array[Set[Int]], ourReducedDomains:Array[Set[Int]]) : Boolean = {
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
-    if(error && ourError) return true
+    if (error && ourError) return true
 
-    if(error && !ourError){
-      for(i<- ourReducedDomains.indices){
-        if(ourReducedDomains(i).nonEmpty){
-          printer(variables,ourReducedDomains,reducedDomains,error,ourError)
+    if (error && !ourError) {
+      for (i <- ourReducedDomains.indices) {
+        if (ourReducedDomains(i).nonEmpty) {
+          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
           return false
         }
       }
     }
-    else if(!ourError) {
+    else if (!ourError) {
       for (i <- ourReducedDomains.indices) {
         if (!ourReducedDomains(i).equals(reducedDomains(i))) {
-          printer(variables,ourReducedDomains,reducedDomains,error,ourError)
+          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
           return false
         }
       }
     }
-    else{
+    else {
       //empty domains accepted as having no solutions
-      if(reducedDomains.nonEmpty && reducedDomains.forall(x=> x.nonEmpty)){
-        printer(variables,ourReducedDomains,reducedDomains,error,ourError)
+      if (reducedDomains.nonEmpty && reducedDomains.forall(x => x.nonEmpty)) {
+        printer(variables, ourReducedDomains, reducedDomains, error, ourError)
         return false
       }
     }
     true
+  }
+
+  def comparison(error:Boolean, ourError:Boolean, variables:Array[Set[Int]], reducedDomains:Array[Set[Int]], ourReducedDomains:Array[Set[Int]],b:List[BranchOp]) : Boolean = {
+    //Finally, we compare the two. If they are not equals, the constraint is not correct.
+    if (error && ourError) return true
+
+    if (error && !ourError) {
+      for (i <- ourReducedDomains.indices) {
+        if (ourReducedDomains(i).nonEmpty) {
+          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
+          println("with all those branches in reverse order: " + b)
+          return false
+        }
+      }
+    }
+    else if (!ourError) {
+      for (i <- ourReducedDomains.indices) {
+        if (!ourReducedDomains(i).equals(reducedDomains(i))) {
+          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
+          println("with all those branches in reverse order: " + b)
+          return false
+        }
+      }
+    }
+    else {
+      //empty domains accepted as having no solutions
+      if (reducedDomains.nonEmpty && reducedDomains.forall(x => x.nonEmpty)) {
+        printer(variables, ourReducedDomains, reducedDomains, error, ourError)
+        println("with all those branches in reverse order: " + b)
+        return false
+      }
+    }
+    true
+  }
+
+  private val random = new Random
+
+  def getBranch(nPush:Int,vars:Array[Set[Int]]):BranchOp = {
+    // creation of the table of operations with the operations that are allowed
+    // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
+    var operations:Array[BranchOp] = Array(new Push(vars))
+    if(nPush > 0)
+      operations = operations :+ new Pop(vars)
+    if(!allFixed(vars)) {
+      // give more weight to the RestrictDomain operation since it allows multiple operations (<,>,=,!=)
+      for(j <- 0 until 4)
+        operations = operations :+ new RestrictDomain(vars)
+    }
+    val indexOp = random.nextInt(operations.length)
+    operations(indexOp)
   }
 }

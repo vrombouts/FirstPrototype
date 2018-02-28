@@ -220,18 +220,20 @@ object Constraint extends Checker {
 
   // ------------------------ INCREMENTAL PART ------------------------
 
-  private var domainsStorage:mutable.Stack[Array[Set[Int]]] = mutable.Stack()
+  private val domainsStorage:mutable.Stack[Array[Set[Int]]] = mutable.Stack()
 
   override def applyConstraint(b: BranchOp): Array[Set[Int]] = {
+    var restrictDomain:Array[Set[Int]]=Array()
     b match {
-      case _: Push => push(b.domains)
-      case _: Pop => pop(b.domains)
-      case restriction: RestrictDomain => restriction.applyRestriction()
+      case _: Push => restrictDomain = push(b.domains)
+      case _: Pop => restrictDomain = pop(b.domains)
+      case restriction: RestrictDomain => restrictDomain = restriction.applyRestriction()
       case _ => b.domains
     }
+    applyConstraint(restrictDomain)
   }
 
-  def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); return currentDomain}
+  def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); currentDomain}
   def pop(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {
     if(domainsStorage.nonEmpty)
       domainsStorage.pop()

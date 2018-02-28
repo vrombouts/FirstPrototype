@@ -20,6 +20,18 @@ object Op {
     }
   }
 
+  def printOp(operation:Int):String = {
+    operation match{
+      case `equal`              => "=="
+      case `different`          => "!="
+      case `lesserThan`         => "<"
+      case `lesserThanOrEqual`  => "<="
+      case `greaterThan`        => ">"
+      case `greaterThanOrEqual` => ">="
+      case _ => "NoSuchOp" //no such op
+    }
+  }
+
   def respectOp(operation:Int, sum:Int, constant:Int) :Boolean= {
     operation match {
       case `equal` => sum == constant

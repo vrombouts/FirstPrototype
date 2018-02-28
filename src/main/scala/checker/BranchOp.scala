@@ -27,7 +27,7 @@ class RestrictDomain(private val dom:Array[Set[Int]]) extends BranchOp(dom) {
     }
     if (op == Op.lesserThan || op == Op.greaterThanOrEqual) dom = dom - dom.min
     else if (op == Op.greaterThan || op == Op.lesserThanOrEqual) dom = dom - dom.max
-    val variable = domains(index).toArray
+    val variable = dom.toArray
     variable(random.nextInt(variable.length))
   }
 
@@ -37,24 +37,31 @@ class RestrictDomain(private val dom:Array[Set[Int]]) extends BranchOp(dom) {
       if(!Op.respectOp(op,i,constant)){ domainToReduced = domainToReduced - i}
     }
     domains(index)=domainToReduced
-    return domains
+    domains
   }
 
   override def clone():RestrictDomain = {
-    var r:RestrictDomain = new RestrictDomain(domains.clone())
+    val r:RestrictDomain = new RestrictDomain(domains.clone())
     r.op=this.op
     r.index=this.index
     r.constant=this.constant
-    return r
+    r
   }
 
+  override def toString: String = {
+    val str = "Restriction of domains for" + index + "th variable with this operation :"
+    str +"x_"+index+Op.printOp(op)+constant+"\n"
+  }
   //type of restriction
   //which variable is touched by the restriction
   //constant
 }
 class Push(private val dom:Array[Set[Int]]) extends BranchOp(dom) {
   override def clone(): Push = new Push(dom.clone())
+  override def toString: String = "Push\n"
 }
 class Pop(private val dom:Array[Set[Int]])  extends BranchOp(dom) {
   override def clone(): Pop = new Pop(dom.clone())
+
+  override def toString: String = "Pop\n"
 }
