@@ -14,6 +14,16 @@ class JCpChecker {
               checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
     Constraint.checkBC(filtering,checker)
   }
+  def checkAC(init: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
+              filtering : Function[BranchOp,Array[java.util.Set[Integer]]],
+              checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
+    Constraint.checkAC(init, filtering,checker)
+  }
+  def checkBC(init: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
+              filtering : Function[BranchOp,Array[java.util.Set[Integer]]],
+              checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
+    Constraint.checkBC(init, filtering,checker)
+  }
   def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
     AllDifferent.checkAC(filtering)
   }
@@ -91,6 +101,17 @@ class JCpChecker {
       val ar: Array[Integer] = myArray.map(x => new Integer(x))
       val bool: Boolean = fun.apply(ar)
       bool
+    }
+  }
+  implicit private def branchToScalaFunction(fun: Function[BranchOp,Array[java.util.Set[Integer]]]): BranchOp => Array[Set[Int]] = {
+    branchOp: BranchOp => {
+      val cons = fun.apply(branchOp)
+      var result:Array[Set[Int]] = new Array[Set[Int]](cons.length)
+      for(i <- cons.indices){
+        val set = cons(i).asScala.toSet
+        result(i) =  set
+      }
+      result
     }
   }
   implicit private def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
