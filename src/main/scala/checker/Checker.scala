@@ -108,12 +108,17 @@ trait Checker {
     var vars:Array[Set[Int]]=ourReducedDomains.clone()
     var nPush:Int = 0
     var branches: List[BranchOp] = List()
-    for(_<- 0 until 20){
+    for(_<- 0 until 25){
       val b:BranchOp=getBranch(nPush,vars)
       branches ::= b
-      if(b.isInstanceOf[Push]) nPush+=1
-      else if(b.isInstanceOf[Pop]) nPush-=1
-
+      b match {
+        case _:Push => nPush+=1
+        case _:Pop  => nPush-=1
+        case _:RestrictDomain =>
+        case _:BranchOp => //no more BranchOp possible (should not happen)
+          println(branches)
+          return true
+      }
       // apply our constraint and the constraint of the user for the branchOp b and the domains vars
       var reducedDomains: Array[Set[Int]] = Array()
       var error: Boolean = false
@@ -144,9 +149,9 @@ trait Checker {
     true
   }
 
-  def allFixed(variables:Array[Set[Int]]) : Boolean = {
-    !variables.exists(x => x.size != 1)
-  }
+
+
+
 
   def comparison(error:Boolean, ourError:Boolean, variables:Array[Set[Int]], reducedDomains:Array[Set[Int]], ourReducedDomains:Array[Set[Int]]) : Boolean = {
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
@@ -177,7 +182,6 @@ trait Checker {
     }
     true
   }
-
   def comparison(error:Boolean, ourError:Boolean, variables:Array[Set[Int]], reducedDomains:Array[Set[Int]], ourReducedDomains:Array[Set[Int]],b:List[BranchOp]) : Boolean = {
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if (error && ourError) return true
@@ -211,20 +215,29 @@ trait Checker {
     true
   }
 
-  private val random = new Random
-
+  private[this] val random = new Random
+  private[this] var lastPush = false
+  private def allFixed(variables:Array[Set[Int]]) : Boolean = {
+    !variables.exists(x => x.size != 1)
+  }
   def getBranch(nPush:Int,vars:Array[Set[Int]]):BranchOp = {
     // creation of the table of operations with the operations that are allowed
     // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
-    var operations:Array[BranchOp] = Array(new Push(vars))
-    if(nPush > 0)
-      operations = operations :+ new Pop(vars)
+    var operations:List[BranchOp] = List()
     if(!allFixed(vars)) {
-      // give more weight to the RestrictDomain operation since it allows multiple operations (<,>,=,!=)
-      for(j <- 0 until 4)
-        operations = operations :+ new RestrictDomain(vars)
-    }
-    val indexOp = random.nextInt(operations.length)
+      if(nPush==0) {lastPush=true; return new Push(vars)}
+      if(!lastPush) operations ::= new Push(vars)
+      if(nPush > 0 && !lastPush) operations ::= new Pop(vars)
+      // give more weight to the RestrictDomain operation
+      // since it allows multiple operations (<,>,=,!=,<=,>=)
+      for(_ <- 0 until 4)
+        operations ::=  new RestrictDomain(vars)
+    }else if(nPush>0) return new Pop(vars) //nothing to restrict anymore => pop
+    //random result
+    else return new BranchOp(vars) //should be taken if all Fixed before any branching
+    val indexOp = random.nextInt(operations.size)
+    if(operations(indexOp).isInstanceOf[Push]) lastPush=true
+    else lastPush=false
     operations(indexOp)
   }
 }

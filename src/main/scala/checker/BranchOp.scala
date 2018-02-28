@@ -6,6 +6,11 @@ class BranchOp(val domains:Array[Set[Int]]) {
   override def clone(): BranchOp ={
     new BranchOp(domains.clone())
   }
+  /*
+   * A BranchOp is not instantiated as one of the class inheriting it only
+   * if none of those class would have uses to be created.
+   */
+  override def toString: String = "No more branching possible"
 }
 
 /**
@@ -49,8 +54,7 @@ class RestrictDomain(private val dom:Array[Set[Int]]) extends BranchOp(dom) {
   }
 
   override def toString: String = {
-    val str = "Restriction of domains for" + index + "th variable with this operation :"
-    str +"x_"+index+Op.printOp(op)+constant+"\n"
+    "Restriction of domains: x_"+index+Op.printOp(op)+constant+"\n"
   }
   //type of restriction
   //which variable is touched by the restriction
