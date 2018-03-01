@@ -20,8 +20,9 @@ object Constraint extends Checker {
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
+    var a:Int=0
     forAll(Generators.basic) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+      a>=100 || x.isEmpty || checkEmpty(x) || {println(a); println(x); a=a+1; checkConstraint(x.toArray, filteringTested)}
     }.check
     //TODO: add simple case limit possible for all constraints
   }
@@ -29,15 +30,16 @@ object Constraint extends Checker {
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
+    var a : Int =0
     forAll(Generators.basic) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+      x.isEmpty || checkEmpty(x) || {println(a); a=a+1; checkConstraint(x.toArray, filteringTested)}
     }.check
     //TODO: add simple case limit possible for all constraints
   }
 
   def checkAC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
-              checker: Array[Int] => Boolean):Unit = {
+              checker: Array[Int] => Boolean) = {
     checkFunction = checker
     isAC = true
     forAll(Generators.basic) { x =>
@@ -47,7 +49,7 @@ object Constraint extends Checker {
 
   def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
-              checker: Array[Int] => Boolean):Unit = {
+              checker: Array[Int] => Boolean) = {
     checkFunction = checker
     isAC = false
     forAll(Generators.basic) { x =>
@@ -55,23 +57,22 @@ object Constraint extends Checker {
     }.check
   }
 
-
-  private def cartesian(sol: Stream[Array[Int]], variable: Set[Int]): Stream[Array[Int]] = {
-    var newStream: Stream[Array[Int]] = Stream.empty
+  private def cartesian(sol: Stream[List[Int]], variable: Set[Int]): Stream[List[Int]] = {
+    var newStream: Stream[List[Int]] = Stream.empty
     for (s <- sol) {
       for (value <- variable) {
-        val array = Array.concat(s, Array(value))
-        val strm: Stream[Array[Int]] = cons(array, Stream.empty)
-        newStream = newStream.append(strm)
+        val l : List[Int]=value :: s
+        //val strm: Stream[List[Int]] = l #:: Stream.empty
+        newStream = l +: newStream
       }
     }
     newStream
   }
 
-  private def instantiateStream(variable: Set[Int]): Stream[Array[Int]] = {
-    var stream = Stream.empty[Array[Int]]
+  private def instantiateStream(variable: Set[Int]): Stream[List[Int]] = {
+    var stream = Stream.empty[List[Int]]
     for (i <- variable) {
-      stream = stream.append(cons(Array(i), Stream.empty))
+      stream = List(i) +: stream
     }
     stream
   }
@@ -81,11 +82,11 @@ object Constraint extends Checker {
     if (variables.length < 1) {
       throw new NoSolutionException
     }
-    var stream: Stream[Array[Int]] = instantiateStream(variables(0))
+    var stream: Stream[List[Int]] = instantiateStream(variables(0))
     for (i <- 1 until variables.length) {
-      stream = cartesian(stream, variables(i)).filter(constraint)
+      stream = cartesian(stream, variables(i)).filter(x => constraint(x.toArray))
     }
-    val solutions: Array[Array[Int]] = stream.toArray
+    val solutions:Array[Array[Int]] = stream.map(x => x.reverse.toArray).toArray
     solutions
   }
 
@@ -225,14 +226,12 @@ object Constraint extends Checker {
   override def applyConstraint(b: BranchOp): Array[Set[Int]] = {
     var restrictDomain:Array[Set[Int]]=Array()
     b match {
-      case _: Push => push(b.domains)
-      case _: Pop => pop(b.domains)
-      case restriction: RestrictDomain =>
-        restrictDomain = restriction.applyRestriction()
-        applyConstraint(restrictDomain)
+      case _: Push => restrictDomain = push(b.domains)
+      case _: Pop => restrictDomain = pop(b.domains)
+      case restriction: RestrictDomain => restrictDomain = restriction.applyRestriction()
       case _ => b.domains
     }
-
+    applyConstraint(restrictDomain)
   }
 
   def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); currentDomain}

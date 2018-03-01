@@ -10,8 +10,7 @@ object Generators {
   val triDomain:Gen[Set[Int]] =  Gen.containerOfN[Set,Int](3,Gen.choose(-10,10))
   def arrayGen(size: Int):Gen[Array[Int]] =  Gen.containerOfN[Array,Int](size,Gen.choose(-10,10))
 
-  val basic: Gen[List[Set[Int]]] = Gen.containerOfN[List,Set[Int]](8,triDomain)
-
+  val basic: Gen[List[Set[Int]]] = Gen.containerOfN[List,Set[Int]](10,triDomain)
   val gcc: Gen[List[Set[Int]]] = for{
     three       <- Gen.containerOfN[Set,Int](2,Gen.choose(0,2))
     assignments <- Gen.containerOfN[List,Set[Int]](8,three)

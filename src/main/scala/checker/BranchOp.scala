@@ -1,6 +1,9 @@
 package checker
 
+import java.util
+
 import scala.util.Random
+import scala.collection.JavaConverters._
 
 class BranchOp(val domains:Array[Set[Int]]) {
   override def clone(): BranchOp ={
