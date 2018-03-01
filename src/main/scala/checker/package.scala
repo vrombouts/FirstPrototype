@@ -1,4 +1,7 @@
 import java.util.function.{BiFunction, Function}
+
+import checker.BranchOp
+
 import scala.collection.JavaConverters._
 
 
@@ -17,8 +20,18 @@ package object Conversions {
     }
     sca
   }
-  
-  
+
+  implicit def branchToScalaFunction(fun: Function[BranchOp,Array[java.util.Set[Integer]]]): BranchOp => Array[Set[Int]] = {
+    branchOp: BranchOp => {
+      val cons = fun.apply(branchOp)
+      var result:Array[Set[Int]] = new Array[Set[Int]](cons.length)
+      for(i <- cons.indices){
+        val set = cons(i).asScala.toSet
+        result(i) =  set
+      }
+      result
+    }
+  }
   implicit def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]])
   : (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]] = {
     (myArray,myTable) =>{

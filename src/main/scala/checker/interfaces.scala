@@ -13,6 +13,16 @@ class JCpChecker {
               checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
     Constraint.checkBC(filtering,checker)
   }
+  def checkAC(init: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
+              filtering : Function[BranchOp,Array[java.util.Set[Integer]]],
+              checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
+    Constraint.checkAC(init, filtering,checker)
+  }
+  def checkBC(init: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]],
+              filtering : Function[BranchOp,Array[java.util.Set[Integer]]],
+              checker : Function[Array[Integer],java.lang.Boolean]): Unit ={
+    Constraint.checkBC(init, filtering,checker)
+  }
   def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]):Unit={
     AllDifferent.checkAC(filtering)
   }
@@ -43,7 +53,6 @@ class JCpChecker {
   def checkTableAC(tableFiltering: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]]):Unit = {
     Table.checkAC(tableFiltering)
   }
-
 }
 object ScCpChecker{
   def checkAC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {
