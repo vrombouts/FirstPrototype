@@ -2,7 +2,7 @@ package checker.constraints
 
 import checker._
 import org.scalacheck.Prop.forAll
-
+import Conversions._
 import scala.collection.immutable.Stream.cons
 import scala.collection.mutable
 
@@ -20,8 +20,9 @@ object Constraint extends Checker {
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
+    var a:Int=0
     forAll(Generators.basic) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+      a>100 || x.isEmpty || checkEmpty(x) || {println(a); a=a+1; println(x); checkConstraint(x.toArray, filteringTested)}
     }.check
     //TODO: add simple case limit possible for all constraints
   }
@@ -60,9 +61,9 @@ object Constraint extends Checker {
     var newStream: Stream[Array[Int]] = Stream.empty
     for (s <- sol) {
       for (value <- variable) {
-        val array = Array.concat(s, Array(value))
-        val strm: Stream[Array[Int]] = cons(array, Stream.empty)
-        newStream = newStream.append(strm)
+        val array: Array[Int] = Array.concat(s, Array(value))
+        //val strm: Stream[Array[Int]] = cons(array, Stream.empty)
+        newStream = newStream :+ array
       }
     }
     newStream

@@ -1,8 +1,7 @@
 package checker
 
-import scala.collection.JavaConverters._
 import java.util.function.{BiFunction, Function}
-
+import Conversions._
 import checker.constraints._
 
 class JCpChecker {
@@ -45,71 +44,6 @@ class JCpChecker {
     Table.checkAC(tableFiltering)
   }
 
-  implicit private def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]])
-  : (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]] = {
-    (myArray,myTable) =>{
-      val javaArray : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
-      for(i <- myArray.indices){
-        val set = myArray(i).asJava
-        javaArray(i) = set
-      }
-      val javaTable : java.util.Set[Array[Integer]] = new java.util.HashSet[Array[Integer]]()
-      for(tableElement<- myTable){
-        val javaTableElement:Array[Integer] = new Array[Integer](tableElement.length)
-        for(i<- tableElement.indices){
-          javaTableElement(i)=tableElement(i)
-        }
-        javaTable.add(javaTableElement)
-      }
-      val cons = fun.apply(javaArray,javaTable)
-      val result = new Array[Set[Int]](myArray.length)
-      for(i <- myArray.indices){
-        val set = cons(i).asScala.toSet
-        result(i) = set
-      }
-      result
-    }
-  }
-  implicit private def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
-    myArray =>{
-      val a : Array[java.util.Set[Integer]]= new Array[java.util.Set[Integer]](myArray.length)
-      for(i <- myArray.indices){
-        val set = myArray(i).asJava
-        a(i) = set
-      }
-      val cons = fun.apply(a)
-      val result = new Array[Set[Int]](myArray.length)
-      for(i <- myArray.indices){
-        val set = cons(i).asScala.toSet
-        result(i) = set
-      }
-      result
-    }
-  }
-  implicit private def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]): Array[Int] => Boolean = {
-    myArray =>{
-      val ar: Array[Integer] = myArray.map(x => new Integer(x))
-      val bool: Boolean = fun.apply(ar)
-      bool
-    }
-  }
-  implicit private def int2IntegerSet(x: java.util.Set[Int]): java.util.Set[Integer] ={
-    val result : java.util.Set[Integer] = new java.util.HashSet[Integer]()
-    val iterator = x.iterator()
-    while(iterator.hasNext){
-      val a: java.lang.Integer = new Integer(iterator.next())
-      result.add(a)
-    }
-    result
-  }
-  implicit private def Integer2intSet(x: Set[Integer]): Set[Int] ={
-    var result : Set[Int] = Set[Int]()
-    for (elem <- x){
-      val a: Int = elem.asInstanceOf[Int]
-      result += a
-    }
-    result
-  }
 }
 object ScCpChecker{
   def checkAC(filteringTested: Array[Set[Int]]=>Array[Set[Int]], checker:Array[Int]=>Boolean): Unit = {

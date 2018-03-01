@@ -1,6 +1,9 @@
 package checker
-import  scala.util.Random
+import java.util
+
+import scala.util.Random
 import scala.language.implicitConversions
+import Conversions._
 
 trait Checker {
   def checkEmpty(variables: List[Set[Int]]): Boolean = {
@@ -240,4 +243,5 @@ trait Checker {
     else lastPush=false
     operations(indexOp)
   }
+
 }
