@@ -1,6 +1,9 @@
 package checker
-import  scala.util.Random
+import java.util
+
+import scala.util.Random
 import scala.language.implicitConversions
+import Conversions._
 
 trait Checker {
   def checkEmpty(variables: List[Set[Int]]): Boolean = {
@@ -32,26 +35,23 @@ trait Checker {
                       constraintTested:Array[Set[Int]]=>Array[Set[Int]])
   : Boolean ={
     //We first compute the domains generated after the application of the constraint.
-    println(variables.toList)
     var reducedDomains: Array[Set[Int]] = Array()
     var error: Boolean = false
     var ourError:Boolean = false
     try {
       reducedDomains = constraintTested(variables.clone())
-      println(reducedDomains.toList)
     }
     catch{
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case _: NoSolutionException => {println("their error ");error = true}
+      case _: NoSolutionException => error = true
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
     try {
       trueReducedDomains = applyConstraint(variables.clone())
-      println(trueReducedDomains.toList)
     }
     catch {
-      case _: NoSolutionException => {println("ourError");ourError = true} // doesn't catch java.lang.StackOverflowError
+      case _: NoSolutionException => ourError = true // doesn't catch java.lang.StackOverflowError
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true
@@ -243,4 +243,5 @@ trait Checker {
     else lastPush=false
     operations(indexOp)
   }
+
 }

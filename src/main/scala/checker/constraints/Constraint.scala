@@ -2,7 +2,7 @@ package checker.constraints
 
 import checker._
 import org.scalacheck.Prop.forAll
-
+import Conversions._
 import scala.collection.immutable.Stream.cons
 import scala.collection.mutable
 
@@ -22,7 +22,7 @@ object Constraint extends Checker {
     isAC = true
     var a:Int=0
     forAll(Generators.basic) { x =>
-      a>=100 || x.isEmpty || checkEmpty(x) || {println(a); println(x); a=a+1; checkConstraint(x.toArray, filteringTested)}
+      a>=100 || x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
   }
