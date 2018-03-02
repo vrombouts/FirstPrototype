@@ -14,7 +14,7 @@ object SumBCIncr extends App{
   private def init(vars: Array[Set[Int]]): Array[Set[Int]] = {
     solver = CPSolver()
     currentVars = vars.map(x => CPIntVar(x))
-    val ad = sum(currentVars) > 25
+    val ad = sum(currentVars).eq(5)
     try {
       solver.post(ad)
     } catch {
@@ -58,7 +58,7 @@ object SumBCIncr extends App{
       var sum = 0
       for (i <- sol)
         sum += i
-      if (sum > 25) return true
+      if (sum == 5) return true
       else return false
     }
     true
