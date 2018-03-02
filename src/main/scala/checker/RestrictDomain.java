@@ -1,9 +1,6 @@
 package checker;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class RestrictDomain extends BranchOp{
     private Random random = new Random();
@@ -33,8 +30,8 @@ public class RestrictDomain extends BranchOp{
 
     public Set<Integer>[] applyRestriction(){
         Set<Integer> domainToReduced= new HashSet<>(domains[index]);
-        for(Integer i: domains[index]){
-            if(!Op.respectOp(op,i,constant)){domainToReduced.remove(i);}
+        for(Integer i: domains[index]) {
+            if (!Op.respectOp(op, i, constant)) domainToReduced.remove(i);
         }
         domains[index]=domainToReduced;
         return domains;
@@ -46,7 +43,7 @@ public class RestrictDomain extends BranchOp{
         Integer minimum = Collections.min(dom);
         Set<Integer> trunc = new HashSet<>();
         for(Integer i : dom){
-            if(minimum.equals(i) )trunc.add(i);
+            if(!minimum.equals(i) )trunc.add(i);
         }
         return trunc;
     }
@@ -54,7 +51,7 @@ public class RestrictDomain extends BranchOp{
         Integer maximum =  Collections.max(dom);
         Set<Integer> trunc = new HashSet<>();
         for(Integer i : dom){
-            if(maximum.equals(i) )trunc.add(i);
+            if(!maximum.equals(i) )trunc.add(i);
         }
         return trunc;
     }

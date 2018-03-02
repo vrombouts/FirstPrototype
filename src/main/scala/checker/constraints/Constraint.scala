@@ -22,7 +22,7 @@ object Constraint extends Checker {
     isAC = true
     var a:Int=0
     forAll(Generators.basic) { x =>
-      a>100 || x.isEmpty || checkEmpty(x) || {println(a); a=a+1; println(x); checkConstraint(x.toArray, filteringTested)}
+      a>100 || x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
   }
@@ -57,39 +57,50 @@ object Constraint extends Checker {
   }
 
 
-  private def cartesian(sol: Stream[Array[Int]], variable: Set[Int]): Stream[Array[Int]] = {
-    var newStream: Stream[Array[Int]] = Stream.empty
-    for (s <- sol) {
-      for (value <- variable) {
-        val array: Array[Int] = Array.concat(s, Array(value))
-        //val strm: Stream[Array[Int]] = cons(array, Stream.empty)
-        newStream = newStream :+ array
+  // Applying AC with pruning //
+  private def firstStream(variable:Set[Int]): Stream[List[Int]] = {
+    variable.map(x => List(x)).toStream
+  }
+  private def perOneValueStreamConstructor(solution:List[Int],variable:Set[Int],str:Stream[List[Int]]):Stream[List[Int]] = {
+    if(variable.isEmpty) return str
+    val current = variable.last
+    (current::solution) #:: perOneValueStreamConstructor(solution, variable-current, str)
+  }
+  private def nthStream(variable: Set[Int], previousStream:Stream[List[Int]]):Stream[List[Int]] = {
+    if(previousStream.isEmpty) return Stream.empty[List[Int]]
+    val solution = previousStream.head
+    val str = (variable.last::solution)#::nthStream(variable, previousStream.tail)
+    val vars = variable - variable.last
+    perOneValueStreamConstructor(solution,vars,str)
+  }
+  @throws[NoSolutionException]
+  private def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Stream[List[Int]] = {
+    if (variables.length < 1) throw new NoSolutionException
+    var str = firstStream(variables.last).filter(x => constraint(x.toArray))
+    if(variables.length==1) return str
+    for( i <- variables.length-2 to 0 by -1){
+      str = nthStream(variables(i),str).filter(x => constraint(x.toArray))
+    }
+    str
+  }
+  def toDomainsAC(solutions: Stream[List[Int]]): Array[Set[Int]] = {
+    val variables: Array[Set[Int]] = Array.fill(solutions.head.size)(Set.empty)
+    solutions.foreach{sol =>
+      for(i<- variables.indices){
+        variables(i)+=sol(i)
       }
     }
-    newStream
+    variables
   }
-
-  private def instantiateStream(variable: Set[Int]): Stream[Array[Int]] = {
-    var stream = Stream.empty[Array[Int]]
-    for (i <- variable) {
-      stream = stream.append(cons(Array(i), Stream.empty))
+  def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
+    val variables: Array[Set[Int]] = Array.fill(solutions(0).length)(Set.empty)
+    solutions.foreach{sol =>
+      for(i<- variables.indices){
+        variables(i)+=sol(i)
+      }
     }
-    stream
+    variables
   }
-
-  @throws[NoSolutionException]
-  private def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Array[Int]] = {
-    if (variables.length < 1) {
-      throw new NoSolutionException
-    }
-    var stream: Stream[Array[Int]] = instantiateStream(variables(0))
-    for (i <- 1 until variables.length) {
-      stream = cartesian(stream, variables(i)).filter(constraint)
-    }
-    val solutions: Array[Array[Int]] = stream.toArray
-    solutions
-  }
-
   @throws[NoSolutionException]
   def applyAC(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Set[Int]] = {
     val sol = cartesianProduct(variables, constraint)
@@ -98,18 +109,7 @@ object Constraint extends Checker {
     result
   }
 
-  def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
-    if (solutions.length < 1) return Array[Set[Int]]()
-    val variables: Array[Set[Int]] = new Array[Set[Int]](solutions(0).length)
-    for (i <- variables.indices) {
-      var domain = Set.empty[Int]
-      for (j <- solutions.indices) {
-        domain += solutions(j)(i)
-      }
-      variables(i) = collection.mutable.SortedSet(domain.toList: _*).toSet
-    }
-    variables
-  }
+  // Applying AC without pruning //
 
   def solutions(variables: Array[Set[Int]]): Array[Array[Int]] = {
     val currentSol: Array[Int] = Array.fill(variables.length)(0)
@@ -133,6 +133,9 @@ object Constraint extends Checker {
     val sols: Array[Array[Int]] = solutions(variables).filter(x => constraint(x))
     toDomainsAC(sols)
   }
+
+
+  //applying BC with pruning //
 
   @throws[NoSolutionException]
   private def getIntervals(variables: Array[Set[Int]]): Array[Interval] = {
@@ -219,7 +222,7 @@ object Constraint extends Checker {
    */
   def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
 
-  // ------------------------ INCREMENTAL PART ------------------------
+  // ------------------------ INCREMENTAL PART ------------------------ //
 
   private val domainsStorage:mutable.Stack[Array[Set[Int]]] = mutable.Stack()
 
@@ -229,11 +232,10 @@ object Constraint extends Checker {
       case _: Push => push(b.domains)
       case _: Pop => pop(b.domains)
       case restriction: RestrictDomain =>
-        restrictDomain = restriction.applyRestriction()
-        applyConstraint(restrictDomain)
+          restrictDomain = restriction.applyRestriction()
+          applyConstraint(restrictDomain)
       case _ => b.domains
     }
-
   }
 
   def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); currentDomain}
