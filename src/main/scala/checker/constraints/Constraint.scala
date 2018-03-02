@@ -2,7 +2,6 @@ package checker.constraints
 
 import checker._
 import org.scalacheck.Prop.forAll
-import Conversions._
 import scala.collection.mutable
 
 
@@ -28,9 +27,8 @@ object Constraint extends Checker {
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
-    var a : Int =0
     forAll(Generators.basic) { x =>
-      x.isEmpty || checkEmpty(x) || {println(a); a=a+1; checkConstraint(x.toArray, filteringTested)}
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
   }
@@ -83,7 +81,7 @@ object Constraint extends Checker {
     }
     str
   }
-  def toDomainsAC(solutions: Stream[List[Int]]): Array[Set[Int]] = {
+  private def toDomainsAC(solutions: Stream[List[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions.head.size)(Set.empty)
     solutions.foreach{sol =>
       for(i<- variables.indices){
@@ -221,29 +219,4 @@ object Constraint extends Checker {
    * This constraint is used to test. It does absolutely nothing.
    */
   def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
-
-  // ------------------------ INCREMENTAL PART ------------------------ //
-
-  private val domainsStorage:mutable.Stack[Array[Set[Int]]] = mutable.Stack()
-
-  override def applyConstraint(b: BranchOp): Array[Set[Int]] = {
-    var restrictDomain:Array[Set[Int]]=Array()
-    b match {
-      case _: Push => push(b.domains)
-      case _: Pop => pop(b.domains)
-      case restriction: RestrictDomain =>
-          restrictDomain = restriction.applyRestriction()
-          applyConstraint(restrictDomain)
-      case _ => b.domains
-    }
-  }
-
-  def push(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {domainsStorage.push(currentDomain); currentDomain}
-  def pop(currentDomain:Array[Set[Int]]):Array[Set[Int]] = {
-    if(domainsStorage.nonEmpty)
-      domainsStorage.pop()
-    else
-      currentDomain
-  }
-
 }

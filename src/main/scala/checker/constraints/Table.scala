@@ -1,6 +1,6 @@
 package checker.constraints
 
-import checker.{BranchOp, Generators, LimitCases, NoSolutionException}
+import checker.{Generators, LimitCases, NoSolutionException}
 import org.scalacheck.Prop.forAll
 
 object Table extends checker.Checker {
@@ -39,8 +39,6 @@ object Table extends checker.Checker {
     if(solutions.isEmpty) throw new NoSolutionException
     Constraint.toDomainsAC(solutions.toArray)
   }
-
-  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
 
   private def possibleWith(variables: Array[Set[Int]], solution: Array[Int]): Boolean = {
     for(i <- solution.indices){

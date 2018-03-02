@@ -69,5 +69,4 @@ object Gcc extends Checker {
     gccToDomainsAC(sols,values,count)
   }
 
-  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
 }
