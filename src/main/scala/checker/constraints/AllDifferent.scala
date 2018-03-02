@@ -9,7 +9,6 @@ object AllDifferent extends Checker{
     else Constraint.applyBC(variables,allDifferent)
   }
 
-  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
   /*
   * This function checks if the constraint passed in argument apply correctly an
   * allDifferent constraint with arc consistency.

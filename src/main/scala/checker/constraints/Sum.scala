@@ -11,8 +11,6 @@ object Sum extends Checker{
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     sumBC(variables,operator)
   }
-  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
-
   /*def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
 
     forAll(Generators.basic){ x =>

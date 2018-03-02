@@ -9,8 +9,6 @@ object Element extends Checker{
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = elementAC(variables)
 
-  override def applyConstraint(b:BranchOp):Array[Set[Int]] = null
-
   def checkAC(constraint: Array[Set[Int]] => Array[Set[Int]]) : Unit={
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,constraint)
     forAll(Generators.element){ x =>
