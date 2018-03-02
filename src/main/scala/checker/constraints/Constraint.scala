@@ -3,14 +3,13 @@ package checker.constraints
 import checker._
 import org.scalacheck.Prop.forAll
 import Conversions._
-import scala.collection.immutable.Stream.cons
 import scala.collection.mutable
 
 
 object Constraint extends Checker {
 
   private var isAC: Boolean = true
-  private var checkFunction: Array[Int] => Boolean = null
+  private var checkFunction: Array[Int] => Boolean = _
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     if (isAC) applyAC(variables, checkFunction)
@@ -20,9 +19,8 @@ object Constraint extends Checker {
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
-    var a:Int=0
     forAll(Generators.basic) { x =>
-      a>100 || x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
   }
@@ -30,15 +28,16 @@ object Constraint extends Checker {
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
+    var a : Int =0
     forAll(Generators.basic) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+      x.isEmpty || checkEmpty(x) || {println(a); a=a+1; checkConstraint(x.toArray, filteringTested)}
     }.check
     //TODO: add simple case limit possible for all constraints
   }
 
   def checkAC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
-              checker: Array[Int] => Boolean):Unit = {
+              checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
     forAll(Generators.basic) { x =>
@@ -48,7 +47,7 @@ object Constraint extends Checker {
 
   def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
-              checker: Array[Int] => Boolean):Unit = {
+              checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
     forAll(Generators.basic) { x =>
@@ -72,6 +71,7 @@ object Constraint extends Checker {
     val str = (variable.last::solution)#::nthStream(variable, previousStream.tail)
     val vars = variable - variable.last
     perOneValueStreamConstructor(solution,vars,str)
+
   }
   @throws[NoSolutionException]
   private def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Stream[List[Int]] = {

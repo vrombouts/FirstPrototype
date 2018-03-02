@@ -51,7 +51,7 @@ trait Checker {
       trueReducedDomains = applyConstraint(variables.clone())
     }
     catch {
-      case _: NoSolutionException => ourError = true
+      case _: NoSolutionException => ourError = true // doesn't catch java.lang.StackOverflowError
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
     if(error && ourError) return true
