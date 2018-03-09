@@ -11,10 +11,10 @@ object SumBCIncr extends App{
   implicit private var solver:CPSolver = new CPSolver
   private var currentVars:Array[CPIntVar] = _
 
-  private def init(vars: Array[Set[Int]]): Array[Set[Int]] = {
+  private def init(vars: Array[Set[Int]], c:Int): Array[Set[Int]] = {
     solver = CPSolver()
     currentVars = vars.map(x => CPIntVar(x))
-    val ad = sum(currentVars).eq(5)
+    val ad = sum(currentVars).eq(c)
     try {
       solver.post(ad)
     } catch {
@@ -53,16 +53,17 @@ object SumBCIncr extends App{
     }
   }
 
-  def checker(sol:Array[Int]):Boolean= {
+  def checker(sol:Array[Int],c:Int):Boolean= {
     if(sol.length==currentVars.length) {
       var sum = 0
       for (i <- sol)
         sum += i
-      if (sum == 5) return true
+      if (sum == c) return true
       else return false
     }
     true
   }
 
-  Constraint.checkAC(init,filtering, checker)
+  for(i <- 1 to 100 by 5)
+    Constraint.checkBC(init(_,i),filtering, checker(_,i))
 }
