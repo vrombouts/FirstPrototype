@@ -183,6 +183,11 @@ object Constraint extends Checker {
     if (intervals.length == 1) {
       if (constraint(sol))
         return false
+      else{
+        if (interval.domain.size == 1) throw new NoSolutionException
+        interval.update(minOrMax)
+        return true
+      }
     }
     var i: Int = 0
     while (i < intervals.length && sol.nonEmpty) {
