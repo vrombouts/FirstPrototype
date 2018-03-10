@@ -28,7 +28,19 @@ object Scheduling {
 
 
 
-
+  def edgeFinding(activities: Array[Activity]) : Array[Activity] = {
+    omegas(activities).foreach { set =>
+      for (activity <- activities) {
+        if (!set.contains(activity)) {
+          if (est(set, activity) + p(set, activity) > lct(set))
+            activity.estReduce(ect(set))
+          if(lct(set,activity)-p(set,activity) < est(set))
+            activity.lctReduce(lst(set))
+        }
+      }
+    }
+    activities
+  }
 
 
 
@@ -53,18 +65,21 @@ object Scheduling {
     activities.foreach{act => if( act.est<min) min = act.est}
     min
   }
+  private def est(activities: Array[Activity], a:Activity): Int = Math.min(est(activities), a.est)
   private def p(activities: Array[Activity])  : Int = {
     if(activities.isEmpty) return 0
     var p = 0
     activities.foreach{act => p += act.dur}
     p
   }
+  private def p(activities:Array[Activity], a:Activity) : Int= p(activities)+a.dur
   private def lct(activities: Array[Activity]): Int = {
     if (activities.isEmpty) return Integer.MAX_VALUE
     var max = Integer.MIN_VALUE
     activities.foreach { act => if (act.lct > max) max = act.lct }
     max
   }
+  private def lct(activities:Array[Activity], a:Activity):Int= Math.max(lct(activities), a.lct)
   private def maxLst(activities: Array[Activity]): Int = {
     if (activities.isEmpty) return Integer.MAX_VALUE
     var max = Integer.MIN_VALUE
@@ -76,5 +91,27 @@ object Scheduling {
     var min = Integer.MAX_VALUE
     activities.foreach { act => if (act.ect < min) min = act.ect }
     min
+  }
+  private def lst(activities: Array[Activity]): Int = {
+    val omega:List[Array[Activity]] = omegas(activities)
+    var min:Int = Integer.MAX_VALUE
+    for(act <- omega){
+      val v=lct(act) - p(act)
+      if(v < min){
+        min=v
+      }
+    }
+    min
+  }
+  private def ect(activities: Array[Activity]): Int = {
+    val omega:List[Array[Activity]] = omegas(activities)
+    var max:Int = Integer.MIN_VALUE
+    for(act <- omega){
+      val v=est(act)+ p(act)
+      if(v < max){
+        max=v
+      }
+    }
+    max
   }
 }
