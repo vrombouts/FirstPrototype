@@ -37,12 +37,12 @@ object SumBCIncr extends App{
       case r:RestrictDomain =>
         try {
           r.op match {
-            case 0 => solver.post(new EqCons(currentVars(r.index), r.constant))
-            case 1 => solver.post(new DiffVal(currentVars(r.index), r.constant))
-            case 2 => solver.post(new Le(currentVars(r.index), r.constant))
-            case 3 => solver.post(new LeEq(currentVars(r.index), r.constant))
-            case 4 => solver.post(new Gr(currentVars(r.index), r.constant))
-            case 5 => solver.post(new GrEq(currentVars(r.index), r.constant))
+            case "=" => solver.post(new EqCons(currentVars(r.index), r.constant))
+            case "!=" => solver.post(new DiffVal(currentVars(r.index), r.constant))
+            case "<" => solver.post(new Le(currentVars(r.index), r.constant))
+            case "<=" => solver.post(new LeEq(currentVars(r.index), r.constant))
+            case ">" => solver.post(new Gr(currentVars(r.index), r.constant))
+            case ">=" => solver.post(new GrEq(currentVars(r.index), r.constant))
           }
         }catch {
           case _:oscar.cp.core.NoSolutionException => throw new NoSolutionException

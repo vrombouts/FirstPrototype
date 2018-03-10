@@ -1,38 +1,28 @@
 package checker
 
+import scala.util.Random
+
 object Op {
-  val equal=0
-  val different=1
-  val lesserThan=2
-  val lesserThanOrEqual=3
-  val greaterThan:Int=4
-  val greaterThanOrEqual=5
+  val equal="="
+  val different="!="
+  val lesserThan="<"
+  val lesserThanOrEqual="<="
+  val greaterThan=">"
+  val greaterThanOrEqual=">="
 
-  def opposite(operation: Int): Int={
+  def opposite(operation: String): String={
     operation match{
-      case `equal` => Op.different
-      case `different` => Op.equal
-      case `lesserThan` => Op.greaterThanOrEqual
+      case `equal` => different
+      case `different` => equal
+      case `lesserThan` => greaterThanOrEqual
       case `lesserThanOrEqual` => greaterThan
-      case `greaterThan` => Op.lesserThanOrEqual
-      case `greaterThanOrEqual` => Op.lesserThan
-      case _ => -1 //no such op
+      case `greaterThan` => lesserThanOrEqual
+      case `greaterThanOrEqual` => lesserThan
+      case _ => "no such op" //no such op
     }
   }
 
-  def printOp(operation:Int):String = {
-    operation match{
-      case `equal`              => "=="
-      case `different`          => "!="
-      case `lesserThan`         => "<"
-      case `lesserThanOrEqual`  => "<="
-      case `greaterThan`        => ">"
-      case `greaterThanOrEqual` => ">="
-      case _ => "NoSuchOp" //no such op
-    }
-  }
-
-  def respectOp(operation:Int, sum:Int, constant:Int) :Boolean= {
+  def respectOp(operation:String, sum:Int, constant:Int) :Boolean= {
     operation match {
       case `equal` => sum == constant
       case `different` => sum != constant
@@ -44,7 +34,7 @@ object Op {
     }
   }
 
-  def condition(operation:Int, sMin:Int, sMax:Int, constant:Int) : Boolean = {
+  def condition(operation:String, sMin:Int, sMax:Int, constant:Int) : Boolean = {
     operation match {
       case `equal` => respectOp(greaterThan,sMin, constant) || respectOp(lesserThan, sMax, constant)
       case `different` => sMax==sMin && sMin==constant
@@ -55,4 +45,15 @@ object Op {
       case _ => respectOp(lesserThan, sMin, constant) && respectOp(greaterThan, sMax, constant)
     }
   }
+
+  def randomOp():String = {
+    val rand = new Random()
+    rand.nextInt(6) match{
+      case 0 => equal
+      case 1 => different
+      case 2 => lesserThan
+      case 3 => lesserThanOrEqual
+      case 4 => greaterThan
+      case 5 => greaterThanOrEqual
+    }}
 }
