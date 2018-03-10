@@ -18,10 +18,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 public class TestsSumIncremental {
-    private static IntVar [] x;
+    private static IntVar[] x;
     private static Model model = new Model("sum problem");
 
-    public static Function<Set<Integer> [],Set<Integer>[]> f() {
+    public static Function<Set<Integer>[], Set<Integer>[]> f() {
         return new Function<Set<Integer>[], Set<Integer>[]>() {
             @Override
             public Set<Integer>[] apply(Set<Integer>[] variables) throws NoSolutionException {
@@ -42,8 +42,8 @@ public class TestsSumIncremental {
         };
     }
 
-    public static void p(Set<Integer> [] input){
-        for(int i=0; i<input.length;i++){
+    public static void p(Set<Integer>[] input) {
+        for (int i = 0; i < input.length; i++) {
             System.out.print(input[i]);
         }
         System.out.println("");
@@ -51,35 +51,46 @@ public class TestsSumIncremental {
 
     public static void main(String[] args) {
         JCpChecker jc = new JCpChecker();
-        jc.checkBC(f(),new Function<BranchOp,Set<Integer>[]>(){
+        jc.checkBC(f(), new Function<BranchOp, Set<Integer>[]>() {
             @Override
-            public Set<Integer> [] apply(BranchOp b) throws NoSolutionException {
-                IEnvironment env=model.getEnvironment();
-                if(b instanceof Push) {
+            public Set<Integer>[] apply(BranchOp b) throws NoSolutionException {
+                IEnvironment env = model.getEnvironment();
+                if (b instanceof Push) {
                     env.worldPush();
                     Solver s = model.getSolver();
-                    try{s.propagate();} catch(Exception e){throw new NoSolutionException("No solution");}
+                    try {
+                        s.propagate();
+                    } catch (Exception e) {
+                        throw new NoSolutionException("No solution");
+                    }
                     p(transform(x));
                     return transform(x);
-                }
-                else if(b instanceof Pop)  {
+                } else if (b instanceof Pop) {
                     env.worldPop();
                     Solver s = model.getSolver();
-                    try{s.propagate();} catch(Exception e){throw new NoSolutionException("No solution");}
+                    try {
+                        s.propagate();
+                    } catch (Exception e) {
+                        throw new NoSolutionException("No solution");
+                    }
                     p(transform(x));
                     return transform(x);
-                }
-                else if(b instanceof RestrictDomain){
-                    try{Set<Integer> [] v= remove((RestrictDomain)b); p(v);} catch(NoSolutionException e){System.out.println("hkjhkjg");}
+                } else if (b instanceof RestrictDomain) {
+                    try {
+                        Set<Integer>[] v = remove((RestrictDomain) b);
+                        p(v);
+                    } catch (NoSolutionException e) {
+                        System.out.println("hkjhkjg");
+                    }
                 }
                 return transform(x);
             }
         }, new Function<Integer[], Boolean>() {
             @Override
             public Boolean apply(Integer[] integers) {
-                if(integers.length != x.length) return true;
-                int sum=0;
-                for(int i =0; i<integers.length;i++){
+                if (integers.length != x.length) return true;
+                int sum = 0;
+                for (int i = 0; i < integers.length; i++) {
                     sum += integers[i];
                 }
                 return sum == 5;
@@ -88,55 +99,11 @@ public class TestsSumIncremental {
     }
 
     public static Set<Integer>[] remove(RestrictDomain r) {
-        switch (r.op) {
-            case 0: {
-                model.arithm(x[r.index], "=", r.constant).post();
-                try {
-                    model.getSolver().propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-            }
-            case 1: {
-                model.arithm(x[r.index], "!=", r.constant).post();
-                try {
-                    model.getSolver().propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-            }
-            case 2: {
-                model.arithm(x[r.index], "<", r.constant).post();
-                try {
-                    model.getSolver().propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-            }
-            case 3: {
-                model.arithm(x[r.index], "<=", r.constant).post();
-                try {
-                    model.getSolver().propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-            }
-            case 4: {
-                model.arithm(x[r.index], ">", r.constant).post();
-                try {
-                    model.getSolver().propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-            }
-            case 5: {
-                model.arithm(x[r.index], ">=", r.constant).post();
-                try {
-                    model.getSolver().propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-            }
+        model.arithm(x[r.index], r.op, r.constant).post();
+        try {
+            model.getSolver().propagate();
+        } catch (Exception e) {
+            throw new NoSolutionException("");
         }
         return transform(x);
     }

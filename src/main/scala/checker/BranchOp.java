@@ -1,9 +1,6 @@
 package checker;
 
-import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
-import checker.Op;
 
 public class BranchOp {
     public Set<Integer>[] domains;

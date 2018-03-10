@@ -6,7 +6,7 @@ import org.scalacheck.Prop.forAll
 object Sum extends Checker{
 
   //private var constant:Int=0
-  private var operator:Int=Op.equal
+  private var operator:String=Op.equal
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     sumBC(variables,operator)
@@ -18,7 +18,7 @@ object Sum extends Checker{
     }.check
   }*/
 
-  def checkBC(constraint:Array[Set[Int]] => Array[Set[Int]],operation:Int):Unit={
+  def checkBC(constraint:Array[Set[Int]] => Array[Set[Int]],operation:String):Unit={
     operator=operation
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_,constraint)
     forAll(Generators.sum){ x =>
@@ -31,8 +31,8 @@ object Sum extends Checker{
     LimitCases.sumLimitCases.foreach{limitCase => check(limitCase)}
   }
 
-  def sum(constant:Int,operation:Int,nbVar:Int): Array[Int] => Boolean = sum(constant,operation,nbVar,_)
-  def sum(constant:Int,operation:Int,nbVar: Int, solution: Array[Int]):Boolean = {
+  def sum(constant:Int,operation:String,nbVar:Int): Array[Int] => Boolean = sum(constant,operation,nbVar,_)
+  def sum(constant:Int,operation:String,nbVar: Int, solution: Array[Int]):Boolean = {
     if(solution.length<nbVar-1) return true
     var sum:Int = 0
     solution.foreach(x => sum += x)
@@ -50,7 +50,7 @@ object Sum extends Checker{
   }
 
   @throws[NoSolutionException]
-  def sumBC(vars:Array[Set[Int]],operation:Int) : Array[Set[Int]] = {
+  def sumBC(vars:Array[Set[Int]],operation:String) : Array[Set[Int]] = {
     val constant:Int = vars.last.last
     val variables = vars.dropRight(1)
     var changed:Boolean=true

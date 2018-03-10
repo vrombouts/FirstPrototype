@@ -6,12 +6,12 @@ public class RestrictDomain extends BranchOp{
     private Random random = new Random();
     public int index;
     public int constant;
-    public int op;
+    public String op;
     public RestrictDomain(Set<Integer>[] domains){
         super(domains);
         this.random = new Random();
         this.index = random.nextInt(domains.length);
-        this.op = random.nextInt(6);
+        this.op = Op.randomOp();
         this.constant = randomConstant();
     }
 
@@ -21,8 +21,8 @@ public class RestrictDomain extends BranchOp{
             index = random.nextInt(domains.length);
             dom=super.domains[index];
         }
-        if (op == Op.lesserThan() || op == Op.greaterThanOrEqual()) dom =min(dom);
-        else if (op == Op.greaterThan() || op == Op.lesserThanOrEqual()) dom = max(dom);
+        if      (op.equals(Op.lesserThan()) || op.equals(Op.greaterThanOrEqual())) dom =min(dom);
+        else if (op.equals(Op.greaterThan()) || op.equals(Op.lesserThanOrEqual())) dom = max(dom);
         Integer[] variable = dom.toArray(new Integer[dom.size()]);
         return variable[random.nextInt(variable.length)];
     }
@@ -67,6 +67,6 @@ public class RestrictDomain extends BranchOp{
 
     @Override
     public String toString() {
-        return "Restriction of domains: x_"+index+Op.printOp(op)+constant+"\n";
+        return "Restriction of domains: x_"+index+op+constant+"\n";
     }
 }
