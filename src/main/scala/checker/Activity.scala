@@ -5,7 +5,8 @@ package checker
  * a latest completion time and a duration
   * @author Aurelie Massart & Valentin Rombouts
  */
-class Activity(var start: Set[Int],var duration: Set[Int], var end:Set[Int]) {
+class Activity(var start: Set[Int],var duration: Set[Int], var end:Set[Int], var height:Int) {
+  def this(start: Set[Int],duration: Set[Int],end:Set[Int]) = this(start,duration,end,0)
   def this() = this(Set.empty, Set.empty, Set.empty)
 
   def est: Int = start.min

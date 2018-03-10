@@ -1,5 +1,7 @@
 package checker
 
+import scala.collection.mutable
+
 object Scheduling {
   def overloadChecking(activities: Array[Activity]): Boolean = {
     omegas(activities).foreach{ set =>
@@ -43,7 +45,59 @@ object Scheduling {
   }
 
 
+  def init(activity: Activity):List[(mutable.Map[Int,Int],List[FixedActivity])]={
+    var solutions : List[(mutable.Map[Int,Int],List[FixedActivity])] = List()
+    for(start <- activity.start){
+      val map:mutable.Map[Int,Int]=mutable.Map()
+      for(j <- start to activity.dur+start)
+        map.put(j, activity.height)
+      val f:FixedActivity = new FixedActivity(start,start+activity.dur)
+      val fixedActivities:List[FixedActivity] = List(f)
+      solutions=(map,fixedActivities)+:solutions
+    }
+    solutions
+  }
 
+  def nextElement(activity:Activity, sols:List[(mutable.Map[Int,Int],List[FixedActivity])]) : List[(mutable.Map[Int,Int],List[FixedActivity])]={
+    var result:List[(mutable.Map[Int,Int],List[FixedActivity])]=List()
+    for((map,fixedActivities) <- sols){
+      for(start <- activity.start) {
+        val f: FixedActivity = new FixedActivity(start, start+activity.dur)
+        val ff:List[FixedActivity] = fixedActivities :+ f
+        for(time <- start to start+activity.dur) {
+          if (map.contains(time))
+            map(time) += activity.height
+          else
+            map.put(time, activity.height)
+        }
+        result = (map,ff) +: result
+      }
+    }
+    result
+  }
+
+  @throws[NoSolutionException]
+  def cartesianForCumulative(activities:Array[Activity], capacity:Int) : Array[Activity]={
+    var sols = init(activities(0))
+    for(i <- 1 until activities.length){
+      sols=nextElement(activities(i),sols).filter(x => x._1.exists(_._2>capacity))
+    }
+    if(sols.isEmpty) throw new NoSolutionException
+    toDomains(sols)
+  }
+
+
+  def toDomains(sols:List[(mutable.Map[Int,Int],List[FixedActivity])]):Array[Activity] ={
+    val act:Array[Activity]=Array.fill(sols.head._2.length)(new Activity())
+    for((_,fixedActivities)<- sols){
+      for(i <- fixedActivities.indices){
+        act(i).start += fixedActivities(i).start
+        act(i).end   += fixedActivities(i).end
+        act(i).duration += (fixedActivities(i).end-fixedActivities(i).start)
+      }
+    }
+    act
+  }
 
 
 
