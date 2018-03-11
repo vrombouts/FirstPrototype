@@ -15,6 +15,9 @@ class Activity(var start: Set[Int],var duration: Set[Int], var end:Set[Int], var
   def ect: Int = start.min+ duration.min
   def dur: Int = duration.min
 
+  def isEmpty:Boolean = start.isEmpty || duration.isEmpty || end.isEmpty
+
+
 
   def lctReduce(maxValue: Int): Unit = {
     end = end.filter(_ <= maxValue)

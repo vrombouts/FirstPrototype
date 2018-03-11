@@ -1,11 +1,75 @@
 package checker
-
+import org.scalacheck.Prop.forAll
 import scala.collection.mutable
 
 object Scheduling {
-  def checkScheduling(filtering:Array[Activity] => Array[Activity], checker : Array[FixedActivity] => Boolean) : Unit={
+  
+  private def clone(activities:Array[Activity]): Array[Activity] =
+    activities.map(x => new Activity(x.start,x.duration,x.end))
 
+  def checkAC(filteringTested:Array[Activity] => Array[Activity]) : Unit={
+    forAll(Generators.scheduling) { x =>
+      x.isEmpty || x.exists(_.isEmpty) || checkNotFirst(x.toArray, filteringTested)
+    }.check
   }
+
+  def checkScheduling(variables: Array[Activity],
+                      constraintTested: Array[Activity] => Array[Activity]) : Boolean = {
+    true
+  }
+
+  def checkNotFirst(activities: Array[Activity],
+                    constraintTested:Array[Activity] => Array[Activity]): Boolean = {
+    var ourReducedDomains: Array[Activity] = Array()
+    var theirReducedDomains: Array[Activity] = Array()
+    var ourError = false
+    var theirError = false
+    try {
+      ourReducedDomains = notFirst(clone(activities))
+    } catch {
+      case _: NoSolutionException => ourError = true
+    }
+    try {
+      theirReducedDomains = constraintTested(activities)
+    } catch {
+      case _: NoSolutionException => theirError = true
+    }
+    if (ourError && theirError) return true
+    if (ourError && !theirError) {
+      for (activity <- theirReducedDomains) {
+        if (activity.isEmpty)
+          return true
+      }
+      println("Failed for " + activities.foreach(println))
+      println("You should return an exception")
+      println("but you have " + theirReducedDomains.foreach(println))
+      return false
+    }
+    if (!ourError && theirError) {
+      for (activity <- ourReducedDomains) {
+        if (activity.isEmpty)
+          return true
+      }
+      println("Failed for " + activities.foreach(println))
+      println("You shoud have " + ourReducedDomains.foreach(println))
+      println("But you returned an exception")
+      return false
+    }
+    if (ourReducedDomains.length != theirReducedDomains.length) {
+      println("You don't return the correct number of activities in your solution!")
+      return false
+    }
+    for(i <- ourReducedDomains.indices){
+      if(!ourReducedDomains(i).equals(theirReducedDomains(i))) {
+        println("Failed for " + activities.foreach(println))
+        println("You shoud have " + ourReducedDomains.foreach(println))
+        println("But you had " + theirReducedDomains.foreach(println))
+        return false
+      }
+    }
+    true
+  }
+
   def overloadChecking(activities: Array[Activity]): Boolean = {
     omegas(activities).foreach{ set =>
       println(set.toList)
@@ -14,19 +78,28 @@ object Scheduling {
     true
   }
 
+  @throws[NoSolutionException]
   def notFirst(activities: Array[Activity]): Array[Activity] = {
-    omegas(activities).foreach{ set => for(activity <- activities){
-      if(!set.contains(activity) && activity.ect > lct(set)-p(set))
-        activity.estReduce(minEct(set))
-    }
+    omegas(activities).foreach { set =>
+      for (activity <- activities) {
+        if (!set.contains(activity) && activity.ect > lct(set) - p(set)) {
+          activity.estReduce(minEct(set))
+          if (activity.isEmpty)
+            throw new NoSolutionException
+        }
+      }
     }
     activities
   }
 
+  @throws[NoSolutionException]
   def notLast(activities: Array[Activity]): Array[Activity] = {
     omegas(activities).foreach{ set => for(activity <- activities){
-        if(!set.contains(activity) && est(set) + p(set)>activity.lst)
-            activity.lctReduce(maxLst(set))
+        if(!set.contains(activity) && est(set) + p(set)>activity.lst) {
+          activity.lctReduce(maxLst(set))
+          if(activity.end.isEmpty)
+            throw new NoSolutionException
+        }
       }
     }
     activities
@@ -34,14 +107,21 @@ object Scheduling {
 
 
 
+  @throws[NoSolutionException]
   def edgeFinding(activities: Array[Activity]) : Array[Activity] = {
     omegas(activities).foreach { set =>
       for (activity <- activities) {
         if (!set.contains(activity)) {
-          if (est(set, activity) + p(set, activity) > lct(set))
+          if (est(set, activity) + p(set, activity) > lct(set)) {
             activity.estReduce(ect(set))
-          if(lct(set,activity)-p(set,activity) < est(set))
+            if (activity.start.isEmpty)
+              throw new NoSolutionException
+          }
+          if(lct(set,activity)-p(set,activity) < est(set)) {
             activity.lctReduce(lst(set))
+            if (activity.end.isEmpty)
+              throw new NoSolutionException
+          }
         }
       }
     }
@@ -181,9 +261,12 @@ object Scheduling {
       new Activity(Set(0,1),Set(2),Set(2,3)),
       new Activity(Set(1,2),Set(3),Set(4,5))
     )
-    activities = notLast(activities)
+
+    //activities = notLast(activities)
     activities = notFirst(activities)
     activities.foreach(_.enforceCohesion())
     println(activities.toList)
+
+    checkAC(notFirst)
   }
 }
