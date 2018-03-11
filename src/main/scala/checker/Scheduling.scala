@@ -45,7 +45,7 @@ object Scheduling {
   }
 
 
-  def init(activity: Activity):List[(mutable.Map[Int,Int],List[FixedActivity])]={
+  def init(activity: Activity):Stream[(mutable.Map[Int,Int],List[FixedActivity])]={
     var solutions : List[(mutable.Map[Int,Int],List[FixedActivity])] = List()
     for(start <- activity.start){
       val map:mutable.Map[Int,Int]=mutable.Map()
@@ -55,25 +55,28 @@ object Scheduling {
       val fixedActivities:List[FixedActivity] = List(f)
       solutions=(map,fixedActivities)+:solutions
     }
-    solutions
+    solutions.toStream
   }
 
-  def nextElement(activity:Activity, sols:List[(mutable.Map[Int,Int],List[FixedActivity])]) : List[(mutable.Map[Int,Int],List[FixedActivity])]={
-    var result:List[(mutable.Map[Int,Int],List[FixedActivity])]=List()
-    for((map,fixedActivities) <- sols){
-      for(start <- activity.start) {
-        val f: FixedActivity = new FixedActivity(start, start+activity.dur)
-        val ff:List[FixedActivity] = fixedActivities :+ f
-        for(time <- start to start+activity.dur) {
-          if (map.contains(time))
-            map(time) += activity.height
-          else
-            map.put(time, activity.height)
-        }
-        result = (map,ff) +: result
+  def nextElement(activity:Activity, sols:Stream[(mutable.Map[Int,Int],List[FixedActivity])]) : Stream[(mutable.Map[Int,Int],List[FixedActivity])]={
+    def nextStart(starts:Set[Int],str: Stream[(mutable.Map[Int,Int],List[FixedActivity])],map: mutable.Map[Int,Int],fixedActivities:List[FixedActivity] ): Stream[(mutable.Map[Int,Int],List[FixedActivity])]= {
+      if (starts.isEmpty) return str
+      val start = starts.last
+      val f: FixedActivity = new FixedActivity(start, start + activity.dur)
+      val ff: List[FixedActivity] = fixedActivities :+ f
+      for (time <- start to start + activity.dur) {
+        if (map.contains(time))
+          map(time) += activity.height
+        else
+          map.put(time, activity.height)
       }
+      (map, ff) #:: nextStart(starts - start, str, map, fixedActivities)
     }
-    result
+    var str :Stream[(mutable.Map[Int,Int],List[FixedActivity])]= Stream.empty
+    for((map,fixedActivities) <- sols){
+      str = nextStart(activity.start,str,map, fixedActivities)
+    }
+    str
   }
 
   @throws[NoSolutionException]
@@ -87,7 +90,7 @@ object Scheduling {
   }
 
 
-  def toDomains(sols:List[(mutable.Map[Int,Int],List[FixedActivity])]):Array[Activity] ={
+  def toDomains(sols:Stream[(mutable.Map[Int,Int],List[FixedActivity])]):Array[Activity] ={
     val act:Array[Activity]=Array.fill(sols.head._2.length)(new Activity())
     for((_,fixedActivities)<- sols){
       for(i <- fixedActivities.indices){
