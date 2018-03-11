@@ -5,6 +5,7 @@ import scala.collection.mutable
 object Scheduling {
   def overloadChecking(activities: Array[Activity]): Boolean = {
     omegas(activities).foreach{ set =>
+      println(set.toList)
       if( est(set) + p(set) > lct(set)) return false
     }
     true
@@ -170,5 +171,16 @@ object Scheduling {
       }
     }
     max
+  }
+
+  def main(args: Array[String]):Unit = {
+    var activities: Array[Activity] = Array(
+      new Activity(Set(0,1),Set(2),Set(2,3)),
+      new Activity(Set(1,2),Set(3),Set(4,5))
+    )
+    activities = notLast(activities)
+    activities = notFirst(activities)
+    activities.foreach(_.enforceCohesion())
+    println(activities.toList)
   }
 }
