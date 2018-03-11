@@ -1,8 +1,10 @@
-package checker;
+package checker.incremental;
+
+import checker.Op;
 
 import java.util.*;
 
-public class RestrictDomain extends BranchOp{
+public class RestrictDomain extends BranchOp {
     private Random random = new Random();
     public int index;
     public int constant;

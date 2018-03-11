@@ -1,7 +1,9 @@
 package checker.constraints
 
+import checker.incremental.BranchOp
 import checker._
 import org.scalacheck.Prop.forAll
+
 import scala.collection.mutable
 
 

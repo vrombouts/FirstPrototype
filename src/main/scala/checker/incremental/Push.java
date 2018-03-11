@@ -1,9 +1,9 @@
-package checker;
+package checker.incremental;
 
 
 import java.util.Set;
 
-public class Push extends BranchOp{
+public class Push extends BranchOp {
     public Push(Set<Integer>[] domains){super(domains);}
     @Override
     public BranchOp clone(){

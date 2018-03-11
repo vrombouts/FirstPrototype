@@ -1,4 +1,4 @@
-package checker
+package checker.scheduling
 
 /**
  * Activity of scheduling problems. An activity contains an earliest starting time,

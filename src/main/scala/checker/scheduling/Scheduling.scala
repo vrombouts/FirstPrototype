@@ -1,4 +1,6 @@
-package checker
+package checker.scheduling
+
+import checker.NoSolutionException
 
 import scala.collection.mutable
 

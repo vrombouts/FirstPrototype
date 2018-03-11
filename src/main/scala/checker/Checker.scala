@@ -3,7 +3,7 @@ package checker
 import scala.util.Random
 import scala.language.implicitConversions
 import Conversions._
-
+import checker.incremental._
 import scala.collection.mutable
 
 trait Checker {

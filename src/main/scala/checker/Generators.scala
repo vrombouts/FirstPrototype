@@ -1,7 +1,6 @@
 package checker
 
-import java.util
-
+import checker.scheduling.Activity
 import org.scalacheck.Gen
 
 /**
