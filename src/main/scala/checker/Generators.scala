@@ -1,5 +1,7 @@
 package checker
 
+import java.util
+
 import org.scalacheck.Gen
 
 /**
@@ -56,4 +58,10 @@ object Generators {
   }yield (variables,s)
   // maybe test with variables of different domains lengths (1,2,3...)
 
+  val activity:Gen[Activity] = for{
+    starts: Set[Int] <- Gen.containerOfN[Set,Int](3,Gen.choose(0,10))
+    duration: Set[Int] <- Gen.containerOfN[Set,Int](1,Gen.choose(0,10))
+  }yield new Activity(starts,duration,starts.map(_+duration.last))
+
+  val scheduling: Gen[List[Activity]] = Gen.containerOfN[List,Activity](10,activity)
 }

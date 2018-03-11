@@ -3,6 +3,9 @@ package checker
 import scala.collection.mutable
 
 object Scheduling {
+  def checkScheduling(filtering:Array[Activity] => Array[Activity], checker : Array[FixedActivity] => Boolean) : Unit={
+
+  }
   def overloadChecking(activities: Array[Activity]): Boolean = {
     omegas(activities).foreach{ set =>
       println(set.toList)
