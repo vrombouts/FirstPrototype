@@ -2,20 +2,15 @@ package choco;
 
 
 import checker.*;
-import checker.constraints.Sum;
+import checker.incremental.*;
 import org.chocosolver.memory.IEnvironment;
-import org.chocosolver.memory.trailing.EnvironmentTrailing;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
-import org.chocosolver.solver.constraints.unary.PropEqualXC;
 import org.chocosolver.solver.variables.IntVar;
-import scala.collection.generic.BitOperations;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 

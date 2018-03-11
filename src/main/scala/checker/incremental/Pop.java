@@ -1,8 +1,8 @@
-package checker;
+package checker.incremental;
 
 import java.util.Set;
 
-public class Pop extends BranchOp{
+public class Pop extends BranchOp {
     public Pop(Set<Integer>[] domains){super(domains);}
     @Override
     public BranchOp clone(){

@@ -1,4 +1,6 @@
-package checker
+package checker.scheduling
+
+import checker.{Generators, NoSolutionException}
 import org.scalacheck.Prop.forAll
 import scala.collection.mutable
 

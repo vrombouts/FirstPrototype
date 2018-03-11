@@ -1,4 +1,4 @@
-package checker;
+package checker.incremental;
 
 import java.util.Set;
 
