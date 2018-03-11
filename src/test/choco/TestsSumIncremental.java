@@ -7,11 +7,13 @@ import org.chocosolver.memory.IEnvironment;
 import org.chocosolver.memory.trailing.EnvironmentTrailing;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
+import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.constraints.unary.PropEqualXC;
 import org.chocosolver.solver.variables.IntVar;
 import scala.collection.generic.BitOperations;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -20,6 +22,7 @@ import java.util.function.Function;
 public class TestsSumIncremental {
     private static IntVar[] x;
     private static Model model = new Model("sum problem");
+    private static int nb = 0;
 
     public static Function<Set<Integer>[], Set<Integer>[]> f() {
         return new Function<Set<Integer>[], Set<Integer>[]>() {
@@ -57,6 +60,7 @@ public class TestsSumIncremental {
                 IEnvironment env = model.getEnvironment();
                 if (b instanceof Push) {
                     env.worldPush();
+                    nb=0;
                     Solver s = model.getSolver();
                     try {
                         s.propagate();
@@ -67,20 +71,22 @@ public class TestsSumIncremental {
                     return transform(x);
                 } else if (b instanceof Pop) {
                     env.worldPop();
+                    Constraint[] cs= model.getCstrs();
+                    cs= Arrays.copyOfRange(cs, cs.length-nb, cs.length);
+                    model.unpost(cs);
+                    //s.restoreRootNode();
+                    nb=0;
                     Solver s = model.getSolver();
-                    try {
-                        s.propagate();
-                    } catch (Exception e) {
-                        throw new NoSolutionException("No solution");
-                    }
+                    try{s.propagate();} catch(Exception e){throw new NoSolutionException("No solution");}
                     p(transform(x));
                     return transform(x);
                 } else if (b instanceof RestrictDomain) {
+                    nb++;
                     try {
                         Set<Integer>[] v = remove((RestrictDomain) b);
                         p(v);
                     } catch (NoSolutionException e) {
-                        System.out.println("hkjhkjg");
+                        System.out.println("Error !!!");
                     }
                 }
                 return transform(x);
