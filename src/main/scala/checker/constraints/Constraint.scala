@@ -20,7 +20,7 @@ object Constraint extends Checker {
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
-    forAll(Generators.basic) { x =>
+    forAll(Generators.AC) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
@@ -29,7 +29,7 @@ object Constraint extends Checker {
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
-    forAll(Generators.basic) { x =>
+    forAll(Generators.BC) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
@@ -40,7 +40,7 @@ object Constraint extends Checker {
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
-    forAll(Generators.basic) { x =>
+    forAll(Generators.AC) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check
   }
@@ -50,7 +50,7 @@ object Constraint extends Checker {
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
-    forAll(Generators.basic) { x =>
+    forAll(Generators.BC) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check
   }

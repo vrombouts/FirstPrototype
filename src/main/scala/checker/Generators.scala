@@ -11,7 +11,8 @@ object Generators {
   val triDomain:Gen[Set[Int]] =  Gen.containerOfN[Set,Int](3,Gen.choose(-10,10))
   def arrayGen(size: Int):Gen[Array[Int]] =  Gen.containerOfN[Array,Int](size,Gen.choose(-10,10))
 
-  val basic: Gen[List[Set[Int]]] = Gen.containerOfN[List,Set[Int]](5,biDomain)
+  val BC: Gen[List[Set[Int]]] = Gen.containerOfN[List,Set[Int]](8,triDomain)
+  val AC: Gen[List[Set[Int]]] = Gen.containerOfN[List,Set[Int]](15,triDomain)
 
   val gcc: Gen[List[Set[Int]]] = for{
     three       <- Gen.containerOfN[Set,Int](2,Gen.choose(0,2))
@@ -21,7 +22,7 @@ object Generators {
   }yield assignments++count
 
   val table: Gen[(List[Set[Int]], Set[Array[Int]])] = for {
-    variables <- basic
+    variables <- AC
     table <- Gen.nonEmptyContainerOf[Set,Array[Int]](arrayGen(variables.size))
   } yield (variables,table)
 
