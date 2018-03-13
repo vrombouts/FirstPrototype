@@ -1,4 +1,4 @@
-package checker.incremental;
+package checker.constraints.incremental;
 
 import checker.Op;
 

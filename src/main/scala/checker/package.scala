@@ -1,6 +1,6 @@
 import java.util.function.{BiFunction, Function}
 
-import checker.incremental.BranchOp
+import checker.constraints.incremental.BranchOp
 
 import scala.collection.JavaConverters._
 

@@ -1,10 +1,12 @@
-package checker
+package checker.constraints
 
-import scala.util.Random
-import scala.language.implicitConversions
 import Conversions._
-import checker.incremental._
+import checker.NoSolutionException
+import checker.constraints.incremental._
+
 import scala.collection.mutable
+import scala.language.implicitConversions
+import scala.util.Random
 
 trait Checker {
   protected def checkEmpty(variables: List[Set[Int]]): Boolean = {

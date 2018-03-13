@@ -1,5 +1,4 @@
-package checker
-
+package checker.constraints
 
 class Interval(private var dom:Set[Int]) {
 

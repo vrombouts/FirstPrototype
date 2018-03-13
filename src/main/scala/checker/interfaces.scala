@@ -2,7 +2,7 @@ package checker
 
 import java.util.function.{BiFunction, Function}
 import Conversions._
-import checker.incremental.BranchOp
+import checker.constraints.incremental.BranchOp
 import checker.constraints._
 
 class JCpChecker {

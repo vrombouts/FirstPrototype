@@ -3,7 +3,7 @@ package checker.constraints
 import checker.{Generators, LimitCases, NoSolutionException}
 import org.scalacheck.Prop.forAll
 
-object Table extends checker.Checker {
+object Table extends Checker {
   private var table:Set[Array[Int]] = Set.empty
 
   def printTable(table: Set[Array[Int]]):Unit = {

@@ -1,6 +1,6 @@
 package checker.constraints
 
-import checker.incremental.BranchOp
+import checker.constraints.incremental.BranchOp
 import checker._
 import org.scalacheck.Prop.forAll
 
