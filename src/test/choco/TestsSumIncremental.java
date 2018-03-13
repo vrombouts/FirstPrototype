@@ -12,15 +12,18 @@ import org.chocosolver.solver.variables.IntVar;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Function;
 
 public class TestsSumIncremental {
     private static IntVar[] x;
     private static Model model = new Model("sum problem");
-    private static int nb = 0;
+    private static Stack<Integer> state = new Stack<Integer>();
+    private static int nb=0;
 
     public static Function<Set<Integer>[], Set<Integer>[]> f() {
         return variables -> {
+            model = new Model("sum problem");
             x = new IntVar[variables.length];
             for (int i = 0; i < variables.length; i++) {
                 int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
@@ -37,19 +40,13 @@ public class TestsSumIncremental {
         };
     }
 
-    public static void p(Set<Integer>[] input) {
-        for (int i = 0; i < input.length; i++) {
-            System.out.print(input[i]);
-        }
-        System.out.println("");
-    }
-
     public static void main(String[] args) {
         JCpChecker jc = new JCpChecker();
         jc.checkBC(f(), b -> {
             IEnvironment env = model.getEnvironment();
             if (b instanceof Push) {
                 env.worldPush();
+                state.push(nb);
                 nb=0;
                 Solver s = model.getSolver();
                 try {
@@ -57,7 +54,6 @@ public class TestsSumIncremental {
                 } catch (Exception e) {
                     throw new NoSolutionException("No solution");
                 }
-                p(transform(x));
                 return transform(x);
             } else if (b instanceof Pop) {
                 env.worldPop();
@@ -65,18 +61,16 @@ public class TestsSumIncremental {
                 cs= Arrays.copyOfRange(cs, cs.length-nb, cs.length);
                 model.unpost(cs);
                 //s.restoreRootNode();
-                nb=0;
+                nb=state.pop();
                 Solver s = model.getSolver();
-                try{s.propagate();} catch(Exception e){throw new NoSolutionException("No solution");}
-                p(transform(x));
+                try{s.propagate();} catch(Exception e){ throw new NoSolutionException("No solution");}
                 return transform(x);
             } else if (b instanceof RestrictDomain) {
-                nb++;
+                nb ++;
                 try {
                     Set<Integer>[] v = remove((RestrictDomain) b);
-                    p(v);
                 } catch (NoSolutionException e) {
-                    System.out.println("Error !!!");
+                    throw new NoSolutionException("No sol for restrict domain");
                 }
             }
             return transform(x);
