@@ -1,6 +1,6 @@
 package OscaR
 
-import checker.incremental._
+import checker.constraints.incremental._
 import checker.NoSolutionException
 import checker.constraints.Constraint
 import oscar.algo.Inconsistency

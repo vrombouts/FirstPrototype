@@ -21,31 +21,28 @@ public class TestsSum {
 
     public static void main(String[] args) {
         JCpChecker jc = new JCpChecker();
-        jc.checkSumGT(new Function<Set<Integer>[], Set<Integer>[]>() {
-            @Override
-            public Set<Integer>[] apply(Set<Integer>[] variables) throws NoSolutionException {
-                Model model = new Model("sum problem");
-                IntVar[] x = new IntVar[variables.length-1];
-                for(int i=0;i<variables.length-1;i++){
-                    int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                    x[i] = model.intVar(""+i,b);
-                }
-                int index=variables.length-1;// the index of the sum variable
-                int[] b = variables[index].stream().mapToInt(Number::intValue).toArray();
-                IntVar s = model.intVar(""+index,b);
-                if(x==null)System.out.println("x null!");
-                if(s==null)System.out.println("s null!");
-                    model.sum(x, ">",s).post();
-                    Solver solver=model.getSolver();
-                try{ solver.propagate();
-                }catch (Exception e){throw new NoSolutionException("");}
-                IntVar[] finals = new IntVar[variables.length];
-                for(int i=0; i<finals.length;i++){
-                    if(i<x.length) finals[i]=x[i];
-                    else if(i==finals.length-1) finals[i]=s;
-                }
-                return transform(finals);
+        jc.checkSumGT(variables -> {
+            Model model = new Model("sum problem");
+            IntVar[] x = new IntVar[variables.length-1];
+            for(int i=0;i<variables.length-1;i++){
+                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+                x[i] = model.intVar(""+i,b);
             }
+            int index=variables.length-1;// the index of the sum variable
+            int[] b = variables[index].stream().mapToInt(Number::intValue).toArray();
+            IntVar s = model.intVar(""+index,b);
+            if(x==null)System.out.println("x null!");
+            if(s==null)System.out.println("s null!");
+                model.sum(x, ">",s).post();
+                Solver solver=model.getSolver();
+            try{ solver.propagate();
+            }catch (Exception e){throw new NoSolutionException("");}
+            IntVar[] finals = new IntVar[variables.length];
+            for(int i=0; i<finals.length;i++){
+                if(i<x.length) finals[i]=x[i];
+                else if(i==finals.length-1) finals[i]=s;
+            }
+            return transform(finals);
         });
     }
 

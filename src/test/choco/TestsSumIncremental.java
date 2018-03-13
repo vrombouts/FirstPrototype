@@ -2,7 +2,7 @@ package choco;
 
 
 import checker.*;
-import checker.incremental.*;
+import checker.constraints.incremental.*;
 import org.chocosolver.memory.IEnvironment;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
@@ -20,23 +20,20 @@ public class TestsSumIncremental {
     private static int nb = 0;
 
     public static Function<Set<Integer>[], Set<Integer>[]> f() {
-        return new Function<Set<Integer>[], Set<Integer>[]>() {
-            @Override
-            public Set<Integer>[] apply(Set<Integer>[] variables) throws NoSolutionException {
-                x = new IntVar[variables.length];
-                for (int i = 0; i < variables.length; i++) {
-                    int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                    x[i] = model.intVar("" + i, b);
-                }
-                model.sum(x, "=", 5).post();
-                Solver solver = model.getSolver();
-                try {
-                    solver.propagate();
-                } catch (Exception e) {
-                    throw new NoSolutionException("");
-                }
-                return transform(x);
+        return variables -> {
+            x = new IntVar[variables.length];
+            for (int i = 0; i < variables.length; i++) {
+                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+                x[i] = model.intVar("" + i, b);
             }
+            model.sum(x, "=", 5).post();
+            Solver solver = model.getSolver();
+            try {
+                solver.propagate();
+            } catch (Exception e) {
+                throw new NoSolutionException("");
+            }
+            return transform(x);
         };
     }
 
@@ -49,53 +46,47 @@ public class TestsSumIncremental {
 
     public static void main(String[] args) {
         JCpChecker jc = new JCpChecker();
-        jc.checkBC(f(), new Function<BranchOp, Set<Integer>[]>() {
-            @Override
-            public Set<Integer>[] apply(BranchOp b) throws NoSolutionException {
-                IEnvironment env = model.getEnvironment();
-                if (b instanceof Push) {
-                    env.worldPush();
-                    nb=0;
-                    Solver s = model.getSolver();
-                    try {
-                        s.propagate();
-                    } catch (Exception e) {
-                        throw new NoSolutionException("No solution");
-                    }
-                    p(transform(x));
-                    return transform(x);
-                } else if (b instanceof Pop) {
-                    env.worldPop();
-                    Constraint[] cs= model.getCstrs();
-                    cs= Arrays.copyOfRange(cs, cs.length-nb, cs.length);
-                    model.unpost(cs);
-                    //s.restoreRootNode();
-                    nb=0;
-                    Solver s = model.getSolver();
-                    try{s.propagate();} catch(Exception e){throw new NoSolutionException("No solution");}
-                    p(transform(x));
-                    return transform(x);
-                } else if (b instanceof RestrictDomain) {
-                    nb++;
-                    try {
-                        Set<Integer>[] v = remove((RestrictDomain) b);
-                        p(v);
-                    } catch (NoSolutionException e) {
-                        System.out.println("Error !!!");
-                    }
+        jc.checkBC(f(), b -> {
+            IEnvironment env = model.getEnvironment();
+            if (b instanceof Push) {
+                env.worldPush();
+                nb=0;
+                Solver s = model.getSolver();
+                try {
+                    s.propagate();
+                } catch (Exception e) {
+                    throw new NoSolutionException("No solution");
                 }
+                p(transform(x));
                 return transform(x);
-            }
-        }, new Function<Integer[], Boolean>() {
-            @Override
-            public Boolean apply(Integer[] integers) {
-                if (integers.length != x.length) return true;
-                int sum = 0;
-                for (int i = 0; i < integers.length; i++) {
-                    sum += integers[i];
+            } else if (b instanceof Pop) {
+                env.worldPop();
+                Constraint[] cs= model.getCstrs();
+                cs= Arrays.copyOfRange(cs, cs.length-nb, cs.length);
+                model.unpost(cs);
+                //s.restoreRootNode();
+                nb=0;
+                Solver s = model.getSolver();
+                try{s.propagate();} catch(Exception e){throw new NoSolutionException("No solution");}
+                p(transform(x));
+                return transform(x);
+            } else if (b instanceof RestrictDomain) {
+                nb++;
+                try {
+                    Set<Integer>[] v = remove((RestrictDomain) b);
+                    p(v);
+                } catch (NoSolutionException e) {
+                    System.out.println("Error !!!");
                 }
-                return sum == 5;
             }
+            return transform(x);
+        }, integers -> {
+            if (integers.length != x.length) return true;
+            int sum = 0;
+            for (int i = 0; i < integers.length; i++) {
+                sum += integers[i];
+            }
+            return sum == 5;
         });
     }
 

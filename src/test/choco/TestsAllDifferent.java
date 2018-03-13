@@ -30,55 +30,46 @@ public class TestsAllDifferent {
     }
 
     public static Function<Set<Integer>[],Set<Integer>[]> applyAC(){
-        return new Function<Set<Integer>[], Set<Integer>[]>() {
-            @Override
-            public Set<Integer>[] apply(Set<Integer>[] variables) throws NoSolutionException{
-                Model model = new Model("allDifferent problem");
-                IntVar[] x = new IntVar[variables.length];
-                for(int i=0;i<variables.length;i++){
-                    int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                    x[i] = model.intVar(""+i,b);
-                }
-                PropAllDiffAC cstr = new PropAllDiffAC(x);
-                try {
-                    cstr.propagate(0);
-                } catch(Exception e){throw new NoSolutionException("No solution");}
-                return transform(x);
+        return variables -> {
+            Model model = new Model("allDifferent problem");
+            IntVar[] x = new IntVar[variables.length];
+            for(int i=0;i<variables.length;i++){
+                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+                x[i] = model.intVar(""+i,b);
             }
+            PropAllDiffAC cstr = new PropAllDiffAC(x);
+            try {
+                cstr.propagate(0);
+            } catch(Exception e){throw new NoSolutionException("No solution");}
+            return transform(x);
         };
     }
 
     public static Function<Set<Integer>[],Set<Integer>[]> applyBC(){
-        return new Function<Set<Integer>[], Set<Integer>[]>() {
-            @Override
-            public Set<Integer>[] apply(Set<Integer>[] variables) throws NoSolutionException{
-                Model model = new Model("allDifferent problem");
-                IntVar[] x = new IntVar[variables.length];
-                for(int i=0;i<variables.length;i++){
-                    int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                    x[i] = model.intVar(""+i,b);
-                }
-                PropAllDiffBC cstr = new PropAllDiffBC(x);
-                try {
-                    cstr.propagate(0);
-                } catch(Exception e){throw new NoSolutionException("No solution");}
-                return transform(x);
+        return variables -> {
+            Model model = new Model("allDifferent problem");
+            IntVar[] x = new IntVar[variables.length];
+            for(int i=0;i<variables.length;i++){
+                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+                x[i] = model.intVar(""+i,b);
             }
+            PropAllDiffBC cstr = new PropAllDiffBC(x);
+            try {
+                cstr.propagate(0);
+            } catch(Exception e){throw new NoSolutionException("No solution");}
+            return transform(x);
         };
     }
 
     public static Function<Integer[],Boolean> applyAllDifferent() {
-        return new Function<Integer[], Boolean>() {
-            @Override
-            public Boolean apply(Integer[] integers) {
-                for (int i = 0; i < integers.length; i++) {
-                    for (int j = 0; j < i; j++) {
-                        if (integers[i].equals(integers[j]))
-                            return false;
-                    }
+        return integers -> {
+            for (int i = 0; i < integers.length; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (integers[i].equals(integers[j]))
+                        return false;
                 }
-                return true;
             }
+            return true;
         };
     }
 

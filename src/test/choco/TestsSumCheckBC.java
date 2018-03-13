@@ -15,32 +15,26 @@ public class TestsSumCheckBC {
     private static IntVar[]x;
     public static void main(String[] args) {
         JCpChecker jc = new JCpChecker();
-        jc.checkBC(new Function<Set<Integer>[], Set<Integer>[]>() {
-            @Override
-            public Set<Integer>[] apply(Set<Integer>[] variables) throws NoSolutionException {
-                Model model = new Model("sum problem");
-                x = new IntVar[variables.length];
-                for(int i=0;i<variables.length;i++){
-                    int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                    x[i] = model.intVar(""+i,b);
-                }
-                model.sum(x, "=",5).post();
-                Solver solver=model.getSolver();
-                try{ solver.propagate();
-                }catch (Exception e){throw new NoSolutionException("");}
-                return transform(x);
+        jc.checkBC(variables -> {
+            Model model = new Model("sum problem");
+            x = new IntVar[variables.length];
+            for(int i=0;i<variables.length;i++){
+                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+                x[i] = model.intVar(""+i,b);
             }
+            model.sum(x, "=",5).post();
+            Solver solver=model.getSolver();
+            try{ solver.propagate();
+            }catch (Exception e){throw new NoSolutionException("");}
+            return transform(x);
         },
-                new Function<Integer[], Boolean>() {
-                    @Override
-                    public Boolean apply(Integer[] integers) {
-                        if(integers.length != x.length) return true;
-                        int sum=0;
-                        for(int i =0; i<integers.length;i++){
-                            sum += integers[i];
-                        }
-                        return sum == 5;
+                integers -> {
+                    if(integers.length != x.length) return true;
+                    int sum=0;
+                    for(int i =0; i<integers.length;i++){
+                        sum += integers[i];
                     }
+                    return sum == 5;
                 });
     }
 
