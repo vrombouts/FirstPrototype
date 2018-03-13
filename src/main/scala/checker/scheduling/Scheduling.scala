@@ -134,11 +134,11 @@ object Scheduling {
   def init(activity: Activity):Stream[(mutable.Map[Int,Int],List[FixedActivity])]={
     var solutions : List[(mutable.Map[Int,Int],List[FixedActivity])] = List()
     for(start <- activity.start){
-      val map:mutable.Map[Int,Int]=mutable.Map()
-      for(j <- start to activity.dur+start)
-        map.put(j, activity.height)
       val f:FixedActivity = new FixedActivity(start,start+activity.dur)
       val fixedActivities:List[FixedActivity] = List(f)
+      val map:mutable.Map[Int,Int]=mutable.Map()
+      for(j <- f.start to f.end)
+        map.put(j, activity.height)
       solutions=(map,fixedActivities)+:solutions
     }
     solutions.toStream
@@ -150,7 +150,7 @@ object Scheduling {
       val start = starts.last
       val f: FixedActivity = new FixedActivity(start, start + activity.dur)
       val ff: List[FixedActivity] = fixedActivities :+ f
-      for (time <- start to start + activity.dur) {
+      for (time <- f.start to f.end) {
         if (map.contains(time))
           map(time) += activity.height
         else
@@ -182,7 +182,7 @@ object Scheduling {
       for(i <- fixedActivities.indices){
         act(i).start += fixedActivities(i).start
         act(i).end   += fixedActivities(i).end
-        act(i).duration += (fixedActivities(i).end-fixedActivities(i).start)
+        act(i).duration += fixedActivities(i).duration
       }
     }
     act
