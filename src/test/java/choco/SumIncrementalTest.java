@@ -15,11 +15,11 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
 
-public class TestsSumIncremental {
+public class SumIncrementalTest {
     private static IntVar[] x;
     private static Model model = new Model("sum problem");
     private static Stack<Integer> state = new Stack<Integer>();
-    private static int nb=0;
+    private static int nb = 0;
 
     public static Function<Set<Integer>[], Set<Integer>[]> f() {
         return variables -> {
@@ -47,7 +47,7 @@ public class TestsSumIncremental {
             if (b instanceof Push) {
                 env.worldPush();
                 state.push(nb);
-                nb=0;
+                nb = 0;
                 Solver s = model.getSolver();
                 try {
                     s.propagate();
@@ -57,16 +57,20 @@ public class TestsSumIncremental {
                 return transform(x);
             } else if (b instanceof Pop) {
                 env.worldPop();
-                Constraint[] cs= model.getCstrs();
-                cs= Arrays.copyOfRange(cs, cs.length-nb, cs.length);
+                Constraint[] cs = model.getCstrs();
+                cs = Arrays.copyOfRange(cs, cs.length - nb, cs.length);
                 model.unpost(cs);
                 //s.restoreRootNode();
-                nb=state.pop();
+                nb = state.pop();
                 Solver s = model.getSolver();
-                try{s.propagate();} catch(Exception e){ throw new NoSolutionException("No solution");}
+                try {
+                    s.propagate();
+                } catch (Exception e) {
+                    throw new NoSolutionException("No solution");
+                }
                 return transform(x);
             } else if (b instanceof RestrictDomain) {
-                nb ++;
+                nb++;
                 try {
                     Set<Integer>[] v = remove((RestrictDomain) b);
                 } catch (NoSolutionException e) {
@@ -94,15 +98,15 @@ public class TestsSumIncremental {
         return transform(x);
     }
 
-    public static Set<Integer>[] transform(IntVar[] input){
-        Set<Integer> [] result = new Set[input.length];
-        for(int i = 0; i<input.length;i++){
+    public static Set<Integer>[] transform(IntVar[] input) {
+        Set<Integer>[] result = new Set[input.length];
+        for (int i = 0; i < input.length; i++) {
             result[i] = new HashSet<Integer>();
         }
-        for(int i=0; i<input.length;i++){
+        for (int i = 0; i < input.length; i++) {
             int elem = input[i].getLB();
             int ub = input[i].getUB();
-            while(elem != ub){
+            while (elem != ub) {
                 result[i].add(elem);
                 elem = input[i].nextValue(elem);
             }

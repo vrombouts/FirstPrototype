@@ -1,4 +1,4 @@
-package OscaR
+package oscar
 
 import checker.constraints.incremental._
 import checker.NoSolutionException
@@ -7,12 +7,12 @@ import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints._
 
-object SumBCIncr extends App{
+object SumBCIncrTest extends App {
 
-  implicit private var solver:CPSolver = new CPSolver
-  private var currentVars:Array[CPIntVar] = _
+  implicit private var solver: CPSolver = new CPSolver
+  private var currentVars: Array[CPIntVar] = _
 
-  private def init(vars: Array[Set[Int]], c:Int): Array[Set[Int]] = {
+  private def init(vars: Array[Set[Int]], c: Int): Array[Set[Int]] = {
     solver = CPSolver()
     currentVars = vars.map(x => CPIntVar(x))
     val ad = sum(currentVars).eq(c)
@@ -25,17 +25,17 @@ object SumBCIncr extends App{
     currentVars.map(x => x.toArray.toSet)
   }
 
-  private def filtering(branch:BranchOp):Array[Set[Int]] = {
-    branch match{
-      case _:Push =>
+  private def filtering(branch: BranchOp): Array[Set[Int]] = {
+    branch match {
+      case _: Push =>
         solver.pushState()
         solver.propagate()
         currentVars.map(x => x.toArray.toSet)
-      case _:Pop =>
+      case _: Pop =>
         solver.pop()
         solver.propagate()
         currentVars.map(x => x.toArray.toSet)
-      case r:RestrictDomain =>
+      case r: RestrictDomain =>
         try {
           r.op match {
             case "=" => solver.post(new EqCons(currentVars(r.index), r.constant))
@@ -45,17 +45,17 @@ object SumBCIncr extends App{
             case ">" => solver.post(new Gr(currentVars(r.index), r.constant))
             case ">=" => solver.post(new GrEq(currentVars(r.index), r.constant))
           }
-        }catch {
-          case _:oscar.cp.core.NoSolutionException => throw new NoSolutionException
-          case _:Inconsistency => throw new NoSolutionException
+        } catch {
+          case _: oscar.cp.core.NoSolutionException => throw new NoSolutionException
+          case _: Inconsistency => throw new NoSolutionException
         }
         currentVars.map(x => x.toArray.toSet)
       case _ => currentVars.map(x => x.toArray.toSet)
     }
   }
 
-  def checker(sol:Array[Int],c:Int):Boolean= {
-    if(sol.length==currentVars.length) {
+  def checker(sol: Array[Int], c: Int): Boolean = {
+    if (sol.length == currentVars.length) {
       var sum = 0
       for (i <- sol)
         sum += i
@@ -65,6 +65,6 @@ object SumBCIncr extends App{
     true
   }
 
-  for(i <- 1 to 100 by 5)
-    Constraint.checkBC(init(_,i),filtering, checker(_,i))
+  for (i <- 1 to 100 by 5)
+    Constraint.checkBC(init(_, i), filtering, checker(_, i))
 }
