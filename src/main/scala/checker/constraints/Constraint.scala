@@ -57,50 +57,56 @@ object Constraint extends Checker {
 
 
   // Applying AC with pruning //
-  private def firstStream(variable:Set[Int]): Stream[List[Int]] = {
+  private def firstStream(variable: Set[Int]): Stream[List[Int]] = {
     variable.map(x => List(x)).toStream
   }
-  private def perOneValueStreamConstructor(solution:List[Int],variable:Set[Int],str:Stream[List[Int]]):Stream[List[Int]] = {
-    if(variable.isEmpty) return str
+
+  private def perOneValueStreamConstructor(solution: List[Int], variable: Set[Int], str: Stream[List[Int]]): Stream[List[Int]] = {
+    if (variable.isEmpty) return str
     val current = variable.last
-    (current::solution) #:: perOneValueStreamConstructor(solution, variable-current, str)
+    (current :: solution) #:: perOneValueStreamConstructor(solution, variable - current, str)
   }
-  private def nthStream(variable: Set[Int], previousStream:Stream[List[Int]]):Stream[List[Int]] = {
-    if(previousStream.isEmpty) return Stream.empty[List[Int]]
+
+  private def nthStream(variable: Set[Int], previousStream: Stream[List[Int]]): Stream[List[Int]] = {
+    if (previousStream.isEmpty) return Stream.empty[List[Int]]
     val solution = previousStream.head
-    val str = (variable.last::solution)#::nthStream(variable, previousStream.tail)
+    val str = (variable.last :: solution) #:: nthStream(variable, previousStream.tail)
     val vars = variable - variable.last
-    perOneValueStreamConstructor(solution,vars,str)
+    perOneValueStreamConstructor(solution, vars, str)
 
   }
+
   @throws[NoSolutionException]
   private def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Stream[List[Int]] = {
     if (variables.length < 1) throw new NoSolutionException
     var str = firstStream(variables.last).filter(x => constraint(x.toArray))
-    if(variables.length==1) return str
-    for( i <- variables.length-2 to 0 by -1){
-      str = nthStream(variables(i),str).filter(x => constraint(x.toArray))
+    if (variables.length == 1) return str
+    for (i <- variables.length - 2 to 0 by -1) {
+      str = nthStream(variables(i), str).filter(x => constraint(x.toArray))
     }
     str
   }
+
   private def toDomainsAC(solutions: Stream[List[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions.head.size)(Set.empty)
-    solutions.foreach{sol =>
-      for(i<- variables.indices){
-        variables(i)+=sol(i)
+    solutions.foreach { sol =>
+      for (i <- variables.indices) {
+        variables(i) += sol(i)
       }
     }
     variables
   }
+
   def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions(0).length)(Set.empty)
-    solutions.foreach{sol =>
-      for(i<- variables.indices){
-        variables(i)+=sol(i)
+    solutions.foreach { sol =>
+      for (i <- variables.indices) {
+        variables(i) += sol(i)
       }
     }
     variables
   }
+
   @throws[NoSolutionException]
   def applyAC(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Set[Int]] = {
     val sol = cartesianProduct(variables, constraint)
@@ -185,7 +191,7 @@ object Constraint extends Checker {
     if (intervals.length == 1) {
       if (constraint(sol))
         return false
-      else{
+      else {
         if (interval.domain.size == 1) throw new NoSolutionException
         interval.update(minOrMax)
         return true

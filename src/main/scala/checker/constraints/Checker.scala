@@ -106,7 +106,8 @@ trait Checker {
   }
 
   def push(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
-    domainsStorage.push(currentDomain); currentDomain
+    domainsStorage.push(currentDomain);
+    currentDomain
   }
 
   def pop(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
@@ -236,7 +237,8 @@ trait Checker {
     var operations: List[BranchOp] = List()
     if (!allFixed(vars)) {
       if (nPush == 0) {
-        lastPush = true; return new Push(vars)
+        lastPush = true;
+        return new Push(vars)
       }
       if (!lastPush) operations ::= new Push(vars)
       if (nPush > 0 && !lastPush) operations ::= new Pop(vars)

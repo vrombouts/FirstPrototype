@@ -4,12 +4,12 @@ import checker.NoSolutionException
 
 trait SchedulingChecker {
 
-  private def clone(activities:Array[Activity]): Array[Activity] =
-    activities.map(x => new Activity(x.start,x.duration,x.end))
+  private def clone(activities: Array[Activity]): Array[Activity] =
+    activities.map(x => new Activity(x.start, x.duration, x.end))
 
   def checkScheduling(activities: Array[Activity],
-                      constraintTested:Array[Activity] => Array[Activity],
-                      ourConstraint:Array[Activity] => Array[Activity]): Boolean = {
+                      constraintTested: Array[Activity] => Array[Activity],
+                      ourConstraint: Array[Activity] => Array[Activity]): Boolean = {
     var ourReducedDomains: Array[Activity] = Array()
     var theirReducedDomains: Array[Activity] = Array()
     var ourError = false
@@ -49,8 +49,8 @@ trait SchedulingChecker {
       println("You don't return the correct number of activities in your solution!")
       return false
     }
-    for(i <- ourReducedDomains.indices){
-      if(!ourReducedDomains(i).equals(theirReducedDomains(i))) {
+    for (i <- ourReducedDomains.indices) {
+      if (!ourReducedDomains(i).equals(theirReducedDomains(i))) {
         println("Failed for " + activities.toList)
         println("You shoud have " + ourReducedDomains.toList)
         println("But you had " + theirReducedDomains.toList)

@@ -3,15 +3,15 @@ package checker
 import scala.util.Random
 
 object Op {
-  val equal="="
-  val different="!="
-  val lesserThan="<"
-  val lesserThanOrEqual="<="
-  val greaterThan=">"
-  val greaterThanOrEqual=">="
+  val equal = "="
+  val different = "!="
+  val lesserThan = "<"
+  val lesserThanOrEqual = "<="
+  val greaterThan = ">"
+  val greaterThanOrEqual = ">="
 
-  def opposite(operation: String): String={
-    operation match{
+  def opposite(operation: String): String = {
+    operation match {
       case `equal` => different
       case `different` => equal
       case `lesserThan` => greaterThanOrEqual
@@ -22,7 +22,7 @@ object Op {
     }
   }
 
-  def respectOp(operation:String, sum:Int, constant:Int) :Boolean= {
+  def respectOp(operation: String, sum: Int, constant: Int): Boolean = {
     operation match {
       case `equal` => sum == constant
       case `different` => sum != constant
@@ -34,10 +34,10 @@ object Op {
     }
   }
 
-  def condition(operation:String, sMin:Int, sMax:Int, constant:Int) : Boolean = {
+  def condition(operation: String, sMin: Int, sMax: Int, constant: Int): Boolean = {
     operation match {
-      case `equal` => respectOp(greaterThan,sMin, constant) || respectOp(lesserThan, sMax, constant)
-      case `different` => sMax==sMin && sMin==constant
+      case `equal` => respectOp(greaterThan, sMin, constant) || respectOp(lesserThan, sMax, constant)
+      case `different` => sMax == sMin && sMin == constant
       case `lesserThan` => respectOp(opposite(operation), sMin, constant)
       case `lesserThanOrEqual` => respectOp(opposite(operation), sMin, constant)
       case `greaterThan` => respectOp(opposite(operation), sMax, constant)
@@ -46,14 +46,15 @@ object Op {
     }
   }
 
-  def randomOp():String = {
+  def randomOp(): String = {
     val rand = new Random()
-    rand.nextInt(6) match{
+    rand.nextInt(6) match {
       case 0 => equal
       case 1 => different
       case 2 => lesserThan
       case 3 => lesserThanOrEqual
       case 4 => greaterThan
       case 5 => greaterThanOrEqual
-    }}
+    }
+  }
 }

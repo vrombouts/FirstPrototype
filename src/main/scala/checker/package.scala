@@ -6,43 +6,51 @@ import scala.collection.JavaConverters._
 
 
 package object Conversions {
-  implicit def conversionDomainsToScala(sca: Array[Set[Int]]):Array[java.util.Set[Integer]] ={
-    val jav:Array[java.util.Set[Integer]] = Array.fill(sca.length)(new java.util.HashSet())
-    for(i <- sca.indices){
-      jav(i) = sca(i).map(x=> new Integer(x)).asJava
+  implicit def conversionDomainsToScala(sca: Array[Set[Int]]): Array[java.util.Set[Integer]] = {
+    val jav: Array[java.util.Set[Integer]] = Array.fill(sca.length)(new java.util.HashSet())
+    for (i <- sca.indices) {
+      jav(i) = sca(i).map(x => new Integer(x)).asJava
     }
     jav
   }
-  implicit def conversionDomainsToJava(jav:Array[java.util.Set[Integer]]):Array[Set[Int]] = {
-    val sca:Array[Set[Int]] = Array.fill(jav.length)(Set.empty)
-    for(i <- jav.indices){
+
+  implicit def conversionDomainsToJava(jav: Array[java.util.Set[Integer]]): Array[Set[Int]] = {
+    val sca: Array[Set[Int]] = Array.fill(jav.length)(Set.empty)
+    for (i <- jav.indices) {
       sca(i) = jav(i).asScala.map(x => x.asInstanceOf[Int]).toSet
     }
     sca
   }
 
-  implicit def branchToScalaFunction(fun: Function[BranchOp,Array[java.util.Set[Integer]]]): BranchOp => Array[Set[Int]] = {
-    branchOp: BranchOp => {fun.apply(branchOp)}
+  implicit def branchToScalaFunction(fun: Function[BranchOp, Array[java.util.Set[Integer]]]): BranchOp => Array[Set[Int]] = {
+    branchOp: BranchOp => {
+      fun.apply(branchOp)
+    }
   }
-  implicit def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]],java.util.Set[Array[Integer]],Array[java.util.Set[Integer]]])
-  : (Array[Set[Int]],Set[Array[Int]]) => Array[Set[Int]] = {
-    (myArray,myTable) =>{
-      val javaTable : java.util.Set[Array[Integer]] = new java.util.HashSet[Array[Integer]]()
-      for(tableElement<- myTable){
-        val javaTableElement:Array[Integer] = new Array[Integer](tableElement.length)
-        for(i<- tableElement.indices){
-          javaTableElement(i)=tableElement(i)
+
+  implicit def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]], java.util.Set[Array[Integer]], Array[java.util.Set[Integer]]])
+  : (Array[Set[Int]], Set[Array[Int]]) => Array[Set[Int]] = {
+    (myArray, myTable) => {
+      val javaTable: java.util.Set[Array[Integer]] = new java.util.HashSet[Array[Integer]]()
+      for (tableElement <- myTable) {
+        val javaTableElement: Array[Integer] = new Array[Integer](tableElement.length)
+        for (i <- tableElement.indices) {
+          javaTableElement(i) = tableElement(i)
         }
         javaTable.add(javaTableElement)
       }
-      fun.apply(myArray,javaTable)
+      fun.apply(myArray, javaTable)
     }
   }
-  implicit def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]],Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
-    myArray =>{fun.apply(myArray)}
+
+  implicit def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
+    myArray => {
+      fun.apply(myArray)
+    }
   }
-  implicit def checkerToScalaFunction(fun: Function[Array[Integer],java.lang.Boolean]): Array[Int] => Boolean = {
-    myArray =>{
+
+  implicit def checkerToScalaFunction(fun: Function[Array[Integer], java.lang.Boolean]): Array[Int] => Boolean = {
+    myArray => {
       val ar: Array[Integer] = myArray.map(x => new Integer(x))
       val bool: Boolean = fun.apply(ar)
       bool
