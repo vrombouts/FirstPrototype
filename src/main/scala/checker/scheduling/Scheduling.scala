@@ -19,7 +19,6 @@ object Scheduling extends SchedulingChecker {
 
   def overloadChecking(activities: Array[Activity]): Boolean = {
     omegas(activities).foreach{ set =>
-      println(set.toList)
       if( est(set) + p(set) > lct(set)) return false
     }
     true
@@ -38,6 +37,27 @@ object Scheduling extends SchedulingChecker {
     }
     activities
   }
+
+  @throws[NoSolutionException]
+  def notFirstWhile(activities: Array[Activity]): Array[Activity] = {
+    var w:Boolean = true
+    while(w) {
+      w=false
+      omegas(activities).foreach { set =>
+        for (activity <- activities) {
+          if (!set.contains(activity) && activity.ect > lct(set) - p(set)) {
+            w=activity.estReduce(minEct(set))
+            if (activity.isEmpty)
+              throw new NoSolutionException
+          }
+        }
+      }
+      activities.foreach(_.enforceCohesion())
+    }
+    activities
+  }
+
+
 
   @throws[NoSolutionException]
   def notLast(activities: Array[Activity]): Array[Activity] = {
@@ -213,7 +233,6 @@ object Scheduling extends SchedulingChecker {
     activities = notFirst(activities)
     activities.foreach(_.enforceCohesion())
     println(activities.toList)
-
-    checkAC(notFirst)
+    checkAC(notFirstWhile)
   }
 }

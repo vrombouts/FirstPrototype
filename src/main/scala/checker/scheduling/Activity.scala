@@ -16,14 +16,20 @@ class Activity(var start: Set[Int],var duration: Set[Int], var end:Set[Int], var
   def dur: Int = duration.min
 
   def isEmpty:Boolean = start.isEmpty || duration.isEmpty || end.isEmpty
-
-
-
-  def lctReduce(maxValue: Int): Unit = {
-    end = end.filter(_ <= maxValue)
+  
+  def lctReduce(maxValue: Int): Boolean = {
+    val e = end.filter(_ <= maxValue)
+    if(e.size == end.size)
+      return false
+    start = e
+    true
   }
-  def estReduce(minValue: Int): Unit = {
-    start = start.filter(_ >= minValue)
+  def estReduce(minValue: Int): Boolean = {
+    val s = start.filter(_ >= minValue)
+    if(s.size == start.size)
+      return false
+    start = s
+    true
   }
 
   /*
@@ -39,5 +45,14 @@ class Activity(var start: Set[Int],var duration: Set[Int], var end:Set[Int], var
       "Starts: " + start +
       "\t duration: " + duration +
       "\t end: " + end + "\n"
+  }
+  override def equals(o: scala.Any): Boolean = {
+    o match{
+      case act:Activity =>
+        act.start.equals(start) &&
+          act.duration.equals(duration) &&
+          act.end.equals(end)
+      case _ => false
+    }
   }
 }

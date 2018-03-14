@@ -30,9 +30,9 @@ trait SchedulingChecker {
         if (activity.isEmpty)
           return true
       }
-      println("Failed for " + activities.foreach(println))
+      println("Failed for " + activities.toList)
       println("You should return an exception")
-      println("but you have " + theirReducedDomains.foreach(println))
+      println("but you have " + theirReducedDomains.toList)
       return false
     }
     if (!ourError && theirError) {
@@ -40,8 +40,8 @@ trait SchedulingChecker {
         if (activity.isEmpty)
           return true
       }
-      println("Failed for " + activities.foreach(println))
-      println("You shoud have " + ourReducedDomains.foreach(println))
+      println("Failed for " + activities.toList)
+      println("You shoud have " + ourReducedDomains.toList)
       println("But you returned an exception")
       return false
     }
@@ -51,9 +51,9 @@ trait SchedulingChecker {
     }
     for(i <- ourReducedDomains.indices){
       if(!ourReducedDomains(i).equals(theirReducedDomains(i))) {
-        println("Failed for " + activities.foreach(println))
-        println("You shoud have " + ourReducedDomains.foreach(println))
-        println("But you had " + theirReducedDomains.foreach(println))
+        println("Failed for " + activities.toList)
+        println("You shoud have " + ourReducedDomains.toList)
+        println("But you had " + theirReducedDomains.toList)
         return false
       }
     }

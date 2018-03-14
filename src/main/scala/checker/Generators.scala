@@ -59,8 +59,8 @@ object Generators {
   // maybe test with variables of different domains lengths (1,2,3...)
 
   val activity:Gen[Activity] = for{
-    starts: Set[Int] <- Gen.containerOfN[Set,Int](3,Gen.choose(0,10))
-    duration: Set[Int] <- Gen.containerOfN[Set,Int](1,Gen.choose(0,10))
+    starts: Set[Int] <- Gen.containerOfN[Set,Int](3,Gen.choose(0,200))
+    duration: Set[Int] <- Gen.containerOfN[Set,Int](1,Gen.choose(1,15))
   }yield new Activity(starts,duration,starts.map(_+duration.last))
 
   val scheduling: Gen[List[Activity]] = Gen.containerOfN[List,Activity](10,activity)
