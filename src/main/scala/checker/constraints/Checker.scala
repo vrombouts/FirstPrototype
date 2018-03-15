@@ -44,7 +44,7 @@ trait Checker {
     var reducedDomains: Array[Set[Int]] = Array()
     try {
       reducedDomains = constraintTested(variables.clone())
-      returnValues = returnValues:+ variables
+      returnValues = returnValues:+ reducedDomains
     }
     catch {
       //TODO check if it is not better to have a case of NoSolutionException instead
@@ -54,7 +54,7 @@ trait Checker {
     var trueReducedDomains: Array[Set[Int]] = Array()
     try {
       trueReducedDomains = applyConstraint(variables.clone())
-      returnValues = returnValues:+variables
+      returnValues = returnValues:+trueReducedDomains
     }
     catch {
       case _: NoSolutionException => returnValues = returnValues :+ Array.fill(variables.length)(Set[Int]()) // doesn't catch java.lang.StackOverflowError
@@ -70,9 +70,10 @@ trait Checker {
     val ourReducedDomains:Array[Set[Int]] = returnValues(2)
     val reducedDomains:Array[Set[Int]] = returnValues(1)
 
-    if(ourReducedDomains.isEmpty && reducedDomains.isEmpty) return true
+    if(ourReducedDomains.isEmpty && reducedDomains.isEmpty){println("1"); return true}
     else if(ourReducedDomains.isEmpty && reducedDomains.nonEmpty){
       printer(returnValues)
+      println("2")
       return false
     }
     else if(ourReducedDomains.length != reducedDomains.length){
@@ -81,12 +82,16 @@ trait Checker {
     }
     else {
       for (i <- ourReducedDomains.indices) {
+        println(reducedDomains(i).toList)
+        println(ourReducedDomains(i).toList)
         if (!ourReducedDomains(i).equals(reducedDomains(i))) {
           printer(returnValues)
+          println("hkjhkjghhgfnbbvbn bbnchgfhg")
           return false
         }
       }
     }
+    println("fin")
     true
   }
 
