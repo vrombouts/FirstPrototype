@@ -83,8 +83,6 @@ trait Checker {
     }
     else {
       for (i <- ourReducedDomains.indices) {
-        println(reducedDomains(i).toList)
-        println(ourReducedDomains(i).toList)
         if (!ourReducedDomains(i).equals(reducedDomains(i))) {
           printer(returnValues)
           return false
