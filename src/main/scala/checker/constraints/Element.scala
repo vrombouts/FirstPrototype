@@ -11,12 +11,11 @@ object Element extends Checker {
 
   def checkAC(constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
     val check: (Array[Set[Int]]) => Boolean = checkConstraint(_, constraint)
-    forAll(Generators.element) { x =>
-      val X: Array[Set[Int]] = x._1.toArray
-      val i: Set[Int] = x._2
-      val v: Set[Int] = x._3
-      val variables: Array[Set[Int]] = X ++ Array(i, v)
-      checkEmpty(variables.toList) || X.length <= 0 || i.size <= 0 || v.size <= 0 || check(variables) //x.length<2
+    gen.addNVar(5)
+    gen.addVar(0.2, (-1, 10))
+    gen.addVar(0.1, (-11, 11))
+    forAll(gen.gen) { x =>
+      x.isEmpty || checkEmpty(x) || check(x.toArray) //x.length<2
     }.check
     LimitCases.elementLimitCases.foreach(limitCase => {
       check(limitCase)
@@ -24,9 +23,9 @@ object Element extends Checker {
   }
 
   override def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
-    val initial:Array[Set[Int]] = returnValues(0)
-    val trueReduced:Array[Set[Int]] = returnValues(1)
-    val reduced:Array[Set[Int]] = returnValues(2)
+    val initial: Array[Set[Int]] = returnValues(0)
+    val trueReduced: Array[Set[Int]] = returnValues(1)
+    val reduced: Array[Set[Int]] = returnValues(2)
     val init = initial.dropRight(2).toList
     val initI = initial(initial.length - 2)
     val initV = initial(initial.length - 1)
@@ -36,9 +35,9 @@ object Element extends Checker {
     val r = reduced.dropRight(2).toList
     val rI = reduced(reduced.length - 2)
     val rV = reduced(reduced.length - 1)
-    val strFail:String = "failed with X domains: " + init + "\n i domain: " + initI + "\n v domain: " + initV
-    val strShould:String="you should have: " + tr + "\n i domain: " + trI + "\n v domain: " + trV
-    val strHave:String="but you had: " + r + "\n i domain: " + rI + "\n v domain: " + rV
+    val strFail: String = "failed with X domains: " + init + "\n i domain: " + initI + "\n v domain: " + initV
+    val strShould: String = "you should have: " + tr + "\n i domain: " + trI + "\n v domain: " + trV
+    val strHave: String = "but you had: " + r + "\n i domain: " + rI + "\n v domain: " + rV
     if (reduced.isEmpty && trueReduced.nonEmpty) {
       println(strFail)
       println(strShould)

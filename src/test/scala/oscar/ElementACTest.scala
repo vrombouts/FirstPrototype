@@ -1,7 +1,7 @@
 package oscar
 
 import checker.constraints.Constraint
-import checker.NoSolutionException
+import checker.{NoSolutionException, ScCpChecker}
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.ElementVarAC
@@ -44,11 +44,11 @@ object ElementACTest extends App {
    * respect the element constraint with its last two element being
    * the variables i and v (solution = [x1,x2,..xn, i,v]
    */
-  private def elementCheck(solution:Array[Int]):Boolean = {
-    if(size ==solution.length){
-      val i = solution(size-2)
-      val v = solution(size-1)
-      return v==solution(i)
+  private def elementCheck(solution: Array[Int]): Boolean = {
+    if (size == solution.length) {
+      val i = solution(size - 2)
+      val v = solution(size - 1)
+      return v == solution(i)
     }
     true
   }
@@ -56,9 +56,11 @@ object ElementACTest extends App {
   //set x with a size of 7
   Constraint.gen.setNVar(7)
   //add variable i in generator
-  Constraint.gen.addVar(0.5,(0,4))
+  Constraint.gen.addVar(0.5, (0, 6))
   //add variable v in generator
-  Constraint.gen.addVar(0.1,(-11,11))
+  Constraint.gen.addVar(0.1, (-11, 11))
   print(Constraint.gen.toString)
-  Constraint.checkAC(elementAC,elementCheck)
+  Constraint.checkAC(elementAC, elementCheck)
+
+  //ScCpChecker.checkElementAC(elementAC)
 }

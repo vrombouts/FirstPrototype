@@ -16,17 +16,18 @@ class VariablesGenerator {
   var baseDensity: Double = 4.0 / 20.0
 
   def gen: Gen[List[Set[Int]]] = for {
-    seq <- Gen.sequence(GenList)
+    seq <- Gen.sequence(genList)
   } yield seq.toArray(new Array[Set[Int]](seq.size())).toList
 
-  private def GenList: List[Gen[Set[Int]]] = {
+  private def genList: List[Gen[Set[Int]]] = {
     var l: List[Gen[Set[Int]]] = List()
     for (i <- nbVars - 1 to 0 by -1) {
-      l = GenVar(i) :: l
+      l = genVar(i) :: l
     }
     l
   }
-  private def GenVar(i: Int): Gen[Set[Int]] = {
+
+  private def genVar(i: Int): Gen[Set[Int]] = {
     val min = ranges(i)._1
     val max = ranges(i)._2
     val dif = max - min
@@ -34,7 +35,7 @@ class VariablesGenerator {
     Gen.containerOfN[Set, Int](size.toInt, Gen.choose(min, max))
   }
 
-  def setNVar(n:Int):Unit= {
+  def setNVar(n: Int): Unit = {
     nbVars = n
     densities = Array.fill(nbVars)(baseDensity)
     ranges = Array.fill(nbVars)(baseRange)
@@ -55,14 +56,14 @@ class VariablesGenerator {
   /* This function add n variables to the instances generated
    * with the basic density and range
    */
-  def AddNVar(n: Int): Unit = {
+  def addNVar(n: Int): Unit = {
     for (_ <- 1 to n) addVar()
   }
 
   /* This function add n variables to the instances generated
    * with the given density and range
    */
-  def AddNVar(density: Double, range: (Int, Int), n: Int): Unit = {
+  def addNVar(density: Double, range: (Int, Int), n: Int): Unit = {
     for (_ <- 1 to n) addVar(density, range)
   }
 
@@ -91,7 +92,7 @@ class VariablesGenerator {
 
   override def toString: String = {
     var str = "vars\tdensity\trange\n"
-    for(i <- 0 until nbVars) str +=i+"\t\t"+densities(i)+"\t\t"+ranges(i)+"\n"
+    for (i <- 0 until nbVars) str += i + "\t\t" + densities(i) + "\t\t" + ranges(i) + "\n"
     str
   }
 
