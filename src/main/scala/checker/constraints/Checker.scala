@@ -1,7 +1,7 @@
 package checker.constraints
 
 import Conversions._
-import checker.{NoSolutionException, VariablesGenerator}
+import checker.{NoSolutionException, Statistics, VariablesGenerator}
 import checker.constraints.incremental._
 
 import scala.collection.mutable
@@ -69,10 +69,19 @@ trait Checker {
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
    */
   private def comparison(returnValues: Array[Array[Set[Int]]]): Boolean = {
+    Statistics.incNbExecutedTests()
     val ourReducedDomains:Array[Set[Int]] = returnValues(2)
     val reducedDomains:Array[Set[Int]] = returnValues(1)
-    if(reducedDomains==null) return false
-    if(ourReducedDomains.isEmpty && reducedDomains.isEmpty) return true
+    val init:Array[Set[Int]] = returnValues(0)
+    var modif:Boolean = false
+    if(reducedDomains==null) {
+      println("You returned a null array instead of an array of filtered domains")
+      return false
+    }
+    if(ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
+      Statistics.incNbNoSolutionTests()
+      return true
+    }
     else if(ourReducedDomains.isEmpty && reducedDomains.nonEmpty){
       printer(returnValues)
       return false
@@ -87,7 +96,14 @@ trait Checker {
           printer(returnValues)
           return false
         }
+        if(!init(i).equals(ourReducedDomains(i)))
+          modif=true
       }
+    }
+    if(modif)
+      Statistics.incNbRemovingValueTests()
+    else{
+      Statistics.incNbRemoveNoValueTests()
     }
     true
   }

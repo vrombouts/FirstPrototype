@@ -24,6 +24,7 @@ object Constraint extends Checker {
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
+    println(Statistics.statisticsToString())
   }
 
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
