@@ -7,10 +7,20 @@ object Gcc extends Checker {
 
   private var values: Array[Int] = Array()
 
+  private def setGen(): Unit = {
+    gen.baseRange = (0, 2)
+    gen.baseDensity = 0.8
+    gen.setNVar(8)
+    gen.baseRange = (0, 8)
+    gen.baseDensity = 2.0 / 8.0
+    gen.addNVar(3)
+  }
+
   def checkAC(constraint: (Array[Set[Int]], Array[Int]) => Array[Set[Int]]): Unit = {
     val check: Array[Set[Int]] => Boolean = checkConstraint(_, constraint(_, Array(0, 1, 2)))
     values = Array(0, 1, 2)
-    forAll(Generators.gcc) { variables =>
+    setGen()
+    forAll(gen.gen) { variables =>
       variables.isEmpty || checkEmpty(variables) || variables.length < 4 || check(variables.toArray)
     }.check
     LimitCases.gccLimitCases.foreach { limit =>
