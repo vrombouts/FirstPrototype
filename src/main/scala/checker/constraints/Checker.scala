@@ -1,7 +1,7 @@
 package checker.constraints
 
 import Conversions._
-import checker.NoSolutionException
+import checker.{NoSolutionException, VariablesGenerator}
 import checker.constraints.incremental._
 
 import scala.collection.mutable
@@ -9,6 +9,8 @@ import scala.language.implicitConversions
 import scala.util.Random
 
 trait Checker {
+  val gen: VariablesGenerator = new VariablesGenerator()
+
   protected def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
     false
@@ -106,7 +108,7 @@ trait Checker {
   }
 
   def push(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
-    domainsStorage.push(currentDomain);
+    domainsStorage.push(currentDomain)
     currentDomain
   }
 
@@ -237,7 +239,7 @@ trait Checker {
     var operations: List[BranchOp] = List()
     if (!allFixed(vars)) {
       if (nPush == 0) {
-        lastPush = true;
+        lastPush = true
         return new Push(vars)
       }
       if (!lastPush) operations ::= new Push(vars)
