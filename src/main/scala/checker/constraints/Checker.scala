@@ -1,7 +1,7 @@
 package checker.constraints
 
 import Conversions._
-import checker.NoSolutionException
+import checker.{NoSolutionException, VariablesGenerator}
 import checker.constraints.incremental._
 
 import scala.collection.mutable
@@ -9,6 +9,8 @@ import scala.language.implicitConversions
 import scala.util.Random
 
 trait Checker {
+  val gen: VariablesGenerator = new VariablesGenerator()
+
   protected def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
     false
