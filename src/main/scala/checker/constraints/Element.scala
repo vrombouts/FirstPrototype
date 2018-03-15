@@ -23,7 +23,10 @@ object Element extends Checker {
     })
   }
 
-  override def printer(initial: Array[Set[Int]], trueReduced: Array[Set[Int]], reduced: Array[Set[Int]], error: Boolean, ourError: Boolean): Unit = {
+  override def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
+    val initial:Array[Set[Int]] = returnValues(0)
+    val trueReduced:Array[Set[Int]] = returnValues(1)
+    val reduced:Array[Set[Int]] = returnValues(2)
     val init = initial.dropRight(2).toList
     val initI = initial(initial.length - 2)
     val initV = initial(initial.length - 1)
@@ -33,18 +36,21 @@ object Element extends Checker {
     val r = reduced.dropRight(2).toList
     val rI = reduced(reduced.length - 2)
     val rV = reduced(reduced.length - 1)
-    if (error && !ourError) {
-      println("failed with X domains: " + init + "\n i domain: " + initI + "\n v domain: " + initV)
-      println("you should have: " + tr + "\n i domain: " + trI + "\n v domain: " + trV)
-      println("but you returned an exception")
-    } else if (!error && ourError) {
-      println("failed with X domains: " + init + "\n i domain: " + initI + "\n v domain: " + initV)
+    val strFail:String = "failed with X domains: " + init + "\n i domain: " + initI + "\n v domain: " + initV
+    val strShould:String="you should have: " + tr + "\n i domain: " + trI + "\n v domain: " + trV
+    val strHave:String="but you had: " + r + "\n i domain: " + rI + "\n v domain: " + rV
+    if (reduced.isEmpty && trueReduced.nonEmpty) {
+      println(strFail)
+      println(strShould)
+      println("but you returned no solution can be found")
+    } else if (reduced.nonEmpty && trueReduced.isEmpty) {
+      println(strFail)
       println("you should not have any solutions")
-      println("but you had: " + r + "\n i domain: " + rI + "\n v domain: " + rV)
-    } else if (!error && !ourError) {
-      println("failed for: " + init + "\n i domain: " + initI + "\n v domain: " + initV)
-      println("you should have: " + tr + "\n i domain: " + trI + "\n v domain: " + trV)
-      println("but you had: " + r + "\n i domain: " + rI + "\n v domain: " + rV)
+      println(strHave)
+    } else if (reduced.nonEmpty && trueReduced.nonEmpty) {
+      println(strFail)
+      println(strShould)
+      println(strHave)
     }
   }
 

@@ -14,16 +14,19 @@ trait Checker {
     false
   }
 
-  protected def printer(initial: Array[Set[Int]], trueReduced: Array[Set[Int]], reduced: Array[Set[Int]], error: Boolean, ourError: Boolean): Unit = {
-    if (error && !ourError) {
+  protected def printer(returnValues:Array[Array[Set[Int]]]): Unit = {
+    val initial:Array[Set[Int]] = returnValues(0)
+    val reduced:Array[Set[Int]] = returnValues(1)
+    val trueReduced:Array[Set[Int]] = returnValues(2)
+    if (reduced.isEmpty && trueReduced.nonEmpty) {
       println("failed for: " + initial.toList)
       println("you should have: " + trueReduced.toList)
-      println("but you returned an exception")
-    } else if (!error && ourError) {
+      println("but you claim there is no solution")
+    } else if (reduced.nonEmpty && trueReduced.isEmpty) {
       println("failed for: " + initial.toList)
       println("you should not have any solutions")
       println("but you had: " + reduced.toList)
-    } else if (!error && !ourError) {
+    } else if (reduced.nonEmpty && trueReduced.nonEmpty) {
       println("failed for: " + initial.toList)
       println("you should have: " + trueReduced.toList)
       println("but you had: " + reduced.toList)
@@ -36,52 +39,52 @@ trait Checker {
                       constraintTested: Array[Set[Int]] => Array[Set[Int]])
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
+    var returnValues:Array[Array[Set[Int]]] = Array()
+    returnValues=returnValues :+ variables
     var reducedDomains: Array[Set[Int]] = Array()
-    var error: Boolean = false
-    var ourError: Boolean = false
     try {
       reducedDomains = constraintTested(variables.clone())
+      returnValues = returnValues:+ variables
     }
     catch {
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case _: NoSolutionException => error = true
+      case _: NoSolutionException => returnValues = returnValues :+ Array.fill(variables.length)(Set[Int]()) // doesn't catch java.lang.StackOverflowError
     }
     // Then we generate the domains that reducedDomains should have
     var trueReducedDomains: Array[Set[Int]] = Array()
     try {
       trueReducedDomains = applyConstraint(variables.clone())
+      returnValues = returnValues:+variables
     }
     catch {
-      case _: NoSolutionException => ourError = true // doesn't catch java.lang.StackOverflowError
+      case _: NoSolutionException => returnValues = returnValues :+ Array.fill(variables.length)(Set[Int]()) // doesn't catch java.lang.StackOverflowError
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
-    comparison(error, ourError, variables, reducedDomains, trueReducedDomains)
+    comparison(returnValues)
   }
 
-  private def comparison(error: Boolean, ourError: Boolean, variables: Array[Set[Int]], reducedDomains: Array[Set[Int]], ourReducedDomains: Array[Set[Int]]): Boolean = {
-    if (error && ourError) return true
+  /*
+   * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
+   */
+  private def comparison(returnValues: Array[Array[Set[Int]]]): Boolean = {
+    val ourReducedDomains:Array[Set[Int]] = returnValues(2)
+    val reducedDomains:Array[Set[Int]] = returnValues(1)
 
-    if (error && !ourError) {
-      for (i <- ourReducedDomains.indices) {
-        if (ourReducedDomains(i).nonEmpty) {
-          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
-          return false
-        }
-      }
+    if(ourReducedDomains.isEmpty && reducedDomains.isEmpty) return true
+    else if(ourReducedDomains.isEmpty && reducedDomains.nonEmpty){
+      printer(returnValues)
+      return false
     }
-    else if (!ourError) {
-      for (i <- ourReducedDomains.indices) {
-        if (!ourReducedDomains(i).equals(reducedDomains(i))) {
-          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
-          return false
-        }
-      }
+    else if(ourReducedDomains.length != reducedDomains.length){
+      println("Incorrect output format : you don't return the correct number of domains variables")
+      return false
     }
     else {
-      //empty domains accepted as having no solutions
-      if (reducedDomains.nonEmpty && reducedDomains.forall(x => x.nonEmpty)) {
-        printer(variables, ourReducedDomains, reducedDomains, error, ourError)
-        return false
+      for (i <- ourReducedDomains.indices) {
+        if (!ourReducedDomains(i).equals(reducedDomains(i))) {
+          printer(returnValues)
+          return false
+        }
       }
     }
     true
@@ -106,7 +109,7 @@ trait Checker {
   }
 
   def push(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
-    domainsStorage.push(currentDomain);
+    domainsStorage.push(currentDomain)
     currentDomain
   }
 
@@ -123,27 +126,29 @@ trait Checker {
                       constraintTested: BranchOp => Array[Set[Int]])
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
+    var returnValues:Array[Array[Set[Int]]]=Array()
+    returnValues = returnValues :+ variables
     var reducedDomains: Array[Set[Int]] = Array()
-    var error: Boolean = false
-    var ourError: Boolean = false
     try {
       reducedDomains = init(variables.clone())
+      returnValues = returnValues :+ reducedDomains
     }
     catch {
       //TODO check if it is not better to have a case of NoSolutionException instead
-      case _: NoSolutionException => error = true
+      case _: NoSolutionException => returnValues=returnValues :+ Array.fill(variables.length)(Set[Int]())
     }
     // Then we generate the domains that reducedDomains should have
     var ourReducedDomains: Array[Set[Int]] = Array()
     try {
       ourReducedDomains = applyConstraint(variables.clone())
+      returnValues = returnValues :+ ourReducedDomains
     }
     catch {
-      case _: NoSolutionException => ourError = true
+      case _: NoSolutionException => returnValues = returnValues :+ Array.fill(variables.length)(Set[Int]())
     }
-    if (!comparison(error, ourError, variables, reducedDomains, ourReducedDomains))
+    if (!comparison(returnValues))
       return false
-    if (error && ourError) return true
+    if (returnValues(1).isEmpty && returnValues(2).isEmpty) return true
     var vars: Array[Set[Int]] = ourReducedDomains.clone()
     var nPush: Int = 0
     var branches: List[BranchOp] = List()
@@ -159,27 +164,27 @@ trait Checker {
           return true
       }
       // apply our constraint and the constraint of the user for the branchOp b and the domains vars
-      var reducedDomains: Array[Set[Int]] = Array()
-      var error: Boolean = false
-      var ourError: Boolean = false
+      var ourReducedDomains:Array[Set[Int]]=Array()
+      var reducedDomains:Array[Set[Int]]=Array()
       try {
         reducedDomains = constraintTested(b)
+        returnValues(1)=reducedDomains
       }
       catch {
         //TODO check if it is not better to have a case of NoSolutionException instead
-        case _: NoSolutionException => error = true
+        case _: NoSolutionException => returnValues(1)=Array.fill(variables.length)(Set[Int]())
       }
       // Then we generate the domains that reducedDomains should have
-      var ourReducedDomains: Array[Set[Int]] = Array()
       try {
         ourReducedDomains = applyConstraint(b)
+        returnValues(2)=ourReducedDomains
       }
       catch {
-        case _: NoSolutionException => ourError = true
+        case _: NoSolutionException => returnValues(2)=Array.fill(variables.length)(Set[Int]())
       }
       // compare our domains filtered with the ones of the user
       // and if no difference, update the domains for the next branching operation
-      if (comparison(error, ourError, variables, reducedDomains, ourReducedDomains, branches))
+      if (comparison(returnValues))
         vars = ourReducedDomains.clone()
       else
         return false
@@ -189,37 +194,11 @@ trait Checker {
   }
 
 
-  private def comparison(error: Boolean, ourError: Boolean, variables: Array[Set[Int]], reducedDomains: Array[Set[Int]], ourReducedDomains: Array[Set[Int]], b: List[BranchOp]): Boolean = {
-    //Finally, we compare the two. If they are not equals, the constraint is not correct.
-    if (error && ourError) return true
-
-    if (error && !ourError) {
-      for (i <- ourReducedDomains.indices) {
-        if (ourReducedDomains(i).nonEmpty) {
-          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
-          println("with all those branches in reverse order: " + b)
-          return false
-        }
-      }
-    }
-    else if (!ourError) {
-      for (i <- ourReducedDomains.indices) {
-        if (!ourReducedDomains(i).equals(reducedDomains(i))) {
-          printer(variables, ourReducedDomains, reducedDomains, error, ourError)
-          println("with all those branches in reverse order: " + b)
-          return false
-        }
-      }
-    }
-    else {
-      //empty domains accepted as having no solutions
-      if (reducedDomains.nonEmpty && reducedDomains.forall(x => x.nonEmpty)) {
-        printer(variables, ourReducedDomains, reducedDomains, error, ourError)
-        println("with all those branches in reverse order: " + b)
-        return false
-      }
-    }
-    true
+  private def comparison(returnValues:Array[Array[Set[Int]]], b: List[BranchOp]): Boolean = {
+    val result:Boolean = comparison(returnValues)
+    if(!result)
+      println("with all those branches in reverse order: " + b)
+    result
   }
 
 
@@ -237,7 +216,7 @@ trait Checker {
     var operations: List[BranchOp] = List()
     if (!allFixed(vars)) {
       if (nPush == 0) {
-        lastPush = true;
+        lastPush = true
         return new Push(vars)
       }
       if (!lastPush) operations ::= new Push(vars)
