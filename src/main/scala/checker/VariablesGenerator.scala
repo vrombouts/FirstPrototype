@@ -8,7 +8,7 @@ import org.scalacheck.Gen
  * Basic density: 0.8 for each variable
  * Basic range: [-10,10] for each variable
  */
-final class VariablesGenerator {
+class VariablesGenerator {
   private[this] var nbVars: Int = 5
   private[this] var densities: Array[Double] = Array.fill(nbVars)(4.0 / 20.0)
   private[this] var ranges: Array[(Int, Int)] = Array.fill(nbVars)((-10, 10))
@@ -26,13 +26,18 @@ final class VariablesGenerator {
     }
     l
   }
-
   private def GenVar(i: Int): Gen[Set[Int]] = {
     val min = ranges(i)._1
     val max = ranges(i)._2
     val dif = max - min
     val size: Double = dif * densities(i)
     Gen.containerOfN[Set, Int](size.toInt, Gen.choose(min, max))
+  }
+
+  def setNVar(n:Int):Unit= {
+    nbVars = n
+    densities = Array.fill(nbVars)(baseDensity)
+    ranges = Array.fill(nbVars)(baseRange)
   }
 
   def addVar(): Unit = {
@@ -82,6 +87,12 @@ final class VariablesGenerator {
     densities = densities.filter { _ => j += 1; j == index }
     j = -1
     ranges = ranges.filter { _ => j += 1; j == index }
+  }
+
+  override def toString: String = {
+    var str = "vars\tdensity\trange\n"
+    for(i <- 0 until nbVars) str +=i+"\t\t"+densities(i)+"\t\t"+ranges(i)+"\n"
+    str
   }
 
 }
