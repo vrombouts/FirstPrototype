@@ -71,11 +71,10 @@ trait Checker {
   private def comparison(returnValues: Array[Array[Set[Int]]]): Boolean = {
     val ourReducedDomains:Array[Set[Int]] = returnValues(2)
     val reducedDomains:Array[Set[Int]] = returnValues(1)
-
-    if(ourReducedDomains.isEmpty && reducedDomains.isEmpty){println("1"); return true}
+    if(reducedDomains==null) return false
+    if(ourReducedDomains.isEmpty && reducedDomains.isEmpty) return true
     else if(ourReducedDomains.isEmpty && reducedDomains.nonEmpty){
       printer(returnValues)
-      println("2")
       return false
     }
     else if(ourReducedDomains.length != reducedDomains.length){
@@ -88,12 +87,10 @@ trait Checker {
         println(ourReducedDomains(i).toList)
         if (!ourReducedDomains(i).equals(reducedDomains(i))) {
           printer(returnValues)
-          println("hkjhkjghhgfnbbvbn bbnchgfhg")
           return false
         }
       }
     }
-    println("fin")
     true
   }
 
