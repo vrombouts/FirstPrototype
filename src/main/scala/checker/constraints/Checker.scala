@@ -69,7 +69,6 @@ trait Checker {
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
    */
   private def comparison(returnValues: Array[Array[Set[Int]]],b: List[BranchOp]): Boolean = {
-    if(b == null) Statistics.incNbExecutedTests()
     val ourReducedDomains:Array[Set[Int]] = returnValues(2)
     val reducedDomains:Array[Set[Int]] = returnValues(1)
     val init:Array[Set[Int]] = returnValues(0)
@@ -80,8 +79,7 @@ trait Checker {
       result = false
     }
     else if(ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
-      if(b==null) Statistics.incNbNoSolutionTests()
-      else{Statistics.incNbLeaves()}
+      if(b!=null){Statistics.incNbLeaves()}
       result = true
     }
     else if(ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.nonEmpty)){
@@ -104,16 +102,25 @@ trait Checker {
           printer(returnValues)
           result = false
         }
-        if (!init(i).equals(ourReducedDomains(i)))
-          modif = true
-      }
-      if (b == null && modif)
-        Statistics.incNbRemovingValueTests()
-      else {
-        Statistics.incNbRemoveNoValueTests()
       }
     }
     if(b != null && !result) println("with all those branches in reverse order: " + b)
+    if(b==null){
+      if(!result) Statistics.incNbFailedTests()
+      Statistics.incNbExecutedTests()
+      if(ourReducedDomains.exists(_.isEmpty)){
+        Statistics.incNbNoSolutionTests()
+        if(!result) Statistics.incNbFailedNoSolutionTests()
+      }
+      else if(!(ourReducedDomains zip init).exists(x => !x._1.equals(x._2))){
+        Statistics.incNbRemoveNoValueTests()
+        if(!result) Statistics.incNbFailedRemoveNoValueTests()
+      }
+      else{
+        Statistics.incNbRemovingValueTests()
+        if(!result) Statistics.incNbFailedRemovingValueTests()
+      }
+    }
     result
   }
 
