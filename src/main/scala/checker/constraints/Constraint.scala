@@ -24,7 +24,7 @@ object Constraint extends Checker {
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
-    println(Statistics.statisticsToString())
+    Statistics.printStats
   }
 
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
@@ -34,6 +34,7 @@ object Constraint extends Checker {
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check
     //TODO: add simple case limit possible for all constraints
+    Statistics.printStats
   }
 
   def checkAC(init: Array[Set[Int]] => Array[Set[Int]],
@@ -44,6 +45,7 @@ object Constraint extends Checker {
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check
+    Statistics.printStats(isInc = true)
   }
 
   def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
@@ -54,6 +56,7 @@ object Constraint extends Checker {
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check
+    Statistics.printStats(isInc = true)
   }
 
 
