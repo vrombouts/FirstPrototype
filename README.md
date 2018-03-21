@@ -9,6 +9,7 @@ This tool is coded in Scala and can be used to tests filtering algorithms writte
 To test the filtering of a constraint, you always need to give 2 informations.
 * A checker telling if a solution is accepted or not by the constraint tested.
 * Your own filtering algorithm of the constraint.
+
 There are also other option that can be used such as 
 * modifying the generator of variables.
 * setting a seed for the tests.
