@@ -31,7 +31,7 @@ class VariablesGenerator {
     val min = ranges(i)._1
     val max = ranges(i)._2
     val dif = max - min
-    val size: Double = dif * densities(i)
+    val size: Double = Math.max(dif * densities(i),1)
     Gen.containerOfN[Set, Int](size.toInt, Gen.choose(min, max))
   }
 
