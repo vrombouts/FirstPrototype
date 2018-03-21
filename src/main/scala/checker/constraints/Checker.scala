@@ -62,50 +62,59 @@ trait Checker {
       case _: NoSolutionException => returnValues = returnValues :+ Array.fill(variables.length)(Set[Int]()) // doesn't catch java.lang.StackOverflowError
     }
     //Finally, we compare the two. If they are not equals, the constraint is not correct.
-    comparison(returnValues)
+    comparison(returnValues,null)
   }
 
   /*
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
    */
-  private def comparison(returnValues: Array[Array[Set[Int]]]): Boolean = {
-    Statistics.incNbExecutedTests()
+  private def comparison(returnValues: Array[Array[Set[Int]]],b: List[BranchOp]): Boolean = {
+    if(b == null) Statistics.incNbExecutedTests()
     val ourReducedDomains:Array[Set[Int]] = returnValues(2)
     val reducedDomains:Array[Set[Int]] = returnValues(1)
     val init:Array[Set[Int]] = returnValues(0)
     var modif:Boolean = false
+    var result : Boolean = true
     if(reducedDomains==null) {
       println("You returned a null array instead of an array of filtered domains")
-      return false
+      result = false
     }
-    if(ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
-      Statistics.incNbNoSolutionTests()
-      return true
+    else if(ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
+      if(b==null) Statistics.incNbNoSolutionTests()
+      else{Statistics.incNbLeaves()}
+      result = true
     }
-    else if(ourReducedDomains.isEmpty && reducedDomains.nonEmpty){
+    else if(ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.nonEmpty)){
       printer(returnValues)
-      return false
+      result = false
+    }
+    else if(ourReducedDomains.exists(_.nonEmpty) && reducedDomains.exists(_.isEmpty)){
+      printer(returnValues)
+      result = false
     }
     else if(ourReducedDomains.length != reducedDomains.length){
       println("Incorrect output format : you don't return the correct number of domains variables")
-      return false
+      result = false
     }
     else {
+      if(!reducedDomains.exists(x => x.size != 1) && b!=null)
+        Statistics.incNbLeaves()
       for (i <- ourReducedDomains.indices) {
         if (!ourReducedDomains(i).equals(reducedDomains(i))) {
           printer(returnValues)
-          return false
+          result = false
         }
-        if(!init(i).equals(ourReducedDomains(i)))
-          modif=true
+        if (!init(i).equals(ourReducedDomains(i)))
+          modif = true
+      }
+      if (b == null && modif)
+        Statistics.incNbRemovingValueTests()
+      else {
+        Statistics.incNbRemoveNoValueTests()
       }
     }
-    if(modif)
-      Statistics.incNbRemovingValueTests()
-    else{
-      Statistics.incNbRemoveNoValueTests()
-    }
-    true
+    if(b != null && !result) println("with all those branches in reverse order: " + b)
+    result
   }
 
 
@@ -164,7 +173,7 @@ trait Checker {
     catch {
       case _: NoSolutionException => returnValues = returnValues :+ Array.fill(variables.length)(Set[Int]())
     }
-    if (!comparison(returnValues))
+    if (!comparison(returnValues,null))
       return false
     if (returnValues(1).isEmpty && returnValues(2).isEmpty) return true
     var vars: Array[Set[Int]] = ourReducedDomains.clone()
@@ -175,8 +184,8 @@ trait Checker {
       branches ::= b
       b match {
         case _: Push => nPush += 1
-        case _: Pop => nPush -= 1
-        case _: RestrictDomain =>
+        case _: Pop => {nPush -= 1; Statistics.incNbBacktracks()}
+        case _: RestrictDomain => Statistics.incNbNodes()
         case _: BranchOp => //no more BranchOp possible (should happen only if all variables are fixed before any Branch)
           println(branches)
           return true
@@ -202,21 +211,13 @@ trait Checker {
       }
       // compare our domains filtered with the ones of the user
       // and if no difference, update the domains for the next branching operation
-      if (comparison(returnValues))
+      if (comparison(returnValues,branches))
         vars = ourReducedDomains.clone()
       else
         return false
     }
     println(branches)
     true
-  }
-
-
-  private def comparison(returnValues:Array[Array[Set[Int]]], b: List[BranchOp]): Boolean = {
-    val result:Boolean = comparison(returnValues)
-    if(!result)
-      println("with all those branches in reverse order: " + b)
-    result
   }
 
 
