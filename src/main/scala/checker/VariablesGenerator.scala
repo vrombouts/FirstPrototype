@@ -1,6 +1,9 @@
 package checker
 
-import org.scalacheck.Gen
+import org.scalacheck.Test.TestCallback
+import org.scalacheck.{Gen, Test}
+
+import scala.util.Random
 
 /*
  * generator of variables represented as Array[Set[Int]].
@@ -9,13 +12,42 @@ import org.scalacheck.Gen
  * Basic range: [-10,10] for each variable
  */
 class VariablesGenerator {
+
+
+
   private[this] var nbVars: Int = 5
   private[this] var densities: Array[Double] = Array.fill(nbVars)(4.0 / 20.0)
   private[this] var ranges: Array[(Int, Int)] = Array.fill(nbVars)((-10, 10))
   var baseRange: (Int, Int) = (-10, 10)
   var baseDensity: Double = 4.0 / 20.0
+  private[this] var seed:Option[Long] = None
 
-  def gen: Gen[List[Set[Int]]] = for {
+  class testParams(seed:Long) extends Test.Parameters {
+    val minSuccessfulTests: Int = 100
+    val minSize: Int = 0
+    val maxSize: Int = Gen.Parameters.default.size
+    override val rng: scala.util.Random = new scala.util.Random(seed)
+    val workers: Int = 1
+    val testCallback: TestCallback = new TestCallback {}
+    val maxDiscardRatio: Float = 5
+    val customClassLoader: Option[ClassLoader] = None
+  }
+
+  def setSeed(sd:Long):Unit= seed = Some(sd)
+
+  def randomSeed():Unit = seed=None
+
+  def getTestParameters: testParams = {
+    seed match{
+      case Some(l) => new testParams(l)
+      case None =>
+        val rd = new Random()
+        new testParams(rd.nextLong())
+    }
+  }
+
+  def gen: Gen[List[Set[Int]]] =
+    for {
     seq <- Gen.sequence(genList)
   } yield seq.toArray(new Array[Set[Int]](seq.size())).toList
 

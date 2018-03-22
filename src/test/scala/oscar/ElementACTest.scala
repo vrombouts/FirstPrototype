@@ -1,7 +1,7 @@
 package oscar
 
 import checker.constraints.Constraint
-import checker.{NoSolutionException, ScCpChecker}
+import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.ElementVarAC
@@ -53,7 +53,10 @@ object ElementACTest extends App {
     true
   }
 
-  //set x with a size of 7
+  //First we set the seed:
+  //Constraint.gen.setSeed(123456)
+
+  //Then we set x with a size of 7
   Constraint.gen.setNVar(7)
   //add variable i in generator
   Constraint.gen.addVar(0.5, (0, 6))
@@ -61,6 +64,4 @@ object ElementACTest extends App {
   Constraint.gen.addVar(0.1, (-11, 11))
   print(Constraint.gen.toString)
   Constraint.checkAC(elementAC, elementCheck)
-
-  //ScCpChecker.checkElementAC(elementAC)
 }

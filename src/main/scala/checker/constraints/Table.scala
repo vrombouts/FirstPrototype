@@ -26,7 +26,7 @@ object Table extends Checker {
         printTable(table)
         false
       } else true
-    }.check
+    }.check(gen.getTestParameters)
     LimitCases.tableLimitCases.foreach { x =>
       table = x._2
       if (!checkConstraint(x._1, constraint(_, x._2)))

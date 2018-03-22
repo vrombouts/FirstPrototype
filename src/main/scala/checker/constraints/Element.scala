@@ -16,7 +16,7 @@ object Element extends Checker {
     gen.addVar(0.1, (-11, 11))
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || check(x.toArray) //x.length<2
-    }.check
+    }.check(gen.getTestParameters)
     LimitCases.elementLimitCases.foreach(limitCase => {
       check(limitCase)
     })

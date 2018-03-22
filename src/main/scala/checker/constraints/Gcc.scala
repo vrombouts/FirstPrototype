@@ -22,7 +22,7 @@ object Gcc extends Checker {
     setGen()
     forAll(gen.gen) { variables =>
       variables.isEmpty || checkEmpty(variables) || variables.length < 4 || check(variables.toArray)
-    }.check
+    }.check(gen.getTestParameters)
     LimitCases.gccLimitCases.foreach { limit =>
       values = limit._2
       checkConstraint(limit._1, constraint(_, limit._2))

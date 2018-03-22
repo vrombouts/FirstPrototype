@@ -21,8 +21,8 @@ object Constraint extends Checker {
     checkFunction = checker
     isAC = true
     forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
-    }.check
+      x.isEmpty || checkEmpty(x) || {println(x);checkConstraint(x.toArray, filteringTested)}
+    }.check(gen.getTestParameters)
     //TODO: add simple case limit possible for all constraints
     Statistics.printStats
   }
@@ -32,7 +32,7 @@ object Constraint extends Checker {
     isAC = false
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
-    }.check
+    }.check(gen.getTestParameters)
     //TODO: add simple case limit possible for all constraints
     Statistics.printStats
   }
@@ -44,7 +44,7 @@ object Constraint extends Checker {
     isAC = true
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
-    }.check
+    }.check(gen.getTestParameters)
     Statistics.printStats(isInc = true)
   }
 
@@ -55,7 +55,7 @@ object Constraint extends Checker {
     isAC = false
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
-    }.check
+    }.check(gen.getTestParameters)
     Statistics.printStats(isInc = true)
   }
 

@@ -28,7 +28,7 @@ object Sum extends Checker {
         val array = x._1.toArray
         check(array ++ Array(Set(x._2)))
       }
-    }.check
+    }.check(gen.getTestParameters)
     LimitCases.sumLimitCases.foreach { limitCase => check(limitCase) }
   }
 
