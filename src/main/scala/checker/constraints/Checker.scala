@@ -120,7 +120,6 @@ trait Checker {
     }
     if (b != null && !result) println("with all those branches in reverse order: " + b)
     if (b == null) {
-      if (!result) Statistics.incNbFailedTests()
       Statistics.incNbExecutedTests()
       if (ourReducedDomains.exists(_.isEmpty)) {
         Statistics.incNbNoSolutionTests()
