@@ -1,4 +1,9 @@
 # Generic checker for CPSolver's constraints
+
+
+[![codecov](https://codecov.io/gh/vrombouts/Generic-checker-for-CP-Solver-s-constraints/branch/master/graph/badge.svg)](https://codecov.io/gh/vrombouts/Generic-checker-for-CP-Solver-s-constraints)
+
+
 In constraint programming, the filtering of constraints are of the upmost importance. 
 Therefore, filtering algorithms for each of those constraints are constantly researched.
 The tool in this repository can be used to test those filtering algorithms for global constraints.
