@@ -14,44 +14,52 @@ import scala.util.Random
 class VariablesGenerator {
 
 
-
   private[this] var nbVars: Int = 5
   private[this] var densities: Array[Double] = Array.fill(nbVars)(4.0 / 20.0)
   private[this] var ranges: Array[(Int, Int)] = Array.fill(nbVars)((-10, 10))
   var baseRange: (Int, Int) = (-10, 10)
   var baseDensity: Double = 4.0 / 20.0
-  private[this] var seed:Option[Long] = None
+  private[this] var seed: Option[Long] = None
+  private[this] var nbTests: Option[Int] = None
 
-  class testParams(seed:Long) extends Test.Parameters {
-    val minSuccessfulTests: Int = 100
+  private[checker] class testParams(seed: Long, nbTests: Int) extends Test.Parameters {
+    def this(seed: Long) = this(seed, 100)
+
+    def this(nbTests: Int) = this(new Random().nextLong, nbTests)
+
+    def this() = this(new Random().nextLong, 100)
+
+    override val minSuccessfulTests: Int = nbTests
     val minSize: Int = 0
     val maxSize: Int = Gen.Parameters.default.size
-    override val rng: scala.util.Random = new scala.util.Random(seed)
+    override val rng: scala.util.Random = new Random(seed)
     val workers: Int = 1
     val testCallback: TestCallback = new TestCallback {}
     val maxDiscardRatio: Float = 5
     val customClassLoader: Option[ClassLoader] = None
   }
 
-  def setSeed(sd:Long):Unit= seed = Some(sd)
+  def setSeed(sd: Long): Unit = seed = Some(sd)
 
-  def randomSeed():Unit = seed=None
+  def randomSeed(): Unit = seed = None
 
-  def getTestParameters: testParams = {
-    seed match{
-      case Some(l) => new testParams(l)
-      case None =>
-        val rd = new Random()
-        new testParams(rd.nextLong())
+  def setNbTests(n: Int): Unit = nbTests = Some(n)
+
+  private[checker] def getTestParameters: testParams = {
+    (seed, nbTests) match {
+      case (Some(l), Some(t)) => new testParams(l, t)
+      case (Some(l), None) => new testParams(l)
+      case (None, Some(t)) => new testParams(t)
+      case _ => new testParams
     }
   }
 
   def gen: Gen[List[Set[Int]]] =
     for {
-    seq <- Gen.sequence(genList)
-  } yield seq.toArray(new Array[Set[Int]](seq.size())).toList
+      seq <- Gen.sequence(genList)
+    } yield seq.toArray(new Array[Set[Int]](seq.size())).toList
 
-  private def genList: List[Gen[Set[Int]]] = {
+  private[this] def genList: List[Gen[Set[Int]]] = {
     var l: List[Gen[Set[Int]]] = List()
     for (i <- nbVars - 1 to 0 by -1) {
       l = genVar(i) :: l
@@ -59,11 +67,11 @@ class VariablesGenerator {
     l
   }
 
-  private def genVar(i: Int): Gen[Set[Int]] = {
+  private[this] def genVar(i: Int): Gen[Set[Int]] = {
     val min = ranges(i)._1
     val max = ranges(i)._2
     val dif = max - min
-    val size: Double = Math.max(dif * densities(i),1)
+    val size: Double = Math.max(dif * densities(i), 1)
     Gen.containerOfN[Set, Int](size.toInt, Gen.choose(min, max))
   }
 

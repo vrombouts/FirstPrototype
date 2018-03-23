@@ -2,15 +2,14 @@ package checker.constraints
 
 import checker.constraints.incremental.BranchOp
 import checker._
-import org.scalacheck.Prop.forAll
 
 import scala.collection.mutable
 
 
 object Constraint extends Checker {
 
-  private var isAC: Boolean = true
-  private var checkFunction: Array[Int] => Boolean = _
+  private[this] var isAC: Boolean = true
+  private[this] var checkFunction: Array[Int] => Boolean = _
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     if (isAC) applyAC(variables, checkFunction)
@@ -20,9 +19,7 @@ object Constraint extends Checker {
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
-    forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || {println(x);checkConstraint(x.toArray, filteringTested)}
-    }.check(gen.getTestParameters)
+    forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
     Statistics.printStats
   }
@@ -30,9 +27,7 @@ object Constraint extends Checker {
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
-    forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
-    }.check(gen.getTestParameters)
+    forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
     Statistics.printStats
   }
@@ -42,9 +37,7 @@ object Constraint extends Checker {
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
-    forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
-    }.check(gen.getTestParameters)
+    forAllCheck(init, filtering)
     Statistics.printStats(isInc = true)
   }
 
@@ -53,25 +46,23 @@ object Constraint extends Checker {
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
-    forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
-    }.check(gen.getTestParameters)
+    forAllCheck(init, filtering)
     Statistics.printStats(isInc = true)
   }
 
 
   // Applying AC with pruning //
-  private def firstStream(variable: Set[Int]): Stream[List[Int]] = {
+  private[this] def firstStream(variable: Set[Int]): Stream[List[Int]] = {
     variable.map(x => List(x)).toStream
   }
 
-  private def perOneValueStreamConstructor(solution: List[Int], variable: Set[Int], str: Stream[List[Int]]): Stream[List[Int]] = {
+  private[this] def perOneValueStreamConstructor(solution: List[Int], variable: Set[Int], str: Stream[List[Int]]): Stream[List[Int]] = {
     if (variable.isEmpty) return str
     val current = variable.last
     (current :: solution) #:: perOneValueStreamConstructor(solution, variable - current, str)
   }
 
-  private def nthStream(variable: Set[Int], previousStream: Stream[List[Int]]): Stream[List[Int]] = {
+  private[this] def nthStream(variable: Set[Int], previousStream: Stream[List[Int]]): Stream[List[Int]] = {
     if (previousStream.isEmpty) return Stream.empty[List[Int]]
     val solution = previousStream.head
     val str = (variable.last :: solution) #:: nthStream(variable, previousStream.tail)
@@ -81,7 +72,7 @@ object Constraint extends Checker {
   }
 
   @throws[NoSolutionException]
-  private def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Stream[List[Int]] = {
+  private[this] def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Stream[List[Int]] = {
     if (variables.length < 1) throw new NoSolutionException
     var str = firstStream(variables.last).filter(x => constraint(x.toArray))
     if (variables.length == 1) return str
@@ -91,7 +82,7 @@ object Constraint extends Checker {
     str
   }
 
-  private def toDomainsAC(solutions: Stream[List[Int]]): Array[Set[Int]] = {
+  private[this] def toDomainsAC(solutions: Stream[List[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions.head.size)(Set.empty)
     solutions.foreach { sol =>
       for (i <- variables.indices) {
@@ -128,7 +119,7 @@ object Constraint extends Checker {
     result.toArray
   }
 
-  private def setIthVariable(variables: Array[Set[Int]], index: Int, currentSol: Array[Int], result: mutable.Set[Array[Int]]): Unit = {
+  private[this] def setIthVariable(variables: Array[Set[Int]], index: Int, currentSol: Array[Int], result: mutable.Set[Array[Int]]): Unit = {
     for (i <- variables(index)) {
       currentSol(index) = i
       if (index == variables.length - 1) {

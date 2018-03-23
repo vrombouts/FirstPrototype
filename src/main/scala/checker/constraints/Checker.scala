@@ -3,6 +3,7 @@ package checker.constraints
 import Conversions._
 import checker.{NoSolutionException, Statistics, VariablesGenerator}
 import checker.constraints.incremental._
+import org.scalacheck.Prop.forAll
 
 import scala.collection.mutable
 import scala.language.implicitConversions
@@ -14,6 +15,19 @@ trait Checker {
   protected def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
     false
+  }
+
+  protected def forAllCheck(filteringTested: Array[Set[Int]] => Array[Set[Int]]):Unit = {
+    forAll(gen.gen) { x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+    }.check(gen.getTestParameters)
+  }
+
+  protected def forAllCheck(init: Array[Set[Int]] => Array[Set[Int]],
+                            filtering: BranchOp => Array[Set[Int]]):Unit = {
+    forAll(gen.gen) { x =>
+      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
+    }.check(gen.getTestParameters)
   }
 
   protected def printer(returnValues: Array[Array[Set[Int]]]): Unit = {

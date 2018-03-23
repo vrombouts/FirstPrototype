@@ -54,7 +54,8 @@ object ElementACTest extends App {
   }
 
   //First we set the seed:
-  //Constraint.gen.setSeed(123456)
+  Constraint.gen.setSeed(123456)
+  Constraint.gen.setNbTests(124)
 
   //Then we set x with a size of 7
   Constraint.gen.setNVar(7)

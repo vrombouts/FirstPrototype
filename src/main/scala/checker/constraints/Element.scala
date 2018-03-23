@@ -1,7 +1,6 @@
 package checker.constraints
 
 import checker._
-import org.scalacheck.Prop.forAll
 
 import scala.collection.mutable
 
@@ -10,15 +9,12 @@ object Element extends Checker {
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = elementAC(variables)
 
   def checkAC(constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
-    val check: (Array[Set[Int]]) => Boolean = checkConstraint(_, constraint)
     gen.addNVar(5)
     gen.addVar(0.2, (-1, 10))
     gen.addVar(0.1, (-11, 11))
-    forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || check(x.toArray) //x.length<2
-    }.check(gen.getTestParameters)
+    forAllCheck(constraint)
     LimitCases.elementLimitCases.foreach(limitCase => {
-      check(limitCase)
+      checkConstraint(limitCase, constraint)
     })
   }
 
