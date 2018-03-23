@@ -75,7 +75,9 @@ object Statistics {
   }
 
   def printStats(implicit isInc:Boolean=false):Unit={
-    val prWriter = new PrintWriter(new File("out/statistics.txt"))
+    val f:File=new File("out/statistics.txt")
+    f.getParentFile.mkdirs
+    val prWriter = new PrintWriter(f)
     prWriter.write(globalStatsToString())
     if(isInc) {
       prWriter.write(branchingStatsToString())
