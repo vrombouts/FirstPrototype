@@ -33,8 +33,4 @@ class AllDifferentCheckerSpec extends UnitSpec {
   "[-1,0]" should "return true in allDifferent" in {
     assert(AllDifferent.allDifferent(Array(-1,0)))
   }
-
-  "[-2,-2]" should "return false in allDifferent" in {
-    assert(AllDifferent.allDifferent(Array(-2,-2)))
-  }
 }
