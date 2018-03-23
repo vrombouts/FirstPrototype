@@ -1,6 +1,6 @@
 # Generic checker for CPSolver's constraints
 
-
+[![Build Status](https://travis-ci.org/vrombouts/Generic-checker-for-CP-Solver-s-constraints.svg?branch=master)](https://travis-ci.org/vrombouts/Generic-checker-for-CP-Solver-s-constraints)
 [![codecov](https://codecov.io/gh/vrombouts/Generic-checker-for-CP-Solver-s-constraints/branch/master/graph/badge.svg)](https://codecov.io/gh/vrombouts/Generic-checker-for-CP-Solver-s-constraints)
 
 
