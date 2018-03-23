@@ -131,8 +131,14 @@ class VariablesGenerator {
   }
 
   override def toString: String = {
-    var str = "vars\tdensity\trange\n"
-    for (i <- 0 until nbVars) str += i + "\t\t" + densities(i) + "\t\t" + ranges(i) + "\n"
+    var str = "Generator :\n\tSeed: "
+    seed match{
+      case Some(sd) => str += sd
+      case None => str += "random"
+    }
+    str += "\n" +
+      "\tvariable\tdensity\trange\n"
+    for (i <- 0 until nbVars) str +="\t" + i + "\t\t\t" + densities(i) + "\t\t" + ranges(i) + "\n"
     str
   }
 

@@ -81,7 +81,7 @@ trait Checker {
   /*
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
    */
-  private def comparison(returnValues: Array[Array[Set[Int]]], b: List[BranchOp]): Boolean = {
+  private[this] def comparison(returnValues: Array[Array[Set[Int]]], b: List[BranchOp]): Boolean = {
     val ourReducedDomains: Array[Set[Int]] = returnValues(2)
     val reducedDomains: Array[Set[Int]] = returnValues(1)
     val init: Array[Set[Int]] = returnValues(0)
@@ -246,11 +246,11 @@ trait Checker {
   private[this] val random = new Random
   private[this] var lastPush = false
 
-  private def allFixed(variables: Array[Set[Int]]): Boolean = {
+  private[this] def allFixed(variables: Array[Set[Int]]): Boolean = {
     !variables.exists(x => x.size != 1)
   }
 
-  private def getBranch(nPush: Int, vars: Array[Set[Int]]): BranchOp = {
+  private[this] def getBranch(nPush: Int, vars: Array[Set[Int]]): BranchOp = {
     // creation of the table of operations with the operations that are allowed
     // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
     var operations: List[BranchOp] = List()

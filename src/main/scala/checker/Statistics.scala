@@ -4,25 +4,23 @@ import java.io._
 object Statistics {
 
   // stats about the number of executed tests
-  private var nbExecutedTests:Int=0
-  private var nbNoSolutionTests:Int=0
-  private var nbRemoveNoValueTests:Int=0
-  private var nbRemovingValueTests:Int=0
-  private var nbFailedTests:Int=0
-  private var nbFailedNoSolutionTests:Int=0
-  private var nbFailedRemoveNoValueTests:Int=0
-  private var nbFailedRemovingValueTests:Int=0
+  private[this] var nbExecutedTests:Int=0
+  private[this] var nbNoSolutionTests:Int=0
+  private[this] var nbRemoveNoValueTests:Int=0
+  private[this] var nbRemovingValueTests:Int=0
+  private[this] var nbFailedTests:Int=0
+  private[this] var nbFailedNoSolutionTests:Int=0
+  private[this] var nbFailedRemoveNoValueTests:Int=0
+  private[this] var nbFailedRemovingValueTests:Int=0
 
-  private var nbBacktracks:Int=0
-  private var nbNodes:Int=0
-  private var nbLeaves:Int=0
+  private[this] var nbBacktracks:Int=0
+  private[this] var nbNodes:Int=0
+  private[this] var nbLeaves:Int=0
 
   // stats about the generator
-  private var nbVarsConsidered:Int=0
-  private var range:(Int,Int)= (0,0)
-  private var density:Double = 0.0
+  private[this] var generatorUsed: VariablesGenerator = _
 
-  private var lastTestFail:(Array[Set[Int]],Array[Set[Int]],Array[Set[Int]])=(null,null,null)
+  //private[this] var lastTestFail:(Array[Set[Int]],Array[Set[Int]],Array[Set[Int]])=(null,null,null)
 
   def incNbExecutedTests() : Unit = nbExecutedTests += 1
   def incNbNoSolutionTests() : Unit = nbNoSolutionTests += 1
@@ -35,6 +33,8 @@ object Statistics {
   def incNbBacktracks() : Unit = nbBacktracks += 1
   def incNbNodes() : Unit = nbNodes += 1
   def incNbLeaves() : Unit = nbLeaves += 1
+
+  def setGenerator(gen: VariablesGenerator):Unit= generatorUsed=gen
 
   def globStatsToString():String={
     "The total number of tests that have been executed is "+nbExecutedTests+"\n"+
@@ -59,9 +59,9 @@ object Statistics {
   def printNumber(nb:Int):String={
     if(nb==0) return " "+0+"         "
     if(nb==1) return " "+1+"         "
-    var nbOfChars:Int=nb.toString.size
+    val nbOfChars:Int=nb.toString.length
     var s:String=" "+nb
-    for(i <- 1 to 10-nbOfChars){
+    for(_ <- 1 to 10-nbOfChars){
       s=s+" "
     }
     s
@@ -80,7 +80,10 @@ object Statistics {
     if(isInc) {
       prWriter.write(branchingStatsToString())
     }
-    prWriter.write("------------------------------------------------------------\n")
+    prWriter.write("------------------------------------------------------------\n\n")
+
+    if(!(generatorUsed == null))
+      prWriter.write(generatorUsed.toString)
     prWriter.close()
   }
 }

@@ -21,6 +21,7 @@ object Constraint extends Checker {
     isAC = true
     forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
+    Statistics.setGenerator(gen)
     Statistics.printStats
   }
 
@@ -29,6 +30,7 @@ object Constraint extends Checker {
     isAC = false
     forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
+    Statistics.setGenerator(gen)
     Statistics.printStats
   }
 
@@ -38,6 +40,7 @@ object Constraint extends Checker {
     checkFunction = checker
     isAC = true
     forAllCheck(init, filtering)
+    Statistics.setGenerator(gen)
     Statistics.printStats(isInc = true)
   }
 
@@ -47,6 +50,7 @@ object Constraint extends Checker {
     checkFunction = checker
     isAC = false
     forAllCheck(init, filtering)
+    Statistics.setGenerator(gen)
     Statistics.printStats(isInc = true)
   }
 
@@ -139,11 +143,11 @@ object Constraint extends Checker {
   //applying BC with pruning //
 
   @throws[NoSolutionException]
-  private def getIntervals(variables: Array[Set[Int]]): Array[Interval] = {
+  private[this] def getIntervals(variables: Array[Set[Int]]): Array[Interval] = {
     variables.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
   }
 
-  private def intervalsToVariables(intervals: Array[Interval]): Array[Set[Int]] = {
+  private[this] def intervalsToVariables(intervals: Array[Interval]): Array[Set[Int]] = {
     intervals.map(x => x.domain)
   }
 
@@ -162,11 +166,11 @@ object Constraint extends Checker {
     intervalsToVariables(intervals)
   }
 
-  private def reinitialize(intervals: Array[Interval]): Unit = {
+  private[this] def reinitialize(intervals: Array[Interval]): Unit = {
     intervals.foreach(x => x.resetPos())
   }
 
-  private def findingAcceptingValue(sol: Array[Int], interval: Interval, constraint: Array[Int] => Boolean): Boolean = {
+  private[this] def findingAcceptingValue(sol: Array[Int], interval: Interval, constraint: Array[Int] => Boolean): Boolean = {
     if (constraint(sol)) true
     else if (interval.posInInterval) {
       sol(sol.length - 1) = interval.position
@@ -179,7 +183,7 @@ object Constraint extends Checker {
   }
 
   @throws[NoSolutionException]
-  private def cartesianBC(intervals: Array[Interval], constraint: Array[Int] => Boolean, id: Int, minOrMax: Boolean): Boolean = {
+  private[this] def cartesianBC(intervals: Array[Interval], constraint: Array[Int] => Boolean, id: Int, minOrMax: Boolean): Boolean = {
     reinitialize(intervals)
     val interval: Interval = intervals(id)
     var sol: Array[Int] = Array(interval.giveValue(minOrMax))
