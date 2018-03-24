@@ -39,6 +39,7 @@ object Constraint extends Checker {
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = true
+    setBranchSeed(gen.getSeed)
     forAllCheck(init, filtering)
     Statistics.setGenerator(gen)
     Statistics.printStats(isInc = true)
@@ -49,6 +50,7 @@ object Constraint extends Checker {
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     isAC = false
+    setBranchSeed(gen.getSeed)
     forAllCheck(init, filtering)
     Statistics.setGenerator(gen)
     Statistics.printStats(isInc = true)

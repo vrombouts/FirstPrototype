@@ -13,23 +13,29 @@ public class RestrictDomain extends BranchOp {
     public RestrictDomain(Set<Integer>[] domains) {
         super(domains);
         this.random = new Random();
-        this.index = random.nextInt(domains.length);
+        this.index = getIndex();
         this.op = Op.randomOp();
         this.constant = randomConstant();
     }
 
     private int randomConstant() {
         Set<Integer> dom = domains[index];
-        while (dom.size() < 2) {
-            index = random.nextInt(domains.length);
-            dom = super.domains[index];
-        }
         if (op.equals(Op.lesserThan()) || op.equals(Op.greaterThanOrEqual())) dom = min(dom);
         else if (op.equals(Op.greaterThan()) || op.equals(Op.lesserThanOrEqual())) dom = max(dom);
         Integer[] variable = dom.toArray(new Integer[dom.size()]);
         return variable[random.nextInt(variable.length)];
     }
 
+    private int getIndex(){
+        ArrayList<Integer> possibleIndexes = new ArrayList<>();
+        for(int i=0;i<domains.length;i++){
+            if(domains[i].size()>1){
+                possibleIndexes.add(i);
+            }
+        }
+        int indexOfIndex = random.nextInt(possibleIndexes.size());
+        return possibleIndexes.get(indexOfIndex);
+    }
 
     public Set<Integer>[] applyRestriction() {
         Set<Integer> domainToReduced = new HashSet<>(domains[index]);

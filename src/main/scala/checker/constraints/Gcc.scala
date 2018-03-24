@@ -5,9 +5,9 @@ import org.scalacheck.Prop.forAll
 
 object Gcc extends Checker {
 
-  private var values: Array[Int] = Array()
+  private[this] var values: Array[Int] = Array()
 
-  private def setGen(): Unit = {
+  private[this] def setGen(): Unit = {
     gen.baseRange = (0, 2)
     gen.baseDensity = 0.8
     gen.setNVar(8)
@@ -52,7 +52,7 @@ object Gcc extends Checker {
     true
   }
 
-  private def gccToDomainsAC(solutions: Array[Array[Int]], values: Array[Int], count: Array[Set[Int]]): Array[Set[Int]] = {
+  private[this] def gccToDomainsAC(solutions: Array[Array[Int]], values: Array[Int], count: Array[Set[Int]]): Array[Set[Int]] = {
     if (solutions.length == 0) throw NoSolutionException()
     val n: Int = solutions(0).length
     val variables: Array[Set[Int]] = Array.fill(n + count.length)(Set.empty)

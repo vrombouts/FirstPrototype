@@ -4,7 +4,7 @@ import checker._
 
 object AllDifferent extends Checker {
 
-  private var isAC: Boolean = true
+  private[this] var isAC: Boolean = true
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     if (isAC) Constraint.applyAC(variables, allDifferent)
@@ -23,7 +23,7 @@ object AllDifferent extends Checker {
     check(isAc = false, constraint)
   }
 
-  private def check(isAc: Boolean, constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
+  private[this] def check(isAc: Boolean, constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
     isAC = isAc
     if (isAc) {
       Constraint.checkAC(constraint, allDifferent)

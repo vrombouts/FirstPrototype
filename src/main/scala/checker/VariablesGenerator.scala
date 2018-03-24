@@ -41,6 +41,11 @@ class VariablesGenerator {
 
   def setSeed(sd: Long): Unit = seed = Some(sd)
 
+  def getSeed: Long = seed match{
+    case Some(sd) => sd
+    case None => new Random().nextLong
+  }
+
   def randomSeed(): Unit = seed = None
 
   def setNbTests(n: Int): Unit = nbTests = Some(n)

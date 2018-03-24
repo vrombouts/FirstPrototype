@@ -4,7 +4,7 @@ import checker.{Generators, LimitCases, NoSolutionException}
 import org.scalacheck.Prop.forAll
 
 object Table extends Checker {
-  private var table: Set[Array[Int]] = Set.empty
+  private[this] var table: Set[Array[Int]] = Set.empty
 
   def printTable(table: Set[Array[Int]]): Unit = {
     println("With Table : ")
@@ -41,7 +41,7 @@ object Table extends Checker {
     Constraint.toDomainsAC(solutions.toArray)
   }
 
-  private def possibleWith(variables: Array[Set[Int]], solution: Array[Int]): Boolean = {
+  private[this] def possibleWith(variables: Array[Set[Int]], solution: Array[Int]): Boolean = {
     for (i <- solution.indices) {
       if (!variables(i).contains(solution(i))) return false
     }
