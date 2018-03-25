@@ -3,7 +3,7 @@ package unit
 import checker.NoSolutionException
 import checker.constraints.{AllDifferent, Constraint}
 
-class CheckConstraintSpec extends UnitSpec {
+class CheckConstraint extends UnitSpec {
 
   def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
 
@@ -17,6 +17,7 @@ class CheckConstraintSpec extends UnitSpec {
   def noSolutionConstraint(x:Array[Set[Int]]) : Array[Set[Int]] = Array.fill(x.length)(Set[Int]())
 
   // add a constraint that makes the allDifferent constraint but only one time (no fix point reached)
+
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1]" should "return false" in {
     assert(!AllDifferent.checkConstraint(Array(Set(1),Set(1)), dummyConstraint))
@@ -44,6 +45,10 @@ class CheckConstraintSpec extends UnitSpec {
 
   "Comparing the allDifferent constraint with a constraint that simply returns null for domain variables [1] [1]" should "return false" in {
     assert(!AllDifferent.checkConstraint(Array(Set(1),Set(1)), nullConstraint))
+  }
+
+  "Comparing the allDifferent constraint with a constraint that simply returns an exception for domain variables [0,1] [0,1] [0,1]" should "return true" in {
+    assert(AllDifferent.checkConstraint(Array(Set(0,1),Set(0,1),Set(0,1)), throwExceptionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns null for domain variables [1] [0]" should "return false" in {
