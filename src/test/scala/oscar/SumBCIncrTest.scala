@@ -65,6 +65,6 @@ object SumBCIncrTest extends App {
     true
   }
   Constraint.gen.setSeed(1000)
-  for (i <- 1 to 100 by 5)
+  for (i <- -50 to 50 by 5)
     Constraint.checkBC(init(_, i), filtering, checker(_, i))
 }

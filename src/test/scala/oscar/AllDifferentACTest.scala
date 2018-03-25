@@ -1,5 +1,6 @@
 package oscar
 
+import checker.constraints.Constraint
 import checker.{NoSolutionException, ScCpChecker}
 import oscar.algo.Inconsistency
 import oscar.cp._
@@ -19,5 +20,8 @@ object AllDifferentACTest extends App {
     variables.map(x => x.toArray.toSet)
   }
 
-  ScCpChecker.checkAllDifferentAC(allDifAC)
+  def allDiff(x:Array[Int]):Boolean = x.toSet.size == x.length
+  Constraint.gen.setRangeForAll(-5,5)
+
+  Constraint.checkAC(allDifAC,allDiff)
 }
