@@ -46,8 +46,8 @@ object Op {
     }
   }
 
-  def randomOp(): String = {
-    val rand = new Random()
+  def randomOp(rd:Random = new Random()): String = {
+    val rand = rd
     rand.nextInt(6) match {
       case 0 => equal
       case 1 => different

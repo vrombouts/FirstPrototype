@@ -19,15 +19,16 @@ class VariablesGenerator {
   private[this] var ranges: Array[(Int, Int)] = Array.fill(nbVars)((-10, 10))
   var baseRange: (Int, Int) = (-10, 10)
   var baseDensity: Double = 4.0 / 20.0
+  val random = new Random()
   private[this] var seed: Option[Long] = None
   private[this] var nbTests: Option[Int] = None
 
   private[checker] class testParams(seed: Long, nbTests: Int) extends Test.Parameters {
     def this(seed: Long) = this(seed, 100)
 
-    def this(nbTests: Int) = this(new Random().nextLong, nbTests)
+    def this(nbTests: Int) = this(random.nextLong, nbTests)
 
-    def this() = this(new Random().nextLong, 100)
+    def this() = this(random.nextLong, 100)
 
     override val minSuccessfulTests: Int = nbTests
     val minSize: Int = 0
@@ -39,14 +40,20 @@ class VariablesGenerator {
     val customClassLoader: Option[ClassLoader] = None
   }
 
-  def setSeed(sd: Long): Unit = seed = Some(sd)
+  def setSeed(sd: Long): Unit = {
+    seed = Some(sd)
+    random.setSeed(sd)
+  }
 
   def getSeed: Long = seed match{
     case Some(sd) => sd
-    case None => new Random().nextLong
+    case None => random.nextLong
   }
 
-  def randomSeed(): Unit = seed = None
+  def randomSeed(): Unit = {
+    seed = None
+    random.setSeed(new Random().nextLong)
+  }
 
   def setNbTests(n: Int): Unit = nbTests = Some(n)
 

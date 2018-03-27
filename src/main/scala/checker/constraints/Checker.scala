@@ -7,7 +7,6 @@ import org.scalacheck.Prop.forAll
 
 import scala.collection.mutable
 import scala.language.implicitConversions
-import scala.util.Random
 
 trait Checker {
   val gen: VariablesGenerator = new VariablesGenerator()
@@ -199,14 +198,11 @@ trait Checker {
 
 
   // part to get BranchOp's in an interesting random way (for exemple, avoid doing (push->pop->push->pop->...)
-  private[this] val random = new Random
   private[this] var lastPush = false
 
   private[this] def allFixed(variables: Array[Set[Int]]): Boolean = {
     variables.forall(_.size == 1)
   }
-
-  protected def setBranchSeed(seed: Long): Unit = random.setSeed(seed)
 
   private[this] def getBranch(nPush: Int, vars: Array[Set[Int]]): BranchOp = {
     // creation of the table of operations with the operations that are allowed
@@ -223,11 +219,11 @@ trait Checker {
       // give more weight to the RestrictDomain operation
       // since it allows multiple operations (<,>,=,!=,<=,>=)
       for (_ <- 0 until 4)
-        operations ::= new RestrictDomain(vars)
+        operations ::= new RestrictDomain(vars,gen.random)
     } else if (nPush > 0) return new Pop(vars) //nothing to restrict anymore => pop
     //random result
     else return new BranchOp(vars) //should be taken if all Fixed before any branching
-    val indexOp = random.nextInt(operations.size)
+    val indexOp = gen.random.nextInt(operations.size)
     if (operations(indexOp).isInstanceOf[Push]) lastPush = true
     else lastPush = false
     operations(indexOp)

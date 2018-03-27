@@ -5,16 +5,16 @@ import checker.Op;
 import java.util.*;
 
 public class RestrictDomain extends BranchOp {
-    private Random random = new Random();
+    private scala.util.Random random = new scala.util.Random();
     public int index;
     public int constant;
     public String op;
 
-    public RestrictDomain(Set<Integer>[] domains) {
+    public RestrictDomain(Set<Integer>[] domains, scala.util.Random random) {
         super(domains);
-        this.random = new Random();
+        this.random = random;
         this.index = getIndex();
-        this.op = Op.randomOp();
+        this.op = Op.randomOp(random);
         this.constant = randomConstant();
     }
 
@@ -67,7 +67,7 @@ public class RestrictDomain extends BranchOp {
 
     @Override
     public BranchOp clone() {
-        RestrictDomain rd = new RestrictDomain(domains.clone());
+        RestrictDomain rd = new RestrictDomain(domains.clone(),random);
         rd.index = this.index;
         rd.constant = this.constant;
         rd.op = this.op;
