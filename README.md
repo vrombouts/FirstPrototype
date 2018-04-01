@@ -5,10 +5,58 @@
 
 
 In constraint programming, the filtering of constraints are of the upmost importance. 
-Therefore, filtering algorithms for each of those constraints are constantly researched.
+Therefore, developers are constantly creating filtering algorithms for each of those constraints.
 The tool in this repository can be used to test those filtering algorithms for global constraints.
 This tool is coded in Scala and can be used to tests filtering algorithms written in Java and Scala.
-## How it works
+
+## Why using this tool?
+
+Thanks to this tool, you can check that the application of your constraint implementation will not remove any solution. Indeed, this is very important since removing solutions constitutes a serious problem. 
+
+You can also test the correct application of some propagation algorithms such as Arc Consistency and Bound Consistency. In this case, the tool will check that the application of your constraint implementation will not remove any solution but also that after applying the constraint, the propagation algorithm has been respected.
+
+Finally, for constraint implemented using a trailing algorithm, this tool allows to check the trailing procedure used through the search. Indeed, it can be used to check the aplication of your constraint implementation during the search and what happens when doing state restoration.
+
+## How to use this tool?
+
+### Generation of random variables
+
+To test your constraint implementation, we apply it over a number (by default 100) of generated random variables domains. So, we have a generator that creates by default 100 random cases, each of which includes 5 variables with domain of size 4. Each domain contains by default values within the range between -10 and 10.
+
+Note that you can use different values for each of these parameters (the number of tests, the number of variables,...).
+
+To make a call to the generator that will be used for the tests, simply do the following : 
+```scala
+  Constraint.gen
+```
+
+From this, you can use the set option of the generator to change the number of tests to 120 tests : 
+```scala
+  Constraint.gen.setNbTests(120)
+```
+
+Similar options exist to change the number of variables or the domains of the variables. Note that for the domains of the variables, two functions can be used. One of them allow you to set all the domains variables to the same ranges and the other one allow you to change only the domain of one variable : 
+```scala
+  Constraint.gen.setRangeForAll(-5,5)
+  // set the domain range of all variables between -5 and 5
+  
+  Constraint.gen.setRange(0,(-2,2))
+  // set the domain range of the first variable between -2 and 2
+```
+
+Another option exists, it is the density. The density of a variable is the number of values that belong to its domain over the difference between the maximum and the minimum of this domain. So, since there are 4 possible values for each domain variable and these values are varying between -10 and 10, we have a default density of 4/20 = 0.2. You can also change this density by doing : 
+```scala
+  Constraint.gen.setDensityForAll(0.4)
+  // set the density of all variables to 0.4
+  
+  Constraint.gen.setDensity(0,0.5)
+  // set the density of the first variable to 0.5
+```
+
+Finally, a more advanced option that is very important is the seed. By defining a seed, two different calls to the generator using the same seed will generate the same tests. This can be useful to observe the evolution of a particular error while correcting the implementation of your constraint. Here is the way to set the seed :
+```scala
+  Constraint.gen.setSeed(123)
+```
 
 ## code example
 To test the filtering of a constraint, you always need to give 2 informations.
@@ -22,7 +70,7 @@ There are also other option that can be used such as
 
 This tool has already be used on two different CPSolver's: Choco and OscaR.
 Here is an example for the element constraint in OscaR where its arc consistency is tested.
-```
+```scala
 package oscar
 
 import checker.constraints.Constraint
@@ -90,7 +138,7 @@ object ElementACTest extends App {
 ```
 Here is the same constraint but for Choco which is coded in java.
 
-```
+```scala
 import checker.NoSolutionException
 import checker.constraints.Constraint
 import org.chocosolver.solver.Model
