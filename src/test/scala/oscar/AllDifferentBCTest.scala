@@ -24,6 +24,6 @@ object AllDifferentBCTest extends App {
   def allDiff(x:Array[Int]):Boolean = x.toSet.size == x.length
   Constraint.gen.setRangeForAll(-5,5)
 
-  Constraint.checkAC(allDifBC,allDiff)
+  Constraint.checkBC(allDifBC,allDiff)
 
 }
