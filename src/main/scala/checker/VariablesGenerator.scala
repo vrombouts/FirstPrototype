@@ -8,7 +8,7 @@ import scala.util.Random
 /*
  * generator of variables represented as Array[Set[Int]].
  * Basic nbVars: 5 variables
- * Basic density: 0.8 for each variable
+ * Basic density: 0.2 for each variable
  * Basic range: [-10,10] for each variable
  */
 class VariablesGenerator {
@@ -57,7 +57,7 @@ class VariablesGenerator {
 
   def setNbTests(n: Int): Unit = nbTests = Some(n)
 
-  private[checker] def getTestParameters: testParams = {
+  def getTestParameters: testParams = {
     (seed, nbTests) match {
       case (Some(l), Some(t)) => new testParams(l, t)
       case (Some(l), None) => new testParams(l)
@@ -83,12 +83,12 @@ class VariablesGenerator {
     val min = ranges(i)._1
     val max = ranges(i)._2
     val dif = max - min
-    val size: Double = Math.max(dif * densities(i), 1)
-    Gen.containerOfN[Set, Int](size.toInt, Gen.choose(min, max))
+    val size = Math.max(Math.round((dif+1) * densities(i)), 1).toInt
+    Gen.containerOfN[Set, Int](size, Gen.choose(min, max))
   }
 
   def setNVar(n: Int): Unit = {
-    nbVars = n
+    nbVars = if(n<1) 1 else n
     densities = Array.fill(nbVars)(baseDensity)
     ranges = Array.fill(nbVars)(baseRange)
   }
@@ -115,14 +115,20 @@ class VariablesGenerator {
   /* This function add n variables to the instances generated
    * with the given density and range
    */
-  def addNVar(density: Double, range: (Int, Int), n: Int): Unit = {
+  def addNVar(n: Int, density: Double, range: (Int, Int)): Unit = {
     for (_ <- 1 to n) addVar(density, range)
   }
 
-  def setDensity(index: Int, density: Double): Unit = densities(index) = density
+  def setDensity(index: Int, density: Double): Unit = {
+    var d = densities(index)
+    if(density<=1.0 && density>=0.0)
+      d = density
+    densities(index) = d
+  }
 
   def setDensityForAll(density: Double): Unit = {
-    baseDensity = density
+    if(density<=1.0 && density>=0.0)
+      baseDensity = density
     densities = Array.fill(nbVars)(baseDensity)
   }
 
@@ -137,9 +143,9 @@ class VariablesGenerator {
     if (index < 0 || index >= nbVars) return
     nbVars -= 1
     var j = -1
-    densities = densities.filter { _ => j += 1; j == index }
+    densities = densities.filterNot { _ => j += 1; j == index }
     j = -1
-    ranges = ranges.filter { _ => j += 1; j == index }
+    ranges = ranges.filterNot { _ => j += 1; j == index }
   }
 
   override def toString: String = {
