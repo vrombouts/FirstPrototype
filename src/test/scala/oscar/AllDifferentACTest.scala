@@ -1,7 +1,7 @@
 package oscar
 
 import checker.constraints.Constraint
-import checker.{NoSolutionException, ScCpChecker}
+import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.AllDiffAC
