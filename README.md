@@ -58,6 +58,102 @@ Finally, a more advanced option that is very important is the seed. By defining 
   Constraint.gen.setSeed(123)
 ```
 
+### How to check your constraint implementation
+Now that you have seen how to set the generator, let's see how to test your implementation. The first function that you can use to test your implementation is the `check` function that simply checks that when applying your constraint implementation, you do not remove any solution.
+
+TO DO
+
+Another option is to use the `checkAC` function that will also check that you do not remove any solution, but also, it will check that your domain filtering is arc consistent. Here is the signature of this function : 
+```scala
+checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean)
+```
+
+The first argument of the function is the `filteringTested` which is a function that takes the variable domains in argument and returns the filtered domains. Note that the domains are represented by the type `Array[Set[Int]]`. So, you have to create a function that takes in argument the domains as `Array[Set[Int]]` and will returned the filtered domains after the filtering through your constraint implementation as `Array[Set[Int]]` too. In the case of inconsistency of the domains, this function should either throw a `NoSolutionException` or return an array of empty sets.
+
+The first step to create such a function is to transform the domains of type `Array[Set[Int]]` to the domain type you are using. For example, for testing the allDifferent constraint of the OscaR solver, you will do something like : 
+```scala
+def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
+  // transform the vars in argument into CPIntVar which is the domain type used by OscaR
+  val variables = vars.map(x => CPIntVar(x))
+  ...
+}
+```
+Then, you have to apply your propagation function. Considering the same example as before, you will do : 
+```scala
+   def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
+    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong) // particularity needed for OscaR. Not important here.
+    val variables = vars.map(x => CPIntVar(x))
+    val ad = new AllDiffAC(variables)
+    try {
+      testSolver.post(ad)
+    } catch {
+      case _: Inconsistency => throw new NoSolutionException
+    }
+    ...
+  }
+```
+In this part, you can see that we create a new constraint allDifferentAC (`ad`) which will be added to the `testSolver` in order to be considered by the solver for the filtering. The `try{...} catch{...}` statement is here to throw the `NoSOlutionException` error in the case of failure.
+
+Now, the domains have been filtered. The only thing that remains is to convert it in the return type (`Array[Set[Int]]`) for the return statement. Here is the complete code containing this last transformation too : 
+
+ ```scala
+  def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
+    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
+    val variables = vars.map(x => CPIntVar(x))
+    val ad = new AllDiffAC(variables)
+    try {
+      testSolver.post(ad)
+    } catch {
+      case _: Inconsistency => throw new NoSolutionException
+    }
+    // conversion of the OscaR domain type into Array[Set[Int]]
+    variables.map(x => x.toArray.toSet)
+  }
+ ```
+ 
+Now, let's consider the second variable of the `checkAC` function. It is the `checker` function which represents the constraint to be tested. This function takes in input an instantiation of the variables and returns true if this instantiation satisfies the constraint, false otherwise. An example of a checker function representing the allDifferent constraint could be :
+```scala
+def allDiffChecker(x:Array[Int]):Boolean = x.toSet.size == x.length
+```
+
+This function is quite simple. By making `x.toSet`, you only have elements that are different that remains. So, taking the size of it would be equal to `x.size` if and only if all values given as input were different. So, this function returns true if all values of `x` are different and false otherwise, which is exactly what we needed.
+
+With all these things, you can test the OscaR implementation of the allDifferent constraint with the following code : 
+```scala
+import checker.constraints.Constraint
+import checker.NoSolutionException
+import oscar.algo.Inconsistency
+import oscar.cp._
+import oscar.cp.constraints.AllDiffAC
+import oscar.cp.core.CPPropagStrength
+
+object AllDifferentACTest extends App {
+  private def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
+    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
+    val variables = vars.map(x => CPIntVar(x))
+    val ad = new AllDiffAC(variables)
+    try {
+      testSolver.post(ad)
+    } catch {
+      case _: Inconsistency => throw new NoSolutionException
+    }
+    variables.map(x => x.toArray.toSet)
+  }
+
+  def allDiffChecker(x:Array[Int]):Boolean = x.toSet.size == x.length
+  Constraint.gen.setRangeForAll(-5,5) // change the generator parameters
+
+  Constraint.checkAC(allDifAC,allDiff)
+}
+```
+And that's it! 
+
+We did a similar function `checkBC` that has approximately the same signature and do the same apart from the fact that we check that the filtering respects the bound consistency condition and not the arc consistency. Here is the signatire of this method : 
+```scala
+checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean)
+```
+
+TO DO : add explanations on incremental constraints testing
 ## code example
 To test the filtering of a constraint, you always need to give 2 informations.
 * A checker telling if a solution is accepted or not by the constraint tested.
