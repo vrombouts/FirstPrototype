@@ -2,7 +2,7 @@ package unit.BranchOp
 
 import java.util
 
-import checker.constraints.incremental.BranchOp
+import checker.constraints.incremental.{BranchOp, BranchOpScala}
 import unit.UnitSpec
 import java.util.Set
 class BranchOpTests extends UnitSpec{
@@ -17,6 +17,8 @@ class BranchOpTests extends UnitSpec{
   "constructor" should "not modify the given domains" in {
     val bop = new BranchOp(domains)
     assert(bop.domains.sameElements(domains))
+    val bop2 = new BranchOpScala(domains)
+    assert(bop2.domains.sameElements(domains))
   }
 
   "clone" should "return a branchOp were modifying its domains does not modify the initial BranchOp" in {

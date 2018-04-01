@@ -14,6 +14,6 @@ public class Pop extends BranchOp {
 
     @Override
     public String toString() {
-        return "Po\n";
+        return "Pop\n";
     }
 }
