@@ -3,7 +3,7 @@ package unit
 import checker.NoSolutionException
 import checker.constraints.{AllDifferent, Constraint}
 
-class ApplyAC extends UnitSpec {
+class ApplyACTests extends UnitSpec {
 
   "Calling applyAC for AllDifferent on domains [1] [1]" should "return an exception" in {
     assertThrows[NoSolutionException] {

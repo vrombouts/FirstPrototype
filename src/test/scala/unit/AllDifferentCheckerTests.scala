@@ -1,7 +1,7 @@
 package unit
 import checker.constraints.AllDifferent
 
-class AllDifferentChecker extends UnitSpec {
+class AllDifferentCheckerTests extends UnitSpec {
   "[1,1]" should "return false in allDifferent" in {
     assert(!AllDifferent.allDifferent(Array(1,1)))
   }

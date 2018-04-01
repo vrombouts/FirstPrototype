@@ -3,7 +3,7 @@ package unit
 import checker.NoSolutionException
 import checker.constraints.{AllDifferent, Constraint}
 
-class CheckConstraint extends UnitSpec {
+class CheckConstraintTests extends UnitSpec {
 
   def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
 
