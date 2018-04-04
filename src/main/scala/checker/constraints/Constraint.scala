@@ -93,9 +93,11 @@ object Constraint extends Checker {
 
   @throws[NoSolutionException]
   private[this] def cartesianProduct(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Stream[List[Int]] = {
-    if (variables.length < 1) throw new NoSolutionException
+    if (variables.length < 1)
+      throw new NoSolutionException
     var str = firstStream(variables.last).filter(x => constraint(x.toArray))
-    if (variables.length == 1) return str
+    if (variables.length == 1)
+      return str
     for (i <- variables.length - 2 to 0 by -1) {
       str = nthStream(variables(i), str).filter(x => constraint(x.toArray))
     }
@@ -125,7 +127,8 @@ object Constraint extends Checker {
   @throws[NoSolutionException]
   def applyAC(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Set[Int]] = {
     val sol = cartesianProduct(variables, constraint)
-    if (sol.isEmpty) throw new NoSolutionException
+    if (sol.isEmpty)
+      throw new NoSolutionException
     val result = toDomainsAC(sol)
     result
   }
@@ -151,7 +154,9 @@ object Constraint extends Checker {
   }
 
   def applyACWithoutPruning(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Set[Int]] = {
+    if(variables.isEmpty) throw NoSolutionException()
     val sols: Array[Array[Int]] = solutions(variables).filter(x => constraint(x))
+    if(sols.isEmpty) throw NoSolutionException()
     toDomainsAC(sols)
   }
 

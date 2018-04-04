@@ -58,4 +58,16 @@ class ApplyACTests extends UnitSpec {
     val b : Array[Set[Int]] = Array(Set(3,8), Set(0), Set(10),Set(1), Set(6))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
+
+  "Calling applyAC for AllDifferent on domain [1,2]" should "return [1,2]" in {
+    val a : Array[Set[Int]] = Constraint.applyAC(Array(Set(1,2)), AllDifferent.allDifferent)
+    val b : Array[Set[Int]] = Array(Set(1,2))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+  }
+
+  "Calling AC on empty domain" should "throw a NoSolutionException" in {
+    assertThrows[NoSolutionException]{
+      Constraint.applyAC(Array(), AllDifferent.allDifferent)
+    }
+  }
 }

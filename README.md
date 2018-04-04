@@ -15,7 +15,7 @@ Thanks to this tool, you can check that the application of your constraint imple
 
 You can also test the correct application of some propagation algorithms such as Arc Consistency and Bound Consistency. In this case, the tool will check that the application of your constraint implementation will not remove any solution but also that after applying the constraint, the propagation algorithm has been respected.
 
-Finally, for constraint implemented using a trailing algorithm, this tool allows to check the trailing procedure used through the search. Indeed, it can be used to check the aplication of your constraint implementation during the search and what happens when doing state restoration.
+Finally, for constraint implemented using a trailing algorithm, this tool allows to check the trailing procedure used through the search. Indeed, it can be used to check the application of your constraint implementation during the search and what happens when doing state restoration.
 
 ## How to use this tool?
 
@@ -81,10 +81,14 @@ def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
 Then, you have to apply your propagation function. Considering the same example as before, you will do : 
 ```scala
    def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
-    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong) // particularity needed for OscaR. Not important here.
+    // Creation of the OscaR solver 
+    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong) 
+    // Creation of the OscaR variables
     val variables = vars.map(x => CPIntVar(x))
+    // Creation of the constraint of OscaR
     val ad = new AllDiffAC(variables)
     try {
+      //propagation to fix-point
       testSolver.post(ad)
     } catch {
       case _: Inconsistency => throw new NoSolutionException
