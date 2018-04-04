@@ -7,51 +7,67 @@ import scala.collection.mutable
 
 
 object Constraint extends Checker {
-
-  private[this] var isAC: Boolean = true
+  var stats: Statistics = new UnstrictStats // basically, it's unstrict stats
+  private[this] val notSpecified = 0
+  private[this] val AC = 1
+  private[this] val BC = 2
+  private[this] var propagationType: Int = notSpecified
   private[this] var checkFunction: Array[Int] => Boolean = _
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    if (isAC) applyAC(variables, checkFunction)
+    if(propagationType == notSpecified) applyAC(variables, checkFunction)
+    else if (propagationType == AC) applyAC(variables, checkFunction)
     else applyBC(variables, checkFunction)
   }
 
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    isAC = true
+    propagationType = AC
+    stats = new StrictStatistics
     forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
-    Statistics.setGenerator(gen)
-    Statistics.printStats
+    stats.setGenerator(gen)
+    stats.printStats
   }
 
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    isAC = false
+    propagationType = BC
+    stats = new StrictStatistics
     forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
-    Statistics.setGenerator(gen)
-    Statistics.printStats
+    stats.setGenerator(gen)
+    stats.printStats
+  }
+
+  def check(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
+    checkFunction = checker
+    stats = new UnstrictStats
+    forAllCheck(filteringTested)
+    stats.setGenerator(gen)
+    stats.printStats
   }
 
   def checkAC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    isAC = true
+    propagationType = AC
+    stats = new StrictStatistics
     forAllCheck(init, filtering)
-    Statistics.setGenerator(gen)
-    Statistics.printStats(isInc = true)
+    stats.setGenerator(gen)
+    stats.printStats(isInc = true)
   }
 
   def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
               filtering: BranchOp => Array[Set[Int]],
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    isAC = false
+    propagationType = BC
+    stats = new StrictStatistics
     forAllCheck(init, filtering)
-    Statistics.setGenerator(gen)
-    Statistics.printStats(isInc = true)
+    stats.setGenerator(gen)
+    stats.printStats(isInc = true)
   }
 
 

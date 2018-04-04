@@ -1,9 +1,11 @@
 package checker.constraints
 
-import checker.{Generators, LimitCases, NoSolutionException}
+import checker._
 import org.scalacheck.Prop.forAll
 
 object Table extends Checker {
+
+  var stats:Statistics = new UnstrictStats
   private[this] var table: Set[Array[Int]] = Set.empty
 
   def printTable(table: Set[Array[Int]]): Unit = {
