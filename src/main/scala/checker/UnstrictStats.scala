@@ -38,9 +38,13 @@ class UnstrictStats extends Statistics {
   }
 
   def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
+    println(ourReducedDomains.toList)
+    println(reducedDomains.toList)
     if (ourReducedDomains.exists(x => x.isEmpty))
       reducedDomains.exists(x => x.size > 1) // check that if no solution can be found, either you still have unfixed variables
       // or if all variables are instantiated, you should find there is no solution
-    else (ourReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
+    else{
+      (ourReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
+    }
   }
 }

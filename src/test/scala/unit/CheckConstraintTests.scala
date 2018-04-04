@@ -1,6 +1,6 @@
 package unit
 
-import checker.NoSolutionException
+import checker.{NoSolutionException, StrictStatistics, UnstrictStats}
 import checker.constraints.{AllDifferent, Constraint}
 
 class CheckConstraintTests extends UnitSpec {
@@ -73,5 +73,15 @@ class CheckConstraintTests extends UnitSpec {
 
   "Comparing the allDifferent constraint with a constraint that returns all empty domains for domain variables [1,0] [0,1] [1,2]" should "return false" in {
     assert(!AllDifferent.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), noSolutionConstraint))
+  }
+
+
+  "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1,0] [0,1] [1,2] considering unstrict format(should not remove solution but does not check that it removes elements that are not solution)" should "return true" in {
+    AllDifferent.stats=new UnstrictStats
+    assert(AllDifferent.checkConstraint(Array(Set(1,0),Set(0,1),Set(1,2)), dummyConstraint))
+  }
+
+  "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1] considering unstrict format" should "return false" in {
+    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(1)), dummyConstraint))
   }
 }

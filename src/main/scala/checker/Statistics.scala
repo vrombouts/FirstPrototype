@@ -146,6 +146,7 @@ abstract class Statistics {
       }
 
     }
+    println(result)
     result
   }
 

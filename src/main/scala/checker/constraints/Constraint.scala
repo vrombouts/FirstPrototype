@@ -70,6 +70,15 @@ object Constraint extends Checker {
     stats.printStats(isInc = true)
   }
 
+  def check(init: Array[Set[Int]] => Array[Set[Int]],
+            filtering: BranchOp => Array[Set[Int]],
+            checker: Array[Int] => Boolean): Unit = {
+    checkFunction = checker
+    stats = new UnstrictStats
+    forAllCheck(init, filtering)
+    stats.setGenerator(gen)
+    stats.printStats(isInc = true)
+  }
 
   // Applying AC with pruning //
   private[this] def firstStream(variable: Set[Int]): Stream[List[Int]] = {
