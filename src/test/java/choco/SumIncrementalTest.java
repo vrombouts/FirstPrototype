@@ -89,7 +89,7 @@ public class SumIncrementalTest {
     }
 
     public static Set<Integer>[] remove(RestrictDomain r) {
-        model.arithm(x[r.index], r.op, r.constant).post();
+        model.arithm(x[r.index()], r.op(), r.constant()).post();
         try {
             model.getSolver().propagate();
         } catch (Exception e) {

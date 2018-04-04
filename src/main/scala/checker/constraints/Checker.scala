@@ -138,7 +138,7 @@ trait Checker {
       case _: Push => push(b.domains)
       case _: Pop => pop(b.domains)
       case restriction: RestrictDomain =>
-        restrictDomain = restriction.applyRestriction()
+        restrictDomain = restriction.applyRestriction
         applyConstraint(restrictDomain)
       case _ => b.domains
     }

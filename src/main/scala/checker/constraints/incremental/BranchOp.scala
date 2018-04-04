@@ -1,9 +1,6 @@
 package checker.constraints.incremental
 
-import java.util
-
-
-class BranchOpScala(var domains: Array[util.Set[Integer]]) {
+class BranchOp(var domains: Array[Set[Int]]) {
   override def clone = new BranchOp(domains.clone)
 
   override def toString = "No more branching possible"
