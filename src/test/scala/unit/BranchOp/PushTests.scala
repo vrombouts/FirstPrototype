@@ -22,7 +22,7 @@ class PushTests extends UnitSpec{
     pushClone.domains(1) = null
     assert(!push.domains.sameElements(pushClone.domains))
   }
-  "toString" should " return that there is no more branching" in {
+  "toString" should " return Push" in {
     val push = new Push(domains)
     assert(push.toString.equals("Push\n"))
   }
