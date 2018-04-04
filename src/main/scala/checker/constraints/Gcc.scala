@@ -4,6 +4,7 @@ import checker._
 import org.scalacheck.Prop.forAll
 
 object Gcc extends Checker {
+  var stats:Statistics = new UnstrictStats
 
   private[this] var values: Array[Int] = Array()
 

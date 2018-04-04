@@ -1,7 +1,7 @@
 package unit.BranchOp
 
 import checker.Op
-import checker.constraints.incremental.{BranchOp, RestrictDomain}
+import checker.constraints.incremental.RestrictDomain
 import unit.UnitSpec
 
 import scala.util.Random

@@ -3,7 +3,7 @@ package checker.constraints
 import checker._
 
 object AllDifferent extends Checker {
-
+  var stats:Statistics = new StrictStatistics
   private[this] var isAC: Boolean = true
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {

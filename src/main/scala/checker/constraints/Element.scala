@@ -5,6 +5,7 @@ import checker._
 import scala.collection.mutable
 
 object Element extends Checker {
+  var stats:Statistics = new UnstrictStats
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = elementAC(variables)
 
@@ -18,7 +19,7 @@ object Element extends Checker {
     })
   }
 
-  override def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
+  /*override def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
     val initial: Array[Set[Int]] = returnValues(0)
     val trueReduced: Array[Set[Int]] = returnValues(1)
     val reduced: Array[Set[Int]] = returnValues(2)
@@ -47,7 +48,7 @@ object Element extends Checker {
       println(strShould)
       println(strHave)
     }
-  }
+  }*/
 
   /*
   * element constraint : element(X,i,v). Here, the i and v are put at the end of the vector for convenient purposes

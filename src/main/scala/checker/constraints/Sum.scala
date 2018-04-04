@@ -5,6 +5,7 @@ import org.scalacheck.Prop.forAll
 
 object Sum extends Checker {
 
+  var stats:Statistics = new UnstrictStats
   //private var constant:Int=0
   private[this] var operator: String = Op.equal
 
