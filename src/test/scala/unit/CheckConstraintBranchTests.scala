@@ -1,11 +1,14 @@
 package unit
 
+import checker.{Statistics, StrictStatistics}
 import checker.constraints.Checker
 import checker.constraints.incremental.{BranchOp, RestrictDomain}
 
 class CheckConstraintBranchTests extends UnitSpec {
 
   private[this] object DummyCheck extends Checker {
+    var stats: Statistics = new StrictStatistics
+
     def applyConstraint(variable: Array[Set[Int]]): Array[Set[Int]] = variable
   }
 
@@ -76,8 +79,10 @@ class CheckConstraintBranchTests extends UnitSpec {
   }
 
   "checkConstraint with filtering throwing an exception" should "consider it as a NoSolutionException" in {
-    val a = Array(Set(1,2), Set(1,2))
+    val a = Array(Set(1, 2), Set(1, 2))
+
     def filtering(v: BranchOp): Array[Set[Int]] = throw new Exception()
+
     assert(!DummyCheck.checkConstraint(a,
       DummyCheck.applyConstraint,
       filtering))
