@@ -22,7 +22,7 @@ class PopTests extends UnitSpec{
     popClone.domains(1) = null
     assert(!pop.domains.sameElements(popClone.domains))
   }
-  "toString" should " return that there is no more branching" in {
+  "toString" should " return Pop" in {
     val pop = new Pop(domains)
     assert(pop.toString.equals("Pop\n"))
   }
