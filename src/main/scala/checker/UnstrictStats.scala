@@ -21,6 +21,8 @@ class UnstrictStats extends Statistics {
       "-----------------------|-----------|-----------|-----------| \n" +
       "without solution       |" + printNumber(getNbNoSolutionTests - getNbFailedNoSolutionTests) + "|" + printNumber(getNbFailedNoSolutionTests) + "|" + printNumber(getNbNoSolutionTests) + "| \n" +
       "with solution          |" + printNumber(nbCorrectTestsWithSolution) + "|" + printNumber(getNbExecutedTests - (getNbNoSolutionTests + nbCorrectTestsWithSolution)) + "| \n" +
+      "reaching AC            |\n"+
+      "with no filtering  \n"+
       "Count                  |" + printNumber(getNbExecutedTests - nbFailedTests) + "|" + printNumber(nbFailedTests) + "|" + printNumber(getNbExecutedTests) + "| \n" +
       "------------------------------------------------------------ \n"
   }
@@ -28,8 +30,9 @@ class UnstrictStats extends Statistics {
   def nbFailedTests: Int = getNbExecutedTests - getNbNoSolutionTests - nbCorrectTestsWithSolution + getNbFailedNoSolutionTests
 
 
+  // FAUX !!
   def strictDomainComparison(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit = {
-    if ((reducedDomains zip init).forall(x => x._1.equals(x._2))) {
+    if ((reducedDomains zip init).forall(x => x._1.subsetOf(x._2))) {
       incNoDomainChange()
       incNbCorrectTestsWithSolution()
     }
@@ -37,7 +40,7 @@ class UnstrictStats extends Statistics {
 
   def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
     if (ourReducedDomains.exists(x => x.isEmpty))
-      reducedDomains.exists(x => x.size > 1) // check that if no solution can be found, either you still have unfixed variables
+      reducedDomains.forall(x => x.size == 1) // check that if no solution can be found, either you still have unfixed variables
       // or if all variables are instantiated, you should find there is no solution
     else{
       (ourReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))

@@ -93,6 +93,8 @@ class VariablesGenerator {
     ranges = Array.fill(nbVars)(baseRange)
   }
 
+  def getNVar():Int = nbVars
+
   def addVar(): Unit = {
     nbVars += 1
     densities = densities :+ baseDensity
