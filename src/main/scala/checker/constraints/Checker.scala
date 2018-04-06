@@ -1,6 +1,5 @@
 package checker.constraints
 
-import Conversions._
 import checker._
 import checker.constraints.incremental._
 import org.scalacheck.Prop.forAll

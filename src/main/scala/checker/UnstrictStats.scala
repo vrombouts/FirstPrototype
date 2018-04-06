@@ -1,7 +1,5 @@
 package checker
 
-import checker.constraints.incremental.BranchOp
-
 class UnstrictStats extends Statistics {
 
   private[this] var noDomainChange: Int = 0
@@ -38,8 +36,6 @@ class UnstrictStats extends Statistics {
   }
 
   def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
-    println(ourReducedDomains.toList)
-    println(reducedDomains.toList)
     if (ourReducedDomains.exists(x => x.isEmpty))
       reducedDomains.exists(x => x.size > 1) // check that if no solution can be found, either you still have unfixed variables
       // or if all variables are instantiated, you should find there is no solution
