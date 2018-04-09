@@ -9,17 +9,19 @@ import oscar.cp.circuit
 
 
 object CircuitTest extends App{
+  implicit private var solver: CPSolver = new CPSolver
+  private var currentVars: Array[CPIntVar] = _
 
   private def Circuit(vars: Array[Set[Int]]): Array[Set[Int]] = {
-    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
-    val variables = vars.map(x => CPIntVar(x))
-    val ad = circuit(variables)
+    solver = CPSolver()
+    currentVars = vars.map(x => CPIntVar(x))
+    val ad = circuit(currentVars)
     try {
-      testSolver.post(ad)
+      solver.post(ad)
     } catch {
       case _: Inconsistency => throw new NoSolutionException
     }
-    variables.map(x => x.toArray.toSet)
+    currentVars.map(x => x.toArray.toSet)
   }
 
   def checker(sol:Array[Int]):Boolean={
@@ -39,7 +41,7 @@ object CircuitTest extends App{
       internal(sol(index), acc+1)
     }
     // change it ! GetNVar ne variarera pas qd scalacheck reduit les tests
-    if(sol.length!=Constraint.gen.getNVar())
+    if(sol.length!=currentVars.length)
       return true
     internal(0,1)
   }

@@ -125,8 +125,7 @@ abstract class Statistics {
         incNbLeaves()
       result = true
     }
-    else if ((ourReducedDomains.exists(_.isEmpty) && reducedDomains.forall(_.nonEmpty)) ||
-      (ourReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty))) {
+    else if (ourReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty)) {
       printer(returnValues)
       result = false
     }
@@ -148,7 +147,6 @@ abstract class Statistics {
       else {
         strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
       }
-
     }
     result
   }

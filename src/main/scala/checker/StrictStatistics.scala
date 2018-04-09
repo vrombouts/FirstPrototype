@@ -64,6 +64,7 @@ class StrictStatistics extends Statistics {
 
   def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
     if (ourReducedDomains.length != reducedDomains.length) return true
+    if (ourReducedDomains.exists(_.isEmpty) && reducedDomains.forall(_.nonEmpty)) return true
     (ourReducedDomains zip reducedDomains).exists(x => !x._1.equals(x._2))
   }
 }
