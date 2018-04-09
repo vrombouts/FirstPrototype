@@ -3,7 +3,7 @@ package unit.BranchOp
 
 import checker.constraints.incremental.BranchOp
 import unit.UnitSpec
-class BranchOpTests extends UnitSpec{
+class BranchOpTests extends UnitSpec {
   val set1= Set(1)
   val set2 = Set(2)
   val set3=Set(3)

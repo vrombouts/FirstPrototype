@@ -8,7 +8,7 @@ import oscar.cp.core.CPPropagStrength
 import oscar.cp.circuit
 
 
-object CircuitTest extends App{
+object CircuitTest extends App {
   implicit private var solver: CPSolver = new CPSolver
   private var currentVars: Array[CPIntVar] = _
 
@@ -24,29 +24,30 @@ object CircuitTest extends App{
     currentVars.map(x => x.toArray.toSet)
   }
 
-  def checker(sol:Array[Int]):Boolean={
-    var visited:Array[Boolean]=Array.fill(sol.length)(false)
-    def internal(index:Int, acc:Int):Boolean={
-      if(sol(index) < 0 || sol(index)>=sol.length)
+  def checker(sol: Array[Int]): Boolean = {
+    var visited: Array[Boolean] = Array.fill(sol.length)(false)
+
+    def internal(index: Int, acc: Int): Boolean = {
+      if (sol(index) < 0 || sol(index) >= sol.length)
         return false
-      if(visited(sol(index)))
+      if (visited(sol(index)))
         return false
-      visited(sol(index))=true
-      if(acc == sol.length){
-        if(sol(index)==0)
+      visited(sol(index)) = true
+      if (acc == sol.length) {
+        if (sol(index) == 0)
           return true
         else
           return false
       }
-      internal(sol(index), acc+1)
+      internal(sol(index), acc + 1)
     }
     // change it ! GetNVar ne variarera pas qd scalacheck reduit les tests
-    if(sol.length!=currentVars.length)
+    if (sol.length != currentVars.length)
       return true
-    internal(0,1)
+    internal(0, 1)
   }
 
-  Constraint.gen.setRangeForAll((0,4))
+  Constraint.gen.setRangeForAll((0, 4))
   Constraint.gen.setDensityForAll(0.8)
   Constraint.check(Circuit, checker)
 }

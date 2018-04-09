@@ -10,6 +10,7 @@ import scala.language.implicitConversions
 trait Checker {
   val gen: VariablesGenerator = new VariablesGenerator()
   var stats: Statistics
+  var nbBranchOp: Int = 25
 
   protected def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
@@ -28,7 +29,6 @@ trait Checker {
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check(gen.getTestParameters)
   }
-
 
 
   def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]]
@@ -101,7 +101,7 @@ trait Checker {
     var vars: Array[Set[Int]] = returnValues(2).clone()
     var nPush: Int = 0
     var branches: List[BranchOp] = List()
-    for (_ <- 0 until 25) {
+    for (_ <- 0 until nbBranchOp) {
       val b: BranchOp = getBranch(nPush, vars)
       branches ::= b
       b match {

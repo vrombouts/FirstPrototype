@@ -15,7 +15,7 @@ object Constraint extends Checker {
   private[this] var checkFunction: Array[Int] => Boolean = _
 
   override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    if(propagationType == notSpecified) applyAC(variables, checkFunction)
+    if (propagationType == notSpecified) applyAC(variables, checkFunction)
     else if (propagationType == AC) applyAC(variables, checkFunction)
     else applyBC(variables, checkFunction)
   }
@@ -163,9 +163,9 @@ object Constraint extends Checker {
   }
 
   def applyACWithoutPruning(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Set[Int]] = {
-    if(variables.isEmpty) throw NoSolutionException()
+    if (variables.isEmpty) throw NoSolutionException()
     val sols: Array[Array[Int]] = solutions(variables).filter(x => constraint(x))
-    if(sols.isEmpty) throw NoSolutionException()
+    if (sols.isEmpty) throw NoSolutionException()
     toDomainsAC(sols)
   }
 

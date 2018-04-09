@@ -45,7 +45,7 @@ class VariablesGenerator {
     random.setSeed(sd)
   }
 
-  def getSeed: Long = seed match{
+  def getSeed: Long = seed match {
     case Some(sd) => sd
     case None => random.nextLong
   }
@@ -83,17 +83,17 @@ class VariablesGenerator {
     val min = ranges(i)._1
     val max = ranges(i)._2
     val dif = max - min
-    val size = Math.max(Math.round((dif+1) * densities(i)), 1).toInt
+    val size = Math.max(Math.round((dif + 1) * densities(i)), 1).toInt
     Gen.containerOfN[Set, Int](size, Gen.choose(min, max))
   }
 
   def setNVar(n: Int): Unit = {
-    nbVars = if(n<1) 1 else n
+    nbVars = if (n < 1) 1 else n
     densities = Array.fill(nbVars)(baseDensity)
     ranges = Array.fill(nbVars)(baseRange)
   }
 
-  def getNVar():Int = nbVars
+  def getNVar(): Int = nbVars
 
   def addVar(): Unit = {
     nbVars += 1
@@ -123,13 +123,13 @@ class VariablesGenerator {
 
   def setDensity(index: Int, density: Double): Unit = {
     var d = densities(index)
-    if(density<=1.0 && density>=0.0)
+    if (density <= 1.0 && density >= 0.0)
       d = density
     densities(index) = d
   }
 
   def setDensityForAll(density: Double): Unit = {
-    if(density<=1.0 && density>=0.0)
+    if (density <= 1.0 && density >= 0.0)
       baseDensity = density
     densities = Array.fill(nbVars)(baseDensity)
   }
@@ -152,13 +152,13 @@ class VariablesGenerator {
 
   override def toString: String = {
     var str = "Generator :\n\tSeed: "
-    seed match{
+    seed match {
       case Some(sd) => str += sd
       case None => str += "random"
     }
     str += "\n" +
       "\tvariable\tdensity\trange\n"
-    for (i <- 0 until nbVars) str +="\t" + i + "\t\t\t" + densities(i) + "\t\t" + ranges(i) + "\n"
+    for (i <- 0 until nbVars) str += "\t" + i + "\t\t\t" + densities(i) + "\t\t" + ranges(i) + "\n"
     str
   }
 

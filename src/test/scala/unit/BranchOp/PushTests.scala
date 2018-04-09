@@ -5,11 +5,11 @@ import java.util
 import checker.constraints.incremental.Push
 import unit.UnitSpec
 
-class PushTests extends UnitSpec{
-  val set1= Set(1)
+class PushTests extends UnitSpec {
+  val set1 = Set(1)
   val set2 = Set(2)
-  val set3=Set(3)
-  val domains = Array(set1,set2,set3)
+  val set3 = Set(3)
+  val domains = Array(set1, set2, set3)
 
   "constructor" should "not modify the given domains" in {
     val push = new Push(domains)

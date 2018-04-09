@@ -123,7 +123,7 @@ class VariablesGeneratorTest extends UnitSpec {
     }
   }
 
-  "setDensity" should "set the density of the given variable" in{
+  "setDensity" should "set the density of the given variable" in {
     gen = new VariablesGenerator
     gen.random.setSeed(10000)
     gen.setSeed(1)
@@ -158,14 +158,14 @@ class VariablesGeneratorTest extends UnitSpec {
       case None => assert(false)
     }
     gen.setDensityForAll(0.5)
-    assert(gen.baseDensity==0.5)
+    assert(gen.baseDensity == 0.5)
     var gg: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
       override val rng: Random = new Random(1000)
       override val size: Int = 100
     })
     gg match {
       case Some(list) =>
-        assert(list.forall{x => x.size <= 10 && x.size >= 8})
+        assert(list.forall { x => x.size <= 10 && x.size >= 8 })
       case None => assert(false)
     }
     gen.setDensityForAll(-2.0)
@@ -175,7 +175,7 @@ class VariablesGeneratorTest extends UnitSpec {
     })
     gg match {
       case Some(list) =>
-        assert(list.forall{x => x.size <= 10 && x.size >= 8})
+        assert(list.forall { x => x.size <= 10 && x.size >= 8 })
       case None => assert(false)
     }
     gen.setDensityForAll(2.0)
@@ -185,7 +185,7 @@ class VariablesGeneratorTest extends UnitSpec {
     })
     gg match {
       case Some(list) =>
-        assert(list.forall{x => x.size <= 10 && x.size >= 8})
+        assert(list.forall { x => x.size <= 10 && x.size >= 8 })
       case None => assert(false)
     }
   }
@@ -195,14 +195,14 @@ class VariablesGeneratorTest extends UnitSpec {
     gen = new VariablesGenerator
     gen.random.setSeed(10000)
     gen.setSeed(1)
-    gen.setRange(0,(100,120))
+    gen.setRange(0, (100, 120))
     val g: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
       override val rng: Random = new Random(1000)
       override val size: Int = 100
     })
     g match {
       case Some(list) =>
-        assert(list.head.forall(x => x<=120 && x>=100))
+        assert(list.head.forall(x => x <= 120 && x >= 100))
       case None => assert(false)
     }
   }
@@ -211,15 +211,15 @@ class VariablesGeneratorTest extends UnitSpec {
     gen = new VariablesGenerator
     gen.random.setSeed(10000)
     gen.setSeed(1)
-    gen.setRangeForAll((100,120))
-    assert(gen.baseRange==(100,120))
+    gen.setRangeForAll((100, 120))
+    assert(gen.baseRange == (100, 120))
     val g: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
       override val rng: Random = new Random(1000)
       override val size: Int = 100
     })
     g match {
       case Some(list) =>
-        assert(list.forall(vari => vari.forall(x => x<=120 && x>=100)))
+        assert(list.forall(vari => vari.forall(x => x <= 120 && x >= 100)))
       case None => assert(false)
     }
   }
@@ -237,7 +237,7 @@ class VariablesGeneratorTest extends UnitSpec {
     })
     g match {
       case Some(list) =>
-        assert(list.size==4 && list.forall(vari => !vari.exists(x => x>=100 && x<=120)))
+        assert(list.size == 4 && list.forall(vari => !vari.exists(x => x >= 100 && x <= 120)))
       case None => assert(false)
     }
 
@@ -261,25 +261,25 @@ class VariablesGeneratorTest extends UnitSpec {
     gen2.setSeed(1)
     var x: List[List[Set[Int]]] = List()
     var y: List[List[Set[Int]]] = List()
-    forAll(gen.gen){y => x = x:+y; true}.check(gen.getTestParameters)
-    forAll(gen2.gen){x => y = y:+x; true}.check(gen2.getTestParameters)
+    forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)
+    forAll(gen2.gen) { x => y = y :+ x; true }.check(gen2.getTestParameters)
     assert((x zip y).forall(z => (z._1 zip z._2).forall(w => w._1.equals(w._2))))
     gen.setNbTests(10)
-    var z=0
-    forAll(gen.gen){y => z+=1; true}.check(gen.getTestParameters)
-    assert(z==10)
+    var z = 0
+    forAll(gen.gen) { y => z += 1; true }.check(gen.getTestParameters)
+    assert(z == 10)
     gen = new VariablesGenerator
     x = List()
     y = List()
-    forAll(gen.gen){y => x = x:+y; true}.check(gen.getTestParameters)
-    forAll(gen.gen){x => y = y:+x; true}.check(gen.getTestParameters)
-    assert(x.size==100 && y.size==100 && !x.equals(y))
+    forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)
+    forAll(gen.gen) { x => y = y :+ x; true }.check(gen.getTestParameters)
+    assert(x.size == 100 && y.size == 100 && !x.equals(y))
     gen.setNbTests(20)
     x = List()
     y = List()
-    forAll(gen.gen){y => x = x:+y; true}.check(gen.getTestParameters)
-    forAll(gen.gen){x => y = y:+x; true}.check(gen.getTestParameters)
-    assert(x.size==20 && y.size==20 && !x.equals(y))
+    forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)
+    forAll(gen.gen) { x => y = y :+ x; true }.check(gen.getTestParameters)
+    assert(x.size == 20 && y.size == 20 && !x.equals(y))
 
   }
 

@@ -5,11 +5,11 @@ import java.util
 import checker.constraints.incremental.Pop
 import unit.UnitSpec
 
-class PopTests extends UnitSpec{
-  val set1= Set(1)
+class PopTests extends UnitSpec {
+  val set1 = Set(1)
   val set2 = Set(2)
-  val set3=Set(3)
-  val domains = Array(set1,set2,set3)
+  val set3 = Set(3)
+  val domains = Array(set1, set2, set3)
 
   "constructor" should "not modify the given domains" in {
     val pop = new Pop(domains)
