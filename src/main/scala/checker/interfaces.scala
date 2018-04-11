@@ -16,6 +16,11 @@ class JCpChecker {
     Constraint.checkBC(filtering, checker)
   }
 
+  def check(filtering: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]],
+            checker: Function[Array[Integer], java.lang.Boolean]): Unit = {
+    Constraint.check(filtering, checker)
+  }
+
   def checkAC(init: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]],
               filtering: Function[BranchOp, Array[java.util.Set[Integer]]],
               checker: Function[Array[Integer], java.lang.Boolean]): Unit = {
@@ -26,6 +31,12 @@ class JCpChecker {
               filtering: Function[BranchOp, Array[java.util.Set[Integer]]],
               checker: Function[Array[Integer], java.lang.Boolean]): Unit = {
     Constraint.checkBC(init, filtering, checker)
+  }
+
+  def check(init: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]],
+              filtering: Function[BranchOp, Array[java.util.Set[Integer]]],
+              checker: Function[Array[Integer], java.lang.Boolean]): Unit = {
+    Constraint.check(init, filtering, checker)
   }
 
   def checkAllDifferentAC(filtering: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]]): Unit = {
