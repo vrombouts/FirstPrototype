@@ -27,21 +27,25 @@ class CheckTests extends UnitSpec {
   }
 
   "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.check(throwExceptionConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "have at least one error" in {
+    Constraint.gen.reset()
     Constraint.check(noSolutionConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling Check for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
+    Constraint.gen.reset()
     Constraint.check(dummyConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests == 0)
   }
 
   "Calling Check with all tests correct " should "perform 100 tests" in {
+    Constraint.gen.reset()
     Constraint.check(dummyConstraint, trueChecker)
     assert(Constraint.stats.getNbExecutedTests == 100)
   }

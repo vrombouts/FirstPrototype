@@ -22,26 +22,31 @@ class CheckBCTests extends UnitSpec {
   Constraint.gen.reset()
   Constraint.gen.setSeed(100)
   "Calling CheckBC for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.checkBC(dummyConstraint, falseChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling CheckBC for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.checkBC(throwExceptionConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling CheckBC for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.checkBC(noSolutionConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling CheckBC for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
+    Constraint.gen.reset()
     Constraint.checkBC(dummyConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests == 0)
   }
 
   "Calling CheckBC with all tests correct " should "perform 100 tests" in {
+    Constraint.gen.reset()
     Constraint.checkBC(dummyConstraint, trueChecker)
     assert(Constraint.stats.getNbExecutedTests == 100)
   }

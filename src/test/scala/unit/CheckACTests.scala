@@ -22,26 +22,31 @@ class CheckACTests extends UnitSpec {
   Constraint.gen.reset()
   Constraint.gen.setSeed(100)
   "Calling CheckAC for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.checkAC(dummyConstraint, falseChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling CheckAC for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.checkAC(throwExceptionConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling CheckAC for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
+    Constraint.gen.reset()
     Constraint.checkAC(noSolutionConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
   "Calling CheckAC for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
+    Constraint.gen.reset()
     Constraint.checkAC(dummyConstraint, trueChecker)
     assert(Constraint.stats.nbFailedTests == 0)
   }
 
   "Calling CheckAC with all tests correct " should "perform 100 tests" in {
+    Constraint.gen.reset()
     Constraint.checkAC(dummyConstraint, trueChecker)
     assert(Constraint.stats.getNbExecutedTests == 100)
   }
