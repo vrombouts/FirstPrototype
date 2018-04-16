@@ -96,7 +96,10 @@ public class AllDifferentTest {
         System.out.println("End test allDifferentAC2");
     }
 
-
+    /*
+     * returns the domains in the type Set<Integer> from the choco
+     * domains type IntVar
+     */
     public static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {

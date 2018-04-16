@@ -4,7 +4,6 @@ import checker.NoSolutionException
 import checker.constraints.Constraint
 import oscar.algo.Inconsistency
 import oscar.cp.{CPIntVar, CPSolver}
-import oscar.cp.core.CPPropagStrength
 import oscar.cp.circuit
 
 
@@ -25,7 +24,7 @@ object CircuitTest extends App {
   }
 
   def checker(sol: Array[Int]): Boolean = {
-    var visited: Array[Boolean] = Array.fill(sol.length)(false)
+    val visited: Array[Boolean] = Array.fill(sol.length)(false)
 
     def internal(index: Int, acc: Int): Boolean = {
       if (sol(index) < 0 || sol(index) >= sol.length)
