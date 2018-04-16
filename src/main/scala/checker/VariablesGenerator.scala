@@ -57,6 +57,11 @@ class VariablesGenerator {
 
   def setNbTests(n: Int): Unit = nbTests = Some(n)
 
+  def getNbTests:Int = nbTests match{
+    case Some(n) => n
+    case _ => 100
+  }
+
   def getTestParameters: testParams = {
     (seed, nbTests) match {
       case (Some(l), Some(t)) => new testParams(l, t)

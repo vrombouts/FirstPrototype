@@ -85,7 +85,7 @@ class CheckTests extends UnitSpec {
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
-  /*"Calling Check Incremental on a constraint that returns always true with an init removing no value " should " detect no error" in {
+  "Calling Check Incremental on a constraint that returns always true with an init removing no value " should " detect no error" in {
     Constraint.gen.reset()
     var currentVars: Array[Set[Int]] = Array()
     var stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
@@ -110,6 +110,6 @@ class CheckTests extends UnitSpec {
 
     Constraint.check(dummy, dummyBranchingFiltering, trueChecker)
     assert(Constraint.stats.nbFailedTests == 0)
-  }*/
+  }
 
 }

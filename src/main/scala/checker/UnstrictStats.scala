@@ -1,16 +1,13 @@
 package checker
 
+import checker.constraints.Constraint
+
 class UnstrictStats extends Statistics {
 
-  private[this] var noDomainChange: Int = 0
   private[this] var nbCorrectTestsWithSolution: Int = 0
   private[this] var canBeMoreFiltered: Int = 0
   private[this] var canBeMoreFilteredAndHasNoSol: Int = 0
   private[this] var canBeMoreFilteredAndIsSol: Int = 0
-
-  def incNoDomainChange(): Unit = noDomainChange += 1
-
-  def incNbCorrectTestsWithSolution(): Unit = nbCorrectTestsWithSolution += 1
 
   def getNbCorrectTestsWithSolution: Int = nbCorrectTestsWithSolution
 
@@ -26,11 +23,12 @@ class UnstrictStats extends Statistics {
   }
   */
 
-  def globalStatsToString(): String = {
-    "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n" +
-      "Here are some stats of the tests being executed : \n\n" +
+  def globalStatsToString(isInc: Boolean): String = {
+    var str = "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n"
+    if (isInc) str += "Note that since we make " + Constraint.nbBranchOp + " branchings per test, the total number of tests will be >= " + Constraint.gen.getNbTests + "\n"
+    str + "Here are some stats of the tests being executed : \n\n" +
       "------------------------------------------------------------ \n" +
-      "Tests                  |   Passed  |   Failed  |   Total   | \n" +
+      "Comparisons            |   Passed  |   Failed  |   Total   | \n" +
       "-----------------------|-----------|-----------|-----------| \n" +
       "Without solution       |" + printNumber(getNbNoSolutionTests - getNbFailedNoSolutionTests) + "|" + printNumber(getNbFailedNoSolutionTests) + "|" + printNumber(getNbNoSolutionTests) + "| \n" +
       "With solution          |" + printNumber(nbCorrectTestsWithSolution) + "|" + printNumber(getNbExecutedTests - (getNbNoSolutionTests + nbCorrectTestsWithSolution)) + "|" + printNumber(getNbExecutedTests - getNbNoSolutionTests) + "| \n" +

@@ -1,5 +1,7 @@
 package checker
 
+import checker.constraints.Constraint
+
 class StrictStatistics extends Statistics {
 
   private[this] var nbRemoveNoValueTests: Int = 0
@@ -27,22 +29,23 @@ class StrictStatistics extends Statistics {
 
   def nbFailedTests: Int = nbFailedRemoveNoValueTests + nbFailedRemovingValueTests + getNbFailedNoSolutionTests
 
-/*
-  def globStatsToString(): String = {
-    "The total number of tests that have been executed is " + getNbExecutedTests + "\n" +
-      "The number of tests that had no solution is " + getNbNoSolutionTests + "/" + getNbExecutedTests + " (" + getNbFailedNoSolutionTests + " failed)" + "\n" +
-      "The number of tests that didn't change anything in the domains compared to the initial is " + nbRemoveNoValueTests + "/" + getNbExecutedTests + " (" + nbFailedRemoveNoValueTests + " failed) " + "\n" +
-      "The number of tests that reduced the domains but still have a solution is " + nbRemovingValueTests + "/" + getNbExecutedTests + " (" + nbFailedRemovingValueTests + " failed)" + "\n" +
-      "The number of tests that you pass successfully is " + (getNbExecutedTests - nbFailedTests) + "/" + getNbExecutedTests + "\n" +
-      "The number of tests that you fail " + nbFailedTests + "/" + getNbExecutedTests + "\n"
-  }
-*/
+  /*
+    def globStatsToString(): String = {
+      "The total number of tests that have been executed is " + getNbExecutedTests + "\n" +
+        "The number of tests that had no solution is " + getNbNoSolutionTests + "/" + getNbExecutedTests + " (" + getNbFailedNoSolutionTests + " failed)" + "\n" +
+        "The number of tests that didn't change anything in the domains compared to the initial is " + nbRemoveNoValueTests + "/" + getNbExecutedTests + " (" + nbFailedRemoveNoValueTests + " failed) " + "\n" +
+        "The number of tests that reduced the domains but still have a solution is " + nbRemovingValueTests + "/" + getNbExecutedTests + " (" + nbFailedRemovingValueTests + " failed)" + "\n" +
+        "The number of tests that you pass successfully is " + (getNbExecutedTests - nbFailedTests) + "/" + getNbExecutedTests + "\n" +
+        "The number of tests that you fail " + nbFailedTests + "/" + getNbExecutedTests + "\n"
+    }
+  */
 
-  def globalStatsToString(): String = {
-    "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n" +
-      "Here are some stats of the tests being executed : \n\n" +
+  def globalStatsToString(isInc: Boolean): String = {
+    var str: String = "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n"
+    if (isInc) str += "Note that since we make " + Constraint.nbBranchOp + " branchings per test, the total number of tests will be >= " + Constraint.gen.getNbTests + "\n"
+    str + "Here are some stats of the tests being executed : \n\n" +
       "------------------------------------------------------------ \n" +
-      "Tests                  |   Passed  |   Failed  |   Total   | \n" +
+      "Comparisons            |   Passed  |   Failed  |   Total   | \n" +
       "-----------------------|-----------|-----------|-----------| \n" +
       "without solution       |" + printNumber(getNbNoSolutionTests - getNbFailedNoSolutionTests) + "|" + printNumber(getNbFailedNoSolutionTests) + "|" + printNumber(getNbNoSolutionTests) + "| \n" +
       "with domain reduction  |" + printNumber(nbRemovingValueTests - nbFailedRemovingValueTests) + "|" + printNumber(nbFailedRemovingValueTests) + "|" + printNumber(nbRemovingValueTests) + "| \n" +

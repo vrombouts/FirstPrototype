@@ -2,6 +2,7 @@ package checker
 
 import java.io._
 
+import checker.constraints.Constraint
 import checker.constraints.incremental.BranchOp
 
 abstract class Statistics {
@@ -48,7 +49,7 @@ abstract class Statistics {
 
   def setGenerator(gen: VariablesGenerator): Unit = generatorUsed = gen
 
-  def globalStatsToString(): String
+  def globalStatsToString(isInc: Boolean): String
 
 
   def printNumber(nb: Int): String = {
@@ -71,10 +72,9 @@ abstract class Statistics {
     val f: File = new File("out/statistics.txt")
     f.getParentFile.mkdirs
     val prWriter = new PrintWriter(f)
-    prWriter.write(globalStatsToString())
-    if (isInc) {
+    prWriter.write(globalStatsToString(isInc))
+    if (isInc)
       prWriter.write(branchingStatsToString())
-    }
 
     if (!(generatorUsed == null))
       prWriter.write(generatorUsed.toString)
@@ -93,15 +93,15 @@ abstract class Statistics {
     val initial: Array[Set[Int]] = returnValues(0)
     val reduced: Array[Set[Int]] = returnValues(1)
     val trueReduced: Array[Set[Int]] = returnValues(2)
-    if (reduced.exists(x => x.isEmpty) && trueReduced.forall(x=>x.nonEmpty)) {
+    if (reduced.exists(x => x.isEmpty) && trueReduced.forall(x => x.nonEmpty)) {
       println("failed for: " + initial.toList)
       println("you should have: " + trueReduced.toList)
       println("but you claim there is no solution")
-    } else if (reduced.forall(x=>x.nonEmpty) && trueReduced.exists(x => x.isEmpty)) {
+    } else if (reduced.forall(x => x.nonEmpty) && trueReduced.exists(x => x.isEmpty)) {
       println("failed for: " + initial.toList)
       println("you should not have any solutions")
       println("but you had: " + reduced.toList)
-    } else if (reduced.forall(x=>x.nonEmpty) && trueReduced.forall(x=>x.nonEmpty)) {
+    } else if (reduced.forall(x => x.nonEmpty) && trueReduced.forall(x => x.nonEmpty)) {
       println("failed for: " + initial.toList)
       println("you should have: " + trueReduced.toList)
       println("but you had: " + reduced.toList)
@@ -142,8 +142,7 @@ abstract class Statistics {
       }
     }
     if (b != null && !result) println("with all those branches in reverse order: " + b)
-    if (b == null)
-      incNbExecutedTests()
+    incNbExecutedTests()
     if (ourReducedDomains.exists(_.isEmpty)) {
       incNbNoSolutionTests()
       if (!result) incNbFailedNoSolutionTests()

@@ -257,8 +257,4 @@ object Constraint extends Checker {
   }
 
 
-  /*
-   * This constraint is used to test. It does absolutely nothing.
-   */
-  def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
 }
