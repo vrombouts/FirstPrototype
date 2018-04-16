@@ -349,4 +349,6 @@ class StrictStatisticsTests extends UnitSpec {
     assert(stats.comparison(v, branch))
     assert(nbLeaves == stats.getNbLeaves)
   }
+
+  "StrictStatistics comparison" should "return false if"
 }

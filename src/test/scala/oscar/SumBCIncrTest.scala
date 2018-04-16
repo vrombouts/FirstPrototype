@@ -28,26 +28,31 @@ object SumBCIncrTest extends App {
   private def filtering(branch: BranchOp): Array[Set[Int]] = {
     branch match {
       case _: Push =>
-        solver.pushState()
         solver.propagate()
+        solver.pushState()
         currentVars.map(x => x.toArray.toSet)
       case _: Pop =>
         solver.pop()
-        solver.propagate()
         currentVars.map(x => x.toArray.toSet)
       case r: RestrictDomain =>
         try {
+          val constant = r.constant
+          val variable = currentVars(r.index)
+          var c: Constraint = null
           r.op match {
-            case "=" => solver.post(new EqCons(currentVars(r.index), r.constant))
-            case "!=" => solver.post(new DiffVal(currentVars(r.index), r.constant))
-            case "<" => solver.post(new Le(currentVars(r.index), r.constant))
-            case "<=" => solver.post(new LeEq(currentVars(r.index), r.constant))
-            case ">" => solver.post(new Gr(currentVars(r.index), r.constant))
-            case ">=" => solver.post(new GrEq(currentVars(r.index), r.constant))
+            case "=" => c = new EqCons(variable, constant) // x(i)=constant
+            case "<" => c = new Le(variable, constant) // x(i)<constant
+            case ">" => c = new Gr(variable, constant) // x(i)>constant
+            case "!=" => c = new DiffVal(variable, constant) // x(i)!=constant
+            case "<=" => c = new LeEq(variable, constant) // x(i)<=constant
+            case ">=" => c = new GrEq(variable, constant) // x(i)>=constant
           }
+          solver.post(c)
         } catch {
-          case _: oscar.cp.core.NoSolutionException => throw new NoSolutionException
-          case _: Inconsistency => throw new NoSolutionException
+          case _: oscar.cp.core.NoSolutionException =>
+            throw new NoSolutionException
+          case _: Inconsistency =>
+            throw new NoSolutionException
         }
         currentVars.map(x => x.toArray.toSet)
       case _ => currentVars.map(x => x.toArray.toSet)
@@ -56,14 +61,12 @@ object SumBCIncrTest extends App {
 
   def checker(sol: Array[Int], c: Int): Boolean = {
     if (sol.length == currentVars.length) {
-      var sum = 0
-      for (i <- sol)
-        sum += i
-      if (sum == c) return true
+      if (sol.sum == c) return true
       else return false
     }
     true
   }
+
   Constraint.gen.setSeed(1000)
   for (i <- -50 to 50 by 5)
     Constraint.checkBC(init(_, i), filtering, checker(_, i))
