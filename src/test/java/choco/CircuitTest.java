@@ -7,7 +7,6 @@ import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.ConstraintsName;
 import org.chocosolver.solver.constraints.nary.circuit.CircuitConf;
 import org.chocosolver.solver.constraints.nary.circuit.PropCircuitSCC;
-import org.chocosolver.solver.constraints.nary.circuit.PropCircuit_ArboFiltering;
 import org.chocosolver.solver.variables.IntVar;
 import scala.Tuple2;
 
@@ -24,7 +23,7 @@ public class CircuitTest {
         jc.check(filter(),isSolution());
     }
 
-    public static Function<Set<Integer>[], Set<Integer>[]> filter(){
+    private static Function<Set<Integer>[], Set<Integer>[]> filter(){
         return variables ->{
             Model model = new Model("Testing circuitSCC implementation");
             currentVars = new IntVar[variables.length];
@@ -50,7 +49,7 @@ public class CircuitTest {
         }
         return isSol(variables,variables[index],acc+1,isVisited);
     }
-    public static Function<Integer[], Boolean> isSolution(){
+    private static Function<Integer[], Boolean> isSolution(){
         return variables -> {
             if(variables.length != currentVars.length) return true;
             boolean[] isVisited = new boolean[variables.length];
@@ -58,7 +57,7 @@ public class CircuitTest {
         };
     }
 
-    public static Set<Integer>[] transform(IntVar[] input) {
+    private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {
             result[i] = new HashSet<Integer>();
