@@ -39,6 +39,8 @@ abstract class Statistics {
 
   def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
 
+  def getNbLeaves: Int = nbLeaves
+
   def nbFailedTests: Int
 
 
@@ -138,16 +140,15 @@ abstract class Statistics {
       }
     }
     if (b != null && !result) println("with all those branches in reverse order: " + b)
-    if (b == null) {
+    if (b == null)
       incNbExecutedTests()
-      if (ourReducedDomains.exists(_.isEmpty)) {
-        incNbNoSolutionTests()
-        if (!result) incNbFailedNoSolutionTests()
-      }
-      else {
-        strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
-      }
+    if (ourReducedDomains.exists(_.isEmpty)) {
+      incNbNoSolutionTests()
+      if (!result) incNbFailedNoSolutionTests()
     }
+    else
+      strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
+
     result
   }
 

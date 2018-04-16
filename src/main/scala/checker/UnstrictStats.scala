@@ -12,6 +12,14 @@ class UnstrictStats extends Statistics {
 
   def incNbCorrectTestsWithSolution(): Unit = nbCorrectTestsWithSolution += 1
 
+  def getNbCorrectTestsWithSolution: Int = nbCorrectTestsWithSolution
+
+  def getCanBeMoreFiltered: Int = canBeMoreFiltered
+
+  def getCanBeMoreFilteredAndHasSol: Int = canBeMoreFilteredAndHasNoSol
+
+  def getCanBeMoreFilteredAndIsSol: Int = canBeMoreFilteredAndIsSol
+
   def globStatsToString(): String = {
     ""
   }
@@ -47,8 +55,9 @@ class UnstrictStats extends Statistics {
 
   def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
     if (ourReducedDomains.exists(x => x.isEmpty)) {
-      reducedDomains.forall(x => x.size == 1) // check that if no solution can be found, either you still have unfixed variables
+      // check that if no solution can be found, either you still have unfixed variables
       // or if all variables are instantiated, you should find there is no solution
+      reducedDomains.forall(x => x.size == 1)
     }
     else {
       (ourReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
