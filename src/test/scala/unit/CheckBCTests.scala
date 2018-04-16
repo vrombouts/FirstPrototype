@@ -19,7 +19,7 @@ class CheckBCTests extends UnitSpec {
 
   def falseChecker(x: Array[Int]): Boolean = false
 
-
+  Constraint.gen.reset()
   Constraint.gen.setSeed(100)
   "Calling CheckBC for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     Constraint.checkBC(dummyConstraint, falseChecker)
@@ -72,7 +72,8 @@ class CheckBCTests extends UnitSpec {
       b match {
         case _: Push => stack.push(currentVars)
         case _: Pop => {
-          currentVars = stack.pop(); currentVars
+          currentVars = stack.pop();
+          currentVars
         }
         case r: RestrictDomain => {
           currentVars = r.applyRestriction
@@ -99,7 +100,8 @@ class CheckBCTests extends UnitSpec {
       b match {
         case _: Push => stack.push(currentVars)
         case _: Pop => {
-          currentVars = stack.pop(); currentVars
+          currentVars = stack.pop();
+          currentVars
         }
         case r: RestrictDomain => {
           currentVars = r.applyRestriction

@@ -19,7 +19,7 @@ class CheckTests extends UnitSpec {
 
   def falseChecker(x: Array[Int]): Boolean = false
 
-
+  Constraint.gen.reset()
   Constraint.gen.setSeed(100)
   "Calling Check for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect no error" in {
     Constraint.check(dummyConstraint, falseChecker)
