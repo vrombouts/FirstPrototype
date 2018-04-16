@@ -6,7 +6,7 @@ import checker.NoSolutionException
 import checker.constraints.Constraint
 import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
 
-class CheckACTests extends UnitSpec {
+class CheckTests extends UnitSpec {
 
   def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
 
@@ -21,43 +21,43 @@ class CheckACTests extends UnitSpec {
 
 
   Constraint.gen.setSeed(100)
-  "Calling CheckAC for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
-    Constraint.checkAC(dummyConstraint, falseChecker)
-    assert(Constraint.stats.nbFailedTests > 0)
-  }
-
-  "Calling CheckAC for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
-    Constraint.checkAC(throwExceptionConstraint, trueChecker)
-    assert(Constraint.stats.nbFailedTests > 0)
-  }
-
-  "Calling CheckAC for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
-    Constraint.checkAC(noSolutionConstraint, trueChecker)
-    assert(Constraint.stats.nbFailedTests > 0)
-  }
-
-  "Calling CheckAC for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
-    Constraint.checkAC(dummyConstraint, trueChecker)
+  "Calling Check for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect no error" in {
+    Constraint.check(dummyConstraint, falseChecker)
     assert(Constraint.stats.nbFailedTests == 0)
   }
 
-  "Calling CheckAC with all tests correct " should "perform 100 tests" in {
-    Constraint.checkAC(dummyConstraint, trueChecker)
+  "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
+    Constraint.check(throwExceptionConstraint, trueChecker)
+    assert(Constraint.stats.nbFailedTests > 0)
+  }
+
+  "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "have at least one error" in {
+    Constraint.check(noSolutionConstraint, trueChecker)
+    assert(Constraint.stats.nbFailedTests > 0)
+  }
+
+  "Calling Check for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
+    Constraint.check(dummyConstraint, trueChecker)
+    assert(Constraint.stats.nbFailedTests == 0)
+  }
+
+  "Calling Check with all tests correct " should "perform 100 tests" in {
+    Constraint.check(dummyConstraint, trueChecker)
     assert(Constraint.stats.getNbExecutedTests == 100)
   }
 
-  "Calling CheckAC after having set a generator " should " consider the good generator " in {
+  "Calling Check after having set a generator " should " consider the good generator " in {
     Constraint.gen.setNbTests(150)
     Constraint.gen.setRangeForAll((-5, 5))
     Constraint.gen.setRange(1, (-2, 2))
     Constraint.gen.setDensity(4, 0.3)
     Constraint.gen.setSeed(125)
-    Constraint.checkAC(dummyConstraint, trueChecker)
+    Constraint.check(dummyConstraint, trueChecker)
     assert(Constraint.stats.getGenerator == Constraint.gen)
     assert(Constraint.stats.getNbExecutedTests == 150)
   }
 
-  "Calling CheckAC Incremental on a constraint that returns always true with an init removing some values " should " detect at least a failed test" in {
+  "Calling Check Incremental on a constraint that returns always true with an init removing some values " should " detect at least an error " in {
     Constraint.gen.reset()
     var currentVars: Array[Set[Int]] = Array()
     val stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
@@ -81,11 +81,11 @@ class CheckACTests extends UnitSpec {
       }
     }
 
-    Constraint.checkAC(dummy, dummyBranchingFiltering, trueChecker)
+    Constraint.check(dummy, dummyBranchingFiltering, trueChecker)
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
-  "Calling CheckAC Incremental on a constraint that returns always true with an init removing no value " should " detect no failed test" in {
+  /*"Calling Check Incremental on a constraint that returns always true with an init removing no value " should " detect no error" in {
     Constraint.gen.reset()
     var currentVars: Array[Set[Int]] = Array()
     var stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
@@ -108,8 +108,8 @@ class CheckACTests extends UnitSpec {
       }
     }
 
-    Constraint.checkAC(dummy, dummyBranchingFiltering, trueChecker)
+    Constraint.check(dummy, dummyBranchingFiltering, trueChecker)
     assert(Constraint.stats.nbFailedTests == 0)
-  }
-}
+  }*/
 
+}
