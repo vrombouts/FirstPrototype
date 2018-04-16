@@ -71,13 +71,12 @@ class CheckTests extends UnitSpec {
     def dummyBranchingFiltering(b: BranchOp): Array[Set[Int]] = {
       b match {
         case _: Push => stack.push(currentVars)
-        case _: Pop => {
-          currentVars = stack.pop(); currentVars
-        }
-        case r: RestrictDomain => {
+        case _: Pop =>
+          currentVars = stack.pop()
+          currentVars
+        case r: RestrictDomain =>
           currentVars = r.applyRestriction
           currentVars
-        }
       }
     }
 
@@ -85,7 +84,7 @@ class CheckTests extends UnitSpec {
     assert(Constraint.stats.nbFailedTests > 0)
   }
 
-  "Calling Check Incremental on a constraint that returns always true with an init removing no value " should " detect no error" in {
+  /*"Calling Check Incremental on a constraint that returns always true with an init removing no value " should " detect no error" in {
     Constraint.gen.reset()
     var currentVars: Array[Set[Int]] = Array()
     var stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
@@ -98,18 +97,17 @@ class CheckTests extends UnitSpec {
     def dummyBranchingFiltering(b: BranchOp): Array[Set[Int]] = {
       b match {
         case _: Push => stack.push(currentVars)
-        case _: Pop => {
-          currentVars = stack.pop(); currentVars
-        }
-        case r: RestrictDomain => {
+        case _: Pop =>
+          currentVars = stack.pop()
+          currentVars
+        case r: RestrictDomain =>
           currentVars = r.applyRestriction
           currentVars
-        }
       }
     }
 
     Constraint.check(dummy, dummyBranchingFiltering, trueChecker)
     assert(Constraint.stats.nbFailedTests == 0)
-  }
+  }*/
 
 }

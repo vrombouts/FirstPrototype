@@ -71,13 +71,12 @@ class CheckACTests extends UnitSpec {
     def dummyBranchingFiltering(b: BranchOp): Array[Set[Int]] = {
       b match {
         case _: Push => stack.push(currentVars)
-        case _: Pop => {
-          currentVars = stack.pop(); currentVars
-        }
-        case r: RestrictDomain => {
+        case _: Pop =>
+          currentVars = stack.pop()
+          currentVars
+        case r: RestrictDomain =>
           currentVars = r.applyRestriction
           currentVars
-        }
       }
     }
 
@@ -98,13 +97,12 @@ class CheckACTests extends UnitSpec {
     def dummyBranchingFiltering(b: BranchOp): Array[Set[Int]] = {
       b match {
         case _: Push => stack.push(currentVars)
-        case _: Pop => {
-          currentVars = stack.pop(); currentVars
-        }
-        case r: RestrictDomain => {
+        case _: Pop =>
+          currentVars = stack.pop()
+          currentVars
+        case r: RestrictDomain =>
           currentVars = r.applyRestriction
           currentVars
-        }
       }
     }
 
