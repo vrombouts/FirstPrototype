@@ -41,6 +41,8 @@ abstract class Statistics {
 
   def getNbLeaves: Int = nbLeaves
 
+  def getGenerator: VariablesGenerator = generatorUsed
+
   def nbFailedTests: Int
 
 

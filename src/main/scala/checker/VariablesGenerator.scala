@@ -93,8 +93,6 @@ class VariablesGenerator {
     ranges = Array.fill(nbVars)(baseRange)
   }
 
-  def getNVar(): Int = nbVars
-
   def addVar(): Unit = {
     nbVars += 1
     densities = densities :+ baseDensity
@@ -148,6 +146,14 @@ class VariablesGenerator {
     densities = densities.filterNot { _ => j += 1; j == index }
     j = -1
     ranges = ranges.filterNot { _ => j += 1; j == index }
+  }
+
+  def reset() : Unit = {
+    setNbTests(100)
+    setNVar(5)
+    setRangeForAll((-10,10))
+    setDensityForAll(0.2)
+    randomSeed()
   }
 
   override def toString: String = {
