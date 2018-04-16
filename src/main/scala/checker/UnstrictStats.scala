@@ -16,13 +16,15 @@ class UnstrictStats extends Statistics {
 
   def getCanBeMoreFiltered: Int = canBeMoreFiltered
 
-  def getCanBeMoreFilteredAndHasSol: Int = canBeMoreFilteredAndHasNoSol
+  def getCanBeMoreFilteredAndHasNoSol: Int = canBeMoreFilteredAndHasNoSol
 
   def getCanBeMoreFilteredAndIsSol: Int = canBeMoreFilteredAndIsSol
 
+  /*
   def globStatsToString(): String = {
     ""
   }
+  */
 
   def globalStatsToString(): String = {
     "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n" +

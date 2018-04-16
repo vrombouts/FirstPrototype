@@ -89,19 +89,19 @@ abstract class Statistics {
 
   def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
 
-  protected def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
+  private[this] def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
     val initial: Array[Set[Int]] = returnValues(0)
     val reduced: Array[Set[Int]] = returnValues(1)
     val trueReduced: Array[Set[Int]] = returnValues(2)
-    if (reduced.isEmpty && trueReduced.nonEmpty) {
+    if (reduced.exists(x => x.isEmpty) && trueReduced.forall(x=>x.nonEmpty)) {
       println("failed for: " + initial.toList)
       println("you should have: " + trueReduced.toList)
       println("but you claim there is no solution")
-    } else if (reduced.nonEmpty && trueReduced.isEmpty) {
+    } else if (reduced.forall(x=>x.nonEmpty) && trueReduced.exists(x => x.isEmpty)) {
       println("failed for: " + initial.toList)
       println("you should not have any solutions")
       println("but you had: " + reduced.toList)
-    } else if (reduced.nonEmpty && trueReduced.nonEmpty) {
+    } else if (reduced.forall(x=>x.nonEmpty) && trueReduced.forall(x=>x.nonEmpty)) {
       println("failed for: " + initial.toList)
       println("you should have: " + trueReduced.toList)
       println("but you had: " + reduced.toList)

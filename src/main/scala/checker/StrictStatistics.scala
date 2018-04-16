@@ -27,7 +27,7 @@ class StrictStatistics extends Statistics {
 
   def nbFailedTests: Int = nbFailedRemoveNoValueTests + nbFailedRemovingValueTests + getNbFailedNoSolutionTests
 
-
+/*
   def globStatsToString(): String = {
     "The total number of tests that have been executed is " + getNbExecutedTests + "\n" +
       "The number of tests that had no solution is " + getNbNoSolutionTests + "/" + getNbExecutedTests + " (" + getNbFailedNoSolutionTests + " failed)" + "\n" +
@@ -36,6 +36,7 @@ class StrictStatistics extends Statistics {
       "The number of tests that you pass successfully is " + (getNbExecutedTests - nbFailedTests) + "/" + getNbExecutedTests + "\n" +
       "The number of tests that you fail " + nbFailedTests + "/" + getNbExecutedTests + "\n"
   }
+*/
 
   def globalStatsToString(): String = {
     "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n" +
