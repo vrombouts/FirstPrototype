@@ -142,7 +142,7 @@ abstract class Statistics {
       }
     }
     if (b != null && !result) println("with all those branches in reverse order: " + b)
-    if(b==null) incNbExecutedTests()
+    incNbExecutedTests()
     if (ourReducedDomains.exists(_.isEmpty)) {
       incNbNoSolutionTests()
       if (!result) incNbFailedNoSolutionTests()
