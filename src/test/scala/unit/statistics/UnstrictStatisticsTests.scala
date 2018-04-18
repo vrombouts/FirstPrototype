@@ -1,4 +1,4 @@
-package unit.Statistics
+package unit.statistics
 
 import checker.UnstrictStats
 import checker.constraints.incremental._
