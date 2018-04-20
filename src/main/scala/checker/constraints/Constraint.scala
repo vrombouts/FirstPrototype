@@ -186,14 +186,19 @@ object Constraint extends Checker {
     val intervals = getIntervals(variables)
     var changed: Boolean = true
     while (changed) {
-      changed = false
-      for (i <- variables.indices) {
-        val modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = true)
-        val other_modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = false)
-        if (modif || other_modif) changed = true
-      }
+      changed = checkBounds(intervals,constraint)
     }
     intervalsToVariables(intervals)
+  }
+
+  private[this] def checkBounds(intervals:Array[Interval], constraint:Array[Int]=>Boolean) : Boolean = {
+    var changed:Boolean = false
+    for (i <- intervals.indices) {
+      val modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = true)
+      val other_modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = false)
+      if (modif || other_modif) changed = true
+    }
+    changed
   }
 
   private[this] def reinitialize(intervals: Array[Interval]): Unit = {
