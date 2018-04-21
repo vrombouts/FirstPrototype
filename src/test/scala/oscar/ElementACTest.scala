@@ -1,6 +1,6 @@
 package oscar
 
-import checker.constraints.Constraint
+import checker.constraints.{Constraint, Constraint2}
 import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
@@ -53,16 +53,18 @@ object ElementACTest extends App {
     true
   }
 
+  val c = new Constraint2
+
   //First we set the seed:
-  Constraint.gen.setSeed(123456)
-  Constraint.gen.setNbTests(124)
+  c.gen.setSeed(123456)
+  c.gen.setNbTests(124)
 
   //Then we set x with a size of 7
-  Constraint.gen.setNVar(7)
+  c.gen.setNVar(7)
   //add variable i in generator
-  Constraint.gen.addVar(0.5, (0, 6))
+  c.gen.addVar(0.5, (0, 6))
   //add variable v in generator
-  Constraint.gen.addVar(0.1, (-11, 11))
-  print(Constraint.gen.toString)
-  Constraint.checkAC(elementAC, elementCheck)
+  c.gen.addVar(0.1, (-11, 11))
+  print(c.gen.toString)
+  c.checkAC(elementAC, elementCheck)
 }

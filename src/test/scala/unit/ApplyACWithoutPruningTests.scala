@@ -5,7 +5,7 @@ import checker.constraints.{ACBasic, AllDifferent, Constraint, Constraint2}
 
 class ApplyACWithoutPruningTests extends UnitSpec {
 
-  val C = new Constraint2 with ACBasic with AllDifferent
+  val C = new AllDifferent with ACBasic
 
   "Calling applyACWithoutPruning for AllDifferent on domains [1] [1]" should "return an exception" in {
     assertThrows[NoSolutionException] {

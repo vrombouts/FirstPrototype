@@ -139,6 +139,13 @@ class VariablesGenerator {
 
   def setRange(index: Int, range: (Int, Int)): Unit = ranges(index) = range
 
+  def setRange(index: Int, min: Int, max: Int): Unit = ranges(index) = (min, max)
+
+  def setRangeForAll(min: Int, max: Int): Unit = {
+    baseRange = (min, max)
+    ranges = Array.fill(nbVars)(baseRange)
+  }
+
   def setRangeForAll(range: (Int, Int)): Unit = {
     baseRange = range
     ranges = Array.fill(nbVars)(baseRange)

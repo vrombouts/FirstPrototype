@@ -177,25 +177,25 @@ object Constraint extends Checker {
     variables.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
   }
 
-  private[this] def intervalsToVariables(intervals: Array[Interval]): Array[Set[Int]] = {
+  private[this] def intervalsToDomains(intervals: Array[Interval]): Array[Set[Int]] = {
     intervals.map(x => x.domain)
   }
 
   @throws[NoSolutionException]
-  def applyBC(variables: Array[Set[Int]], constraint: Array[Int] => Boolean): Array[Set[Int]] = {
+  def applyBC(variables: Array[Set[Int]], checker: Array[Int] => Boolean): Array[Set[Int]] = {
     val intervals = getIntervals(variables)
     var changed: Boolean = true
     while (changed) {
-      changed = checkBounds(intervals,constraint)
+      changed = checkBounds(intervals,checker)
     }
-    intervalsToVariables(intervals)
+    intervalsToDomains(intervals)
   }
 
-  private[this] def checkBounds(intervals:Array[Interval], constraint:Array[Int]=>Boolean) : Boolean = {
+  private[this] def checkBounds(intervals:Array[Interval], checker:Array[Int]=>Boolean) : Boolean = {
     var changed:Boolean = false
     for (i <- intervals.indices) {
-      val modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = true)
-      val other_modif: Boolean = cartesianBC(intervals, constraint, i, minOrMax = false)
+      val modif: Boolean = cartesianBC(intervals, checker, i, minOrMax = true)
+      val other_modif: Boolean = cartesianBC(intervals, checker, i, minOrMax = false)
       if (modif || other_modif) changed = true
     }
     changed

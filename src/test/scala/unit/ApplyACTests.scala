@@ -5,7 +5,7 @@ import checker.constraints.{AllDifferent, Constraint, Constraint2}
 
 class ApplyACTests extends UnitSpec {
 
-  val C = new Constraint2 with AllDifferent
+  val C = new AllDifferent
 
   "Calling applyAC for AllDifferent on domains [1] [1]" should "return an exception" in {
     assertThrows[NoSolutionException] {

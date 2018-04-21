@@ -13,7 +13,7 @@ object AllDifferentACTest {
     val c = new Constraint2
     c.gen.setRangeForAll(-5, 5)
     c.checkAC(filteringAllDifferentAC, allDifferent)
-    val c2 = new Constraint2 with AllDifferent
+    val c2 = new AllDifferent
     c2.checkAC(filteringAllDifferentAC,null)
   }
 

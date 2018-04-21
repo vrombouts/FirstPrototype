@@ -2,31 +2,37 @@ package choco;
 
 import checker.JCpChecker;
 import checker.NoSolutionException;
+import checker.constraints.AllDifferent;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffAC;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffBC;
 import org.chocosolver.solver.variables.IntVar;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
 public class AllDifferentTest {
 
-    public static void testAllDifferentBC(JCpChecker jc) {
+    public static void testAllDifferentBC() {
+        JCpChecker jc = new JCpChecker();
+        jc.gen().setRangeForAll(-5,5);
         jc.checkBC(applyBC(), applyAllDifferent());
     }
 
-    public static void testAllDifferentAC(JCpChecker jc) {
+    public static void testAllDifferentAC() {
+        JCpChecker jc = new JCpChecker();
+        jc.gen().setRangeForAll(-5,5);
         jc.checkAC(applyAC(), applyAllDifferent());
     }
 
-    public static void testAllDifferentBC2(JCpChecker jc) {
-        jc.checkAllDifferentBC(applyBC());
+    public static void testAllDifferentBC2() {
+        JCpChecker jc = new JCpChecker(new AllDifferent());
+        jc.checkBC(applyBC(), null);
     }
 
-    public static void testAllDifferentAC2(JCpChecker jc) {
-        jc.checkAllDifferentAC(applyAC());
+    public static void testAllDifferentAC2() {
+        JCpChecker jc = new JCpChecker(new AllDifferent());
+        jc.checkAC(applyAC(), null);
     }
 
     public static Function<Set<Integer>[], Set<Integer>[]> applyAC() {
@@ -80,19 +86,19 @@ public class AllDifferentTest {
     public static void main(String[] args) {
         JCpChecker jc = new JCpChecker();
         System.out.println("Begin test allDifferentBC");
-        testAllDifferentBC(jc);
+        testAllDifferentBC();
         System.out.println("End test allDifferentBC");
 
         System.out.println("Begin test allDifferentAC");
-        testAllDifferentAC(jc);
+        testAllDifferentAC();
         System.out.println("End test allDifferentAC");
 
         System.out.println("Begin test allDifferentBC2");
-        testAllDifferentBC2(jc);
+        testAllDifferentBC2();
         System.out.println("End test allDifferentBC2");
 
         System.out.println("Begin test allDifferentAC2");
-        testAllDifferentAC2(jc);
+        testAllDifferentAC2();
         System.out.println("End test allDifferentAC2");
     }
 

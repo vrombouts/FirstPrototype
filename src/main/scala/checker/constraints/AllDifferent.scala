@@ -1,50 +1,10 @@
 package checker.constraints
 
-import checker._
-
-object AllDifferent extends Checker {
-  var stats:Statistics = new StrictStatistics
-  private[this] var isAC: Boolean = true
-
-  override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    if (isAC) Constraint.applyAC(variables, allDifferent)
-    else Constraint.applyBC(variables, allDifferent)
-  }
-
-  /*
-  * This function checks if the constraint passed in argument apply correctly an
-  * allDifferent constraint with arc consistency.
-  */
-  def checkAC(constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
-    check(isAc = true, constraint)
-  }
-
-  def checkBC(constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
-    check(isAc = false, constraint)
-  }
-
-  private[this] def check(isAc: Boolean, constraint: Array[Set[Int]] => Array[Set[Int]]): Unit = {
-    isAC = isAc
-    if (isAc) {
-      Constraint.checkAC(constraint, allDifferent)
-    }
-    else Constraint.checkBC(constraint, allDifferent)
-    val checkAllDiff: Array[Set[Int]] => Boolean = checkConstraint(_, constraint)
-    LimitCases.allDifferentLimitCases.foreach(x => checkAllDiff(x))
-    println("All tests executed.")
-  }
-
-  def allDifferent(solution: Array[Int]): Boolean = {
-    solution.toSet.size == solution.length
-  }
-
-}
-
-
-trait AllDifferent extends Base {
+class AllDifferent extends Constraint2 {
   gen.setRangeForAll((-5, 5))
   gen.setDensityForAll(0.3)
   gen.setNVar(7)
 
-  override protected[this] def checker(solution: Array[Int]): Boolean = solution.toSet.size == solution.length
+  override def checker(solution: Array[Int]): Boolean = solution.toSet.size == solution.length
+
 }
