@@ -1,8 +1,8 @@
 package checker
 
-import checker.constraints.Constraint
 
-class StrictStatistics extends Statistics {
+class StrictStatistics(nbBranchOp:Int) extends Statistics {
+  def this() = this(25)
 
   private[this] var nbRemoveNoValueTests: Int = 0
   private[this] var nbRemovingValueTests: Int = 0
@@ -42,7 +42,7 @@ class StrictStatistics extends Statistics {
 
   def globalStatsToString(isInc: Boolean): String = {
     var str: String = "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n"
-    if (isInc) str += "Note that since we make " + Constraint.nbBranchOp + " branchings per test, the total number of tests will be >= " + Constraint.gen.getNbTests + "\n"
+    if (isInc) str += "Note that since we make " + nbBranchOp + " branchings per test, the total number of tests will be >= " + generatorUsed.getNbTests + "\n"
     str + "Here are some stats of the tests being executed : \n\n" +
       "------------------------------------------------------------ \n" +
       "Comparisons            |   Passed  |   Failed  |   Total   | \n" +

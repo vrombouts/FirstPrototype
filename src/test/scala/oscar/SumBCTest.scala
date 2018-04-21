@@ -1,5 +1,6 @@
 package oscar
 
+import checker.constraints.Sum
 import checker.{NoSolutionException, ScCpChecker}
 import oscar.algo.Inconsistency
 import oscar.cp._
@@ -8,16 +9,16 @@ import oscar.cp.core.CPPropagStrength
 object SumBCTest extends App {
   private def GT(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
-    val variables = vars.dropRight(1).map(x => CPIntVar(x))
-    val constant = vars(vars.length - 1).last
-    val ad = sum(variables) > constant
+    val variables = vars.map(x => CPIntVar(x))
+    val ad = sum(variables) > 15
     try {
       testSolver.post(ad)
     } catch {
       case _: Inconsistency => throw new NoSolutionException
     }
-    variables.map(x => x.toArray.toSet) ++ Array(vars(vars.length - 1))
+    variables.map(x => x.toArray.toSet)
   }
 
-  ScCpChecker.checkSumGT(GT)
+  val s:Sum = new Sum(">",15)
+  s.checkBC(GT, null)
 }

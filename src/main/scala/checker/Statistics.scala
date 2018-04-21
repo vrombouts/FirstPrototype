@@ -2,7 +2,6 @@ package checker
 
 import java.io._
 
-import checker.constraints.Constraint
 import checker.constraints.incremental.BranchOp
 
 abstract class Statistics {
@@ -18,7 +17,7 @@ abstract class Statistics {
   private[this] var nbLeaves: Int = 0
 
   // stats about the generator
-  private[this] var generatorUsed: VariablesGenerator = _
+  protected[this] var generatorUsed: VariablesGenerator = _
 
   //private[this] var lastTestFail:(Array[Set[Int]],Array[Set[Int]],Array[Set[Int]])=(null,null,null)
 
