@@ -24,7 +24,7 @@ trait Base {
 
   protected[this] def checker(solution:Array[Int]): Boolean
 
-  protected[this] def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     propagation match {
       case `notSpecified` => applyConstraintSimple(variables)
       case `AC` => applyConstraintAC(variables)

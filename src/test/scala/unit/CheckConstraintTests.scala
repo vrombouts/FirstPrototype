@@ -1,7 +1,7 @@
 package unit
 
 import checker.{NoSolutionException, StrictStatistics, UnstrictStats}
-import checker.constraints.{AllDifferent, Constraint}
+import checker.constraints.{AllDifferent, Constraint, Constraint2}
 
 class CheckConstraintTests extends UnitSpec {
 
@@ -19,69 +19,74 @@ class CheckConstraintTests extends UnitSpec {
   // add a constraint that makes the allDifferent constraint but only one time (no fix point reached)
 
 
+  val c = new Constraint2 with AllDifferent {
+    propagation=AC
+    stats = new StrictStatistics
+  }
+
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(1)), dummyConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(1)), dummyConstraint))
   }
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [0]" should "return true" in {
-    assert(AllDifferent.checkConstraint(Array(Set(1), Set(0)), dummyConstraint))
+    assert(c.checkConstraint(Array(Set(1), Set(0)), dummyConstraint))
   }
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1,0] [0,1] [1,2]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), dummyConstraint))
+    assert(!c.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), dummyConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns an exception for domain variables [1] [1]" should "return true" in {
-    assert(AllDifferent.checkConstraint(Array(Set(1), Set(1)), throwExceptionConstraint))
+    assert(c.checkConstraint(Array(Set(1), Set(1)), throwExceptionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns an exception for domain variables [1] [0]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(0)), throwExceptionConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(0)), throwExceptionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that returns an exception for domain variables [1,0] [0,1] [1,2]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), throwExceptionConstraint))
+    assert(!c.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), throwExceptionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns null for domain variables [1] [1]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(1)), nullConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(1)), nullConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns an exception for domain variables [0,1] [0,1] [0,1]" should "return true" in {
-    assert(AllDifferent.checkConstraint(Array(Set(0, 1), Set(0, 1), Set(0, 1)), throwExceptionConstraint))
+    assert(c.checkConstraint(Array(Set(0, 1), Set(0, 1), Set(0, 1)), throwExceptionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns null for domain variables [1] [0]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(0)), nullConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(0)), nullConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns the initial domains without the first one for domain variables [1] [1]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(1)), badVariablesConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(1)), badVariablesConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns the initial domains without the first one for domain variables [1] [0]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(0)), badVariablesConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(0)), badVariablesConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns all empty domains for domain variables [1] [1]" should "return true" in {
-    assert(AllDifferent.checkConstraint(Array(Set(1), Set(1)), noSolutionConstraint))
+    assert(c.checkConstraint(Array(Set(1), Set(1)), noSolutionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that simply returns all empty domains for domain variables [1] [0]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(0)), noSolutionConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(0)), noSolutionConstraint))
   }
 
   "Comparing the allDifferent constraint with a constraint that returns all empty domains for domain variables [1,0] [0,1] [1,2]" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), noSolutionConstraint))
+    assert(!c.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), noSolutionConstraint))
   }
 
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1,0] [0,1] [1,2] considering unstrict format(should not remove solution but does not check that it removes elements that are not solution)" should "return true" in {
-    AllDifferent.stats = new UnstrictStats
-    assert(AllDifferent.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), dummyConstraint))
+    c.stats = new UnstrictStats
+    assert(c.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), dummyConstraint))
   }
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1] considering unstrict format" should "return false" in {
-    assert(!AllDifferent.checkConstraint(Array(Set(1), Set(1)), dummyConstraint))
+    assert(!c.checkConstraint(Array(Set(1), Set(1)), dummyConstraint))
   }
 }
