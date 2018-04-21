@@ -39,3 +39,12 @@ object AllDifferent extends Checker {
   }
 
 }
+
+
+trait AllDifferent extends Base {
+  gen.setRangeForAll((-5, 5))
+  gen.setDensityForAll(0.3)
+  gen.setNVar(7)
+
+  override protected[this] def checker(solution: Array[Int]): Boolean = solution.toSet.size == solution.length
+}

@@ -5,7 +5,11 @@ import Conversions._
 import checker.constraints.incremental.BranchOp
 import checker.constraints._
 
-class JCpChecker {
+class JCpChecker(c: Constraint2) {
+  def this() = this(new Constraint2)
+
+  def gen() = c.gen
+
   def checkAC(filtering: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]],
               checker: Function[Array[Integer], java.lang.Boolean]): Unit = {
     Constraint.checkAC(filtering, checker)

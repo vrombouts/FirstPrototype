@@ -1,26 +1,31 @@
 package unit
 
 import checker.{Statistics, StrictStatistics}
-import checker.constraints.Checker
-import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.constraints.incremental._
 
 import scala.util.Random
 
 class applyConstraintBranchTests extends UnitSpec {
 
-  private[this] object dummyCheck extends Checker {
+  private[this] object dummyCheck extends Incremental {
     var stats: Statistics = new StrictStatistics
-
-    def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = variables
+    propagation=AC
+    def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = variables
+    def applyConstraintBC(variables: Array[Set[Int]]): Array[Set[Int]] = variables
+    def applyConstraintSimple(variables: Array[Set[Int]]): Array[Set[Int]] = variables
+    override def checker(solution: Array[Int]): Boolean = true
   }
 
-  private[this] object SpecialCheck extends Checker {
+  private[this] object SpecialCheck extends Incremental {
     var stats: Statistics = new StrictStatistics
-
-    def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
+    propagation=AC
+    def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
       variables(2) = Set(5)
       variables
     }
+    def applyConstraintBC(variables: Array[Set[Int]]): Array[Set[Int]] = variables
+    def applyConstraintSimple(variables: Array[Set[Int]]): Array[Set[Int]] = variables
+    override def checker(solution: Array[Int]): Boolean = true
   }
 
   "domain storage" should "be empty when beginning" in {
