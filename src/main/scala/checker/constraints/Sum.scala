@@ -8,7 +8,7 @@ class Sum(operator:String, constant:Int) extends Constraint2 with ACBasic {
   def this(c:Int) = this("=", c)
   setGen()
 
-  def setGen() : Unit = {
+  private[this] def setGen() : Unit = {
     gen.setNVar(10)
     val middleValue = constant/10
     if(operator.equals("=")) {
@@ -38,6 +38,7 @@ class Sum(operator:String, constant:Int) extends Constraint2 with ACBasic {
     }
   }
 
+
   override def checker(solution:Array[Int]):Boolean = {
     var result : Boolean = true
     if(operator.equals("=")) result = solution.sum == constant
@@ -49,6 +50,22 @@ class Sum(operator:String, constant:Int) extends Constraint2 with ACBasic {
     result
   }
 
+
+  override def limitCases(): Array[Array[Set[Int]]] = {
+    Array(
+      //Array(Set(Integer.MAX_VALUE), Set(1), Set(Integer.MIN_VALUE)),
+      //Array(Set(Integer.MIN_VALUE), Set(-1),Set(Integer.MAX_VALUE)),
+      Array(Set(2), Set(constant-2)),
+      Array(Set(2, constant - 2), Set(2, constant - 2)),
+      Array(Set(1, 2), Set(2, 4), Set(constant - 6)), // constant == sMax
+      Array(Set(1, 2), Set(2, 4), Set(constant - 5)), // constant > sMax
+      Array(Set(1, 2), Set(2, 4), Set(constant - 7)), // constant < sMax
+      Array(Set(1, 2), Set(2, 4), Set(constant - 3)), // constant == sMin
+      Array(Set(1, 2), Set(2, 4), Set(constant - 2)), // constant > sMin
+      Array(Set(1, 2), Set(2, 4), Set(constant - 4)), // constant < sMin
+      Array(Set(2), Set(2), Set(constant - 4)) // constant == sMin == sMax
+    )
+  }
 
   def sum(constant: Int, operation: String, nbVar: Int): Array[Int] => Boolean = sum(constant, operation, nbVar, _)
 

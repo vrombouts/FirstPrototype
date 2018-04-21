@@ -33,6 +33,15 @@ class Gcc(values: Array[Int]) extends Constraint2 with ACBasic{
     true
   }
 
+  /*override def limitCases(): Array[Array[Set[Int]]] = {
+   Array(
+      (Array(Set(0, 1), Set(0, 1), Set(0, 1, 2), Set(0, 1)), Array(0, 1)), //pruning count correctly
+      (Array(Set(0, 1, 2), Set(0, 1, 2), Set(0, 1, 2), Set(0, 1), Set(0, 1), Set(0, 1)), Array(0, 1, 2)), //alldifferent
+      (Array(Set(1, 2, 3, 4), Set(1, 2), Set(2, 1), Set(3, 4), Set(1), Set(1), Set(1), Set(1)), Array(1, 2, 3, 4)) //permutation
+      //TODO add limit cases
+    )
+  }*/
+
   override protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val n: Int = values.length
     val assignments: Array[Set[Int]] = variables.dropRight(n)

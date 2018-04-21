@@ -16,6 +16,8 @@ class Constraint2 extends Static with Incremental with ACFiltering with BCFilter
     applyAC(variables)
   }
 
+  protected[this] def limitCases() : Array[Array[Set[Int]]] = Array()
+
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
@@ -82,6 +84,7 @@ class Constraint2 extends Static with Incremental with ACFiltering with BCFilter
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check(gen.getTestParameters)
+    limitCases().forall(x => checkConstraint(x, filteringTested))
   }
 
   private[this] def forAllCheck(init: Array[Set[Int]] => Array[Set[Int]],
@@ -89,6 +92,7 @@ class Constraint2 extends Static with Incremental with ACFiltering with BCFilter
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check(gen.getTestParameters)
+    limitCases().forall(x => checkConstraint(x, init, filtering))
   }
 
   private[this] def checkEmpty(variables: List[Set[Int]]): Boolean = {
