@@ -67,10 +67,6 @@ class JCpChecker(c: Constraint2) {
     Sum.checkBC(filtering, Op.greaterThanOrEqual)
   }
 
-  def checkElementAC(filteringTested: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]]): Unit = {
-    Element.checkAC(filteringTested)
-  }
-
   def checkTableAC(tableFiltering: BiFunction[Array[java.util.Set[Integer]], java.util.Set[Array[Integer]], Array[java.util.Set[Integer]]]): Unit = {
     Table.checkAC(tableFiltering)
   }
@@ -109,15 +105,7 @@ object ScCpChecker {
     Sum.checkBC(filteringTested, Op.greaterThanOrEqual)
   }
 
-  def checkElementAC(filteringTested: Array[Set[Int]] => Array[Set[Int]]): Unit = {
-    Element.checkAC(filteringTested)
-  }
-
   def checkTableAC(filteringWithTableTested: (Array[Set[Int]], Set[Array[Int]]) => Array[Set[Int]]): Unit = {
     Table.checkAC(filteringWithTableTested)
-  }
-
-  def checkGCC(filteringWithValuesTested: (Array[Set[Int]], Array[Int]) => Array[Set[Int]]): Unit = {
-    Gcc.checkAC(filteringWithValuesTested)
   }
 }

@@ -18,7 +18,7 @@ trait ACBasic extends Base {
 
 
   //Generation of all the solutions
-  private[this] def solutions(variables: Array[Set[Int]]): Array[Array[Int]] = {
+  protected[this] def solutions(variables: Array[Set[Int]]): Array[Array[Int]] = {
     val currentSol: Array[Int] = Array.fill(variables.length)(0)
     val result: mutable.Set[Array[Int]] = mutable.Set()
     setIthVariable(variables, 0, currentSol, result)
