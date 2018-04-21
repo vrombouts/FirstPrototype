@@ -1,15 +1,17 @@
 package unit
 
 import checker.{Statistics, StrictStatistics}
-import checker.constraints.Checker
-import checker.constraints.incremental.{BranchOp, RestrictDomain}
+import checker.constraints.incremental.{BranchOp, Incremental, RestrictDomain}
 
 class CheckConstraintBranchTests extends UnitSpec {
 
-  private[this] object DummyCheck extends Checker {
+  private[this] object DummyCheck extends Incremental {
     var stats: Statistics = new StrictStatistics
 
-    def applyConstraint(variable: Array[Set[Int]]): Array[Set[Int]] = variable
+    def applyConstraintAC(variable: Array[Set[Int]]): Array[Set[Int]] = variable
+    def applyConstraintBC(variable: Array[Set[Int]]): Array[Set[Int]] = variable
+    def applyConstraintSimple(variable: Array[Set[Int]]): Array[Set[Int]] = variable
+    override def checker(solution: Array[Int]): Boolean = true
   }
 
   DummyCheck.gen.setSeed(100)
