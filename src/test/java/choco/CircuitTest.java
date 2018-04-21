@@ -2,13 +2,11 @@ package choco;
 
 import checker.JCpChecker;
 import checker.NoSolutionException;
-import checker.constraints.Constraint;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.ConstraintsName;
 import org.chocosolver.solver.constraints.nary.circuit.CircuitConf;
 import org.chocosolver.solver.constraints.nary.circuit.PropCircuitSCC;
 import org.chocosolver.solver.variables.IntVar;
-import scala.Tuple2;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,8 +16,8 @@ public class CircuitTest {
     private static IntVar[] currentVars;
     public static void main(String [] args){
         JCpChecker jc = new JCpChecker();
-        Constraint.gen().setRangeForAll(new Tuple2<>(0,4));
-        Constraint.gen().setDensityForAll(0.8);
+        jc.gen().setRangeForAll(0,4);
+        jc.gen().setDensityForAll(0.8);
         jc.check(filter(),isSolution());
     }
 

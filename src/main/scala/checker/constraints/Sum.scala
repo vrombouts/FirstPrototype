@@ -3,35 +3,52 @@ package checker.constraints
 import checker._
 import org.scalacheck.Prop.forAll
 
-object Sum extends Checker {
+class Sum(operator:String, constant:Int) extends Constraint2 with ACBasic {
 
-  var stats:Statistics = new UnstrictStats
-  //private var constant:Int=0
-  private[this] var operator: String = Op.equal
+  def this(c:Int) = this("=", c)
+  setGen()
 
-  override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    sumBC(variables, operator)
+  def setGen() : Unit = {
+    gen.setNVar(10)
+    val middleValue = constant/10
+    if(operator.equals("=")) {
+      gen.setRangeForAll(middleValue-1, middleValue+1)
+      gen.setDensityForAll(0.7)
+    }
+    else if(operator.equals("!=")) {
+      gen.setRangeForAll(middleValue-1, middleValue+1)
+      gen.setDensityForAll(0.1)
+      gen.setDensity(0,0.5)
+    }
+    else if(operator.equals(">")) {
+      gen.setRangeForAll(middleValue-5, middleValue+3)
+      gen.setDensityForAll(0.3)
+    }
+    else if(operator.equals("<")){
+      gen.setRangeForAll(middleValue-2, middleValue+5)
+      gen.setDensityForAll(0.3)
+    }
+    else if(operator.equals(">=")){
+      gen.setRangeForAll(middleValue-5, middleValue+3)
+      gen.setDensityForAll(0.3)
+    }
+    else if(operator.equals("<=")) {
+      gen.setRangeForAll(middleValue-2, middleValue+5)
+      gen.setDensityForAll(0.3)
+    }
   }
 
-  /*def checkSum(constraint:Array[Set[Int]]=>Array[Set[Int]],constant:Int, operation:Int):Unit = {
-
-    forAll(Generators.basic){ x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray,constraint)
-    }.check
-  }*/
-
-  def checkBC(constraint: Array[Set[Int]] => Array[Set[Int]], operation: String): Unit = {
-    operator = operation
-    val check: (Array[Set[Int]]) => Boolean = checkConstraint(_, constraint)
-    forAll(Generators.sum) { x =>
-      if (x._1.isEmpty || checkEmpty(x._1)) true
-      else {
-        val array = x._1.toArray
-        check(array ++ Array(Set(x._2)))
-      }
-    }.check(gen.getTestParameters)
-    LimitCases.sumLimitCases.foreach { limitCase => check(limitCase) }
+  override def checker(solution:Array[Int]):Boolean = {
+    var result : Boolean = true
+    if(operator.equals("=")) result = solution.sum == constant
+    else if(operator.equals("!=")) result = solution.sum != constant
+    else if(operator.equals(">")) result = solution.sum > constant
+    else if(operator.equals("<")) result = solution.sum < constant
+    else if(operator.equals(">=")) result = solution.sum >= constant
+    else if(operator.equals("<=")) result = solution.sum <= constant
+    result
   }
+
 
   def sum(constant: Int, operation: String, nbVar: Int): Array[Int] => Boolean = sum(constant, operation, nbVar, _)
 
@@ -53,11 +70,9 @@ object Sum extends Checker {
   }
 
   @throws[NoSolutionException]
-  def sumBC(vars: Array[Set[Int]], operation: String): Array[Set[Int]] = {
-    val constant: Int = vars.last.last
-    val variables = vars.dropRight(1)
+  def sumBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     var changed: Boolean = true
-    val cond: (Int, Int) => Boolean = Op.condition(operation, _, _, constant)
+    val cond: (Int, Int) => Boolean = Op.condition(operator, _, _, constant)
     while (changed) {
       changed = false
       for (i <- variables.indices) {
@@ -85,6 +100,9 @@ object Sum extends Checker {
         }
       }
     }
-    variables :+ Set(constant)
+    variables
   }
+
+  override def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = sumBC(variables)
+
 }

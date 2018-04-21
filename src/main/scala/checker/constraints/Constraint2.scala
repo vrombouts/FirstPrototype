@@ -49,7 +49,7 @@ class Constraint2 extends Static with Incremental with ACFiltering with BCFilter
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = new StrictStatistics
+    stats = new StrictStatistics(nbBranchOp)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.printStats(isInc = true)
@@ -60,7 +60,7 @@ class Constraint2 extends Static with Incremental with ACFiltering with BCFilter
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = new StrictStatistics
+    stats = new StrictStatistics(nbBranchOp)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.printStats(isInc = true)
@@ -70,7 +70,7 @@ class Constraint2 extends Static with Incremental with ACFiltering with BCFilter
             filtering: BranchOp => Array[Set[Int]],
             checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    stats = new UnstrictStats
+    stats = new UnstrictStats(nbBranchOp)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.printStats(isInc = true)
