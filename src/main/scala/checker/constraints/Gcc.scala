@@ -3,43 +3,46 @@ package checker.constraints
 import checker._
 import org.scalacheck.Prop.forAll
 
-object Gcc extends Checker {
-  var stats:Statistics = new UnstrictStats
 
-  private[this] var values: Array[Int] = Array()
+class Gcc(values: Array[Int]) extends Constraint2 with ACBasic{
+  setGen()
 
   private[this] def setGen(): Unit = {
-    gen.baseRange = (0, 2)
-    gen.baseDensity = 0.8
+    //TODO: be more in accordance to values
+    gen.baseRange = (values.min, values.max)
+    gen.baseDensity = 3/values.length
     gen.setNVar(8)
     gen.baseRange = (0, 8)
     gen.baseDensity = 2.0 / 8.0
-    gen.addNVar(3)
+    gen.addNVar(values.length)
   }
 
-  def checkAC(constraint: (Array[Set[Int]], Array[Int]) => Array[Set[Int]]): Unit = {
-    val check: Array[Set[Int]] => Boolean = checkConstraint(_, constraint(_, Array(0, 1, 2)))
-    values = Array(0, 1, 2)
-    setGen()
-    forAll(gen.gen) { variables =>
-      variables.isEmpty || checkEmpty(variables) || variables.length < 4 || check(variables.toArray)
-    }.check(gen.getTestParameters)
-    LimitCases.gccLimitCases.foreach { limit =>
-      values = limit._2
-      checkConstraint(limit._1, constraint(_, limit._2))
+  override def checker(solution: Array[Int]): Boolean = {
+    var valuesCount: Map[Int, Int] = Map()
+    val variables  = solution.dropRight(values.length)
+    val occurences = solution.drop(solution.length-values.length)
+    values.foreach { v => valuesCount = valuesCount + (v -> 0) }
+    variables.foreach { x =>
+      if (valuesCount.contains(x)) {
+        valuesCount = valuesCount.updated(x, valuesCount(x) + 1)
+      }
     }
+    for (i <- values.indices) {
+      if(!(occurences(i) == valuesCount(values(i)))) return false
+    }
+    true
   }
 
-  /*
-   * TODO ask if count variables should be incremental in their representing value or not
-   * This function checks the solution respect the gcc constraint when
-   *  solution[0..solution.length-values.length-1] correspond to the assignment variables
-   *  solution[solution.length-values.length..solution.length] corespond to the count variables
-   *  where values represent the value corresponding to their respective count variable.
-   *  each count variable correspond to the value of the previous count variable's value +1
-   *  this function cannot be used to test an incomplete solution
-   */
-  def gccChecker(solution: Array[Int], values: Array[Int], count: Array[Set[Int]]): Boolean = {
+  override protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
+    val n: Int = values.length
+    val assignments: Array[Set[Int]] = variables.dropRight(n)
+    val count: Array[Set[Int]] = variables.drop(variables.length - n)
+    val sols: Array[Array[Int]] = solutions(assignments).filter(x => gccChecker(x, values, count))
+    gccToDomainsAC(sols, values, count)
+  }
+
+
+  private[this] def gccChecker(solution: Array[Int], values: Array[Int], count: Array[Set[Int]]): Boolean = {
     var valuesCount: Map[Int, Int] = Map()
     values.foreach { v => valuesCount = valuesCount + (v -> 0) }
     solution.foreach { x =>
@@ -71,14 +74,6 @@ object Gcc extends Checker {
       }
     }
     variables
-  }
-
-  def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    val n: Int = values.length
-    val assignments: Array[Set[Int]] = variables.dropRight(n)
-    val count: Array[Set[Int]] = variables.drop(variables.length - n)
-    val sols: Array[Array[Int]] = Constraint.solutions(assignments).filter(x => gccChecker(x, values, count))
-    gccToDomainsAC(sols, values, count)
   }
 
 }
