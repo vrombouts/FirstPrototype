@@ -37,7 +37,7 @@ trait ACBasic extends Base {
   }
 
   //Retrieval of the domains filtered
-  private[this] def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
+  protected[this] def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions(0).length)(Set.empty)
     solutions.foreach { sol =>
       for (i <- variables.indices) {

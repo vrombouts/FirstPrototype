@@ -2,23 +2,36 @@ package choco;
 
 import checker.JCpChecker;
 import checker.NoSolutionException;
+import checker.constraints.Table;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.extension.Tuples;
 import org.chocosolver.solver.variables.IntVar;
+import scala.Int;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class TableTest {
+    static Set<Integer[]> table= new HashSet();
+
 
     public static void main(String[] args) {
+        Integer[] tab1 = {1,2,3};
+        Integer[] tab2 = {2,2,3};
+        Integer[] tab3 = {2,3,3};
+        Integer[] tab4 = {1,2,4};
+        table.add(tab1);
+        table.add(tab2);
+        table.add(tab3);
+        table.add(tab4);
         checkTable();
     }
 
     private static void checkTable() {
-        JCpChecker jc = new JCpChecker();
-        jc.checkTableAC((variables, tablee) -> {
+        Table t = new Table(table);
+        JCpChecker jc = new JCpChecker(t);
+        jc.checkAC((variables) -> {
             Model model = new Model("my first problem");
             // 2. Create variables
             IntVar[] x = new IntVar[variables.length];
@@ -26,9 +39,9 @@ public class TableTest {
                 int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
                 x[i] = model.intVar("" + i, b);
             }
-            int[][] ii = new int[tablee.size()][variables.length];
+            int[][] ii = new int[table.size()][variables.length];
             int i = 0;
-            for (Integer[] s : tablee) {
+            for (Integer[] s : table) {
                 ii[i] = new int[s.length];
                 for (int j = 0; j < s.length; j++) {
                     ii[i][j] = s[j];
@@ -44,7 +57,7 @@ public class TableTest {
                 throw new NoSolutionException("");
             }
             return transform(x);
-        });
+        }, null);
     }
 
     private static Set<Integer>[] transform(IntVar[] input) {

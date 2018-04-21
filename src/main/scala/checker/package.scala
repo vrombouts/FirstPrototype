@@ -56,4 +56,15 @@ package object Conversions {
       bool
     }
   }
+
+  implicit def tableToScala(table: java.util.Set[Array[Integer]]): Set[Array[Int]] = {
+    var t: Set[Array[Int]] = Set()
+    val array = table.toArray(new Array[Array[Integer]](table.size))
+    for(tab <- array){
+      val subtab: Array[Int] = Array.fill(tab.length)(0)
+      for(i <- tab.indices) subtab(i) = tab(i)
+      t = t + subtab
+    }
+    t
+  }
 }
