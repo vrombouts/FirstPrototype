@@ -57,7 +57,7 @@ class VariablesGenerator {
 
   def setNbTests(n: Int): Unit = nbTests = Some(n)
 
-  def getNbTests:Int = nbTests match{
+  def getNbTests: Int = nbTests match {
     case Some(n) => n
     case _ => 100
   }
@@ -110,6 +110,12 @@ class VariablesGenerator {
     ranges = ranges :+ range
   }
 
+  def addVar(density: Double, min: Int, max: Int): Unit = {
+    nbVars += 1
+    densities = densities :+ density
+    ranges = ranges :+ (min, max)
+  }
+
   /* This function add n variables to the instances generated
    * with the basic density and range
    */
@@ -123,6 +129,14 @@ class VariablesGenerator {
   def addNVar(n: Int, density: Double, range: (Int, Int)): Unit = {
     for (_ <- 1 to n) addVar(density, range)
   }
+
+  /* This function add n variables to the instances generated
+ * with the given density and range
+ */
+  def addNVar(n: Int, density: Double, min: Int, max: Int): Unit = {
+    for (_ <- 1 to n) addVar(density, (min, max))
+  }
+
 
   def setDensity(index: Int, density: Double): Unit = {
     var d = densities(index)
@@ -160,10 +174,10 @@ class VariablesGenerator {
     ranges = ranges.filterNot { _ => j += 1; j == index }
   }
 
-  def reset() : Unit = {
+  def reset(): Unit = {
     setNbTests(100)
     setNVar(5)
-    setRangeForAll((-10,10))
+    setRangeForAll((-10, 10))
     setDensityForAll(0.2)
     randomSeed()
   }

@@ -1,5 +1,5 @@
 import checker.NoSolutionException
-import checker.constraints.Constraint
+import checker.constraints.{Constraint, Element}
 import org.chocosolver.solver.Model
 import org.chocosolver.solver.constraints.ConstraintsName
 import org.chocosolver.solver.constraints.nary.element.PropElementV_fast
@@ -11,14 +11,15 @@ object ChocoElementTest {
   def main(args: Array[String]) {
 
     //set the x
-    Constraint.gen.setNVar(7)
-    Constraint.gen.addVar(1.5 / 7.0, (0, 10))
-    Constraint.gen.addVar(0.1, (-10, 10))
-    Constraint.checkAC(
+    val c = new Element
+    c.gen.setNVar(7)
+    c.gen.addVar(1.5 / 7.0, (0, 10))
+    c.gen.addVar(0.1, (-10, 10))
+    c.checkAC(
       variables => {
         size = variables.length
         if (variables.length < 3) throw NoSolutionException()
-        val model: Model = new Model("sum problem")
+        val model: Model = new Model("Element constraint")
         val x: Array[IntVar] = new Array[IntVar](variables.length)
         for (i <- variables.indices) {
           val b: Array[Int] = variables(i).toArray

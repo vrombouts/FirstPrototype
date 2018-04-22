@@ -27,7 +27,7 @@ object Constraint extends Checker {
     forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
     stats.setGenerator(gen)
-    stats.printStats
+    stats.print
   }
 
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
@@ -37,7 +37,7 @@ object Constraint extends Checker {
     forAllCheck(filteringTested)
     //TODO: add simple case limit possible for all constraints
     stats.setGenerator(gen)
-    stats.printStats
+    stats.print
   }
 
   def check(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
@@ -45,7 +45,7 @@ object Constraint extends Checker {
     stats = new UnstrictStats
     forAllCheck(filteringTested)
     stats.setGenerator(gen)
-    stats.printStats
+    stats.print
   }
 
   def checkAC(init: Array[Set[Int]] => Array[Set[Int]],
@@ -56,7 +56,7 @@ object Constraint extends Checker {
     stats = new StrictStatistics
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
-    stats.printStats(isInc = true)
+    stats.print(isInc = true)
   }
 
   def checkBC(init: Array[Set[Int]] => Array[Set[Int]],
@@ -67,7 +67,7 @@ object Constraint extends Checker {
     stats = new StrictStatistics
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
-    stats.printStats(isInc = true)
+    stats.print(isInc = true)
   }
 
   def check(init: Array[Set[Int]] => Array[Set[Int]],
@@ -77,7 +77,7 @@ object Constraint extends Checker {
     stats = new UnstrictStats
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
-    stats.printStats(isInc = true)
+    stats.print(isInc = true)
   }
 
   // Applying AC with pruning //

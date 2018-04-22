@@ -65,6 +65,5 @@ object ElementACTest extends App {
   c.gen.addVar(0.5, (0, 6))
   //add variable v in generator
   c.gen.addVar(0.1, (-11, 11))
-  print(c.gen.toString)
   c.checkAC(elementAC, elementCheck)
 }

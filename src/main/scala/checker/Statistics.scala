@@ -50,6 +50,10 @@ abstract class Statistics {
 
   def globalStatsToString(isInc: Boolean): String
 
+  var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]])] = Array()
+
+  var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]])] = Array()
+
 
   def printNumber(nb: Int): String = {
     val nbOfChars: Int = nb.toString.length
@@ -67,7 +71,13 @@ abstract class Statistics {
       "The average number of leaves per test is " + nbLeaves / nbExecutedTests + "\n"
   }
 
-  def printStats(implicit isInc: Boolean = false): Unit = {
+  def print(implicit isInc: Boolean = false): Unit = {
+    printStats(isInc)
+    printTests("passedTests.txt", testsPassed)
+    printTests("failedTests.txt", testsFailed)
+  }
+
+  private[this] def printStats(implicit isInc: Boolean = false): Unit = {
     val f: File = new File("out/statistics.txt")
     f.getParentFile.mkdirs
     val prWriter = new PrintWriter(f)
@@ -77,6 +87,43 @@ abstract class Statistics {
 
     if (!(generatorUsed == null))
       prWriter.write(generatorUsed.toString)
+    prWriter.close()
+  }
+
+  def domainToString(dom: Set[Int]): String = {
+    var result: String = "["
+    var first: Boolean = true
+    for (elem <- dom) {
+      if (first) {
+        result += elem
+        first = false
+      }
+      else result += ", " + elem
+    }
+    result += "]"
+    result
+  }
+
+  private[this] def extendString(s: String, l: Int): String = {
+    var result: String = s
+    if (s.length != l) {
+      for (i <- s.length until l)
+        result += " "
+    }
+    result
+  }
+
+  private[this] def printTests(filename: String, tests: Array[(Array[Set[Int]], Array[Set[Int]])]): Unit = {
+    val f: File = new File("out/" + filename)
+    f.getParentFile.mkdirs
+    val prWriter = new PrintWriter(f)
+    for (test <- tests) {
+      var maxLength: Int = "Initial domains ".length
+      test._1.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
+      prWriter.write(extendString("Initial domains ", maxLength) + "|" + "Filtered domains \n")
+      (test._1 zip test._2).foreach(x => prWriter.write(extendString(domainToString(x._1), maxLength) + "|" + domainToString(x._2) + "\n"))
+      prWriter.write("\n")
+    }
     prWriter.close()
   }
 
@@ -148,7 +195,8 @@ abstract class Statistics {
     }
     else
       strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
-
+    if (result) testsPassed = testsPassed :+ (init, ourReducedDomains)
+    else testsFailed = testsFailed :+ (init, ourReducedDomains)
     result
   }
 
