@@ -1,6 +1,6 @@
 package oscar
 
-import checker.constraints.{Constraint, Constraint2}
+import checker.constraints.Constraint
 import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
@@ -53,7 +53,7 @@ object ElementACTest extends App {
     true
   }
 
-  val c = new Constraint2
+  val c = new Constraint
 
   //First we set the seed:
   c.gen.setSeed(123456)

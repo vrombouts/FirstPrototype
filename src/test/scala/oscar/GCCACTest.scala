@@ -1,6 +1,6 @@
 package oscar
 
-import checker.{NoSolutionException, ScCpChecker}
+import checker.NoSolutionException
 import checker.constraints.Gcc
 import oscar.algo.Inconsistency
 import oscar.cp._

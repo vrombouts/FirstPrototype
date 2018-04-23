@@ -1,6 +1,6 @@
 package checker.constraints
 
-class AllDifferent extends Constraint2 {
+class AllDifferent extends Constraint {
   gen.setRangeForAll((-5, 5))
   gen.setDensityForAll(0.3)
   gen.setNVar(7)

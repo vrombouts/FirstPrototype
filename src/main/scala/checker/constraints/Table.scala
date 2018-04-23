@@ -3,7 +3,7 @@ package checker.constraints
 import checker._
 import Conversions._
 
-class Table(table: Set[Array[Int]]) extends Constraint2 with ACBasic {
+class Table(table: Set[Array[Int]]) extends Constraint with ACBasic {
   def this(table: java.util.Set[Array[Integer]]) = this(tableToScala(table))
 
   private[this] val min: Int = table.map(x=>x.min).min

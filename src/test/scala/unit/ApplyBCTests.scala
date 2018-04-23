@@ -1,7 +1,7 @@
 package unit
 
 import checker.NoSolutionException
-import checker.constraints.{AllDifferent, Constraint, Constraint2}
+import checker.constraints.{AllDifferent, Constraint}
 
 class ApplyBCTests extends UnitSpec {
 
@@ -68,7 +68,7 @@ class ApplyBCTests extends UnitSpec {
   }
 
   "calling applyBC for false constraint on domain [1,2,3]" should "throw a noSolutionException" in {
-    val C = new Constraint2{
+    val C = new Constraint{
       override def checker(solution: Array[Int]): Boolean = false
     }
     assertThrows[NoSolutionException] {

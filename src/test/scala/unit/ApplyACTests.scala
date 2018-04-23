@@ -1,7 +1,7 @@
 package unit
 
 import checker.NoSolutionException
-import checker.constraints.{AllDifferent, Constraint, Constraint2}
+import checker.constraints.AllDifferent
 
 class ApplyACTests extends UnitSpec {
 

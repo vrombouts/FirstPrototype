@@ -1,5 +1,5 @@
 import checker.NoSolutionException
-import checker.constraints.{Constraint, Element}
+import checker.constraints.Element
 import org.chocosolver.solver.Model
 import org.chocosolver.solver.constraints.ConstraintsName
 import org.chocosolver.solver.constraints.nary.element.PropElementV_fast

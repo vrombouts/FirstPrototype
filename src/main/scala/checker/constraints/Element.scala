@@ -5,7 +5,7 @@ import checker._
 import scala.collection.mutable
 
 
-class Element extends Constraint2 {
+class Element extends Constraint {
   gen.addNVar(5)
   gen.addVar(0.2, (-1, 10))
   gen.addVar(0.1, (-11, 11))
