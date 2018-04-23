@@ -1,7 +1,7 @@
 package unit
 
 import checker.NoSolutionException
-import checker.constraints.{ACBasic, AllDifferent, Constraint, Constraint2}
+import checker.constraints.{ACBasic, AllDifferent, Constraint}
 
 class ApplyACWithoutPruningTests extends UnitSpec {
 
@@ -74,7 +74,7 @@ class ApplyACWithoutPruningTests extends UnitSpec {
   }
 
   "Calling applyACWithoutPruning" should "should filter only the complete solutions" in {
-    val C = new Constraint2 with ACBasic {
+    val C = new Constraint with ACBasic {
       override def checker(solution: Array[Int]): Boolean =  solution.length == 4}
     val a: Array[Set[Int]] = C.applyACWithoutPruning(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))

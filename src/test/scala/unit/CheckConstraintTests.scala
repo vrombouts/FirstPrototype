@@ -1,7 +1,7 @@
 package unit
 
 import checker.{NoSolutionException, StrictStatistics, UnstrictStats}
-import checker.constraints.{AllDifferent, Constraint, Constraint2}
+import checker.constraints.AllDifferent
 
 class CheckConstraintTests extends UnitSpec {
 
@@ -18,7 +18,7 @@ class CheckConstraintTests extends UnitSpec {
 
   // add a constraint that makes the allDifferent constraint but only one time (no fix point reached)
 
-  val c = new AllDifferent {
+  val c: AllDifferent = new AllDifferent {
     propagation=AC
     stats = new StrictStatistics
   }

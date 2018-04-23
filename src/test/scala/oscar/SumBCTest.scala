@@ -1,7 +1,7 @@
 package oscar
 
 import checker.constraints.Sum
-import checker.{NoSolutionException, ScCpChecker}
+import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.core.CPPropagStrength

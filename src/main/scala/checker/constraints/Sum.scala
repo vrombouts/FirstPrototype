@@ -3,7 +3,7 @@ package checker.constraints
 import checker._
 import org.scalacheck.Prop.forAll
 
-class Sum(operator:String, constant:Int) extends Constraint2 with ACBasic {
+class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
 
   def this(c:Int) = this("=", c)
   setGen()

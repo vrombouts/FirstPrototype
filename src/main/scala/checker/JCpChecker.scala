@@ -5,8 +5,8 @@ import Conversions._
 import checker.constraints.incremental.BranchOp
 import checker.constraints._
 
-class JCpChecker(c: Constraint2) {
-  def this() = this(new Constraint2)
+class JCpChecker(c: Constraint) {
+  def this() = this(new Constraint)
 
   def gen() = c.gen
 
@@ -44,14 +44,4 @@ class JCpChecker(c: Constraint2) {
   }
 
 
-}
-
-object ScCpChecker {
-  def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
-    Constraint.checkAC(filteringTested, checker)
-  }
-
-  def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
-    Constraint.checkBC(filteringTested, checker)
-  }
 }

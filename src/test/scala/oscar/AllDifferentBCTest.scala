@@ -1,6 +1,6 @@
 package oscar
 
-import checker.constraints.{Constraint, Constraint2}
+import checker.constraints.Constraint
 import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
@@ -22,7 +22,7 @@ object AllDifferentBCTest extends App {
 
   def allDiff(x:Array[Int]):Boolean = x.toSet.size == x.length
 
-  val c = new Constraint2
+  val c = new Constraint
   c.gen.setRangeForAll(-5,5)
   c.checkBC(allDifBC,allDiff)
 

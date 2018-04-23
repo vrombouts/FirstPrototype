@@ -1,10 +1,9 @@
 package checker.constraints
 
 import checker._
-import org.scalacheck.Prop.forAll
 
 
-class Gcc(values: Array[Int]) extends Constraint2 with ACBasic{
+class Gcc(values: Array[Int]) extends Constraint with ACBasic{
   setGen()
 
   private[this] def setGen(): Unit = {

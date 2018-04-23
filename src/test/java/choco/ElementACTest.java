@@ -3,11 +3,9 @@ package choco;
 import checker.JCpChecker;
 import checker.NoSolutionException;
 import checker.constraints.BasicConstraint;
-import checker.constraints.Constraint2;
+import checker.constraints.Constraint;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
-import org.chocosolver.solver.constraints.ConstraintsName;
-import org.chocosolver.solver.constraints.nary.element.PropElementV_fast;
 import org.chocosolver.solver.variables.IntVar;
 
 import java.util.HashSet;
@@ -16,7 +14,7 @@ import java.util.Set;
 public class ElementACTest {
 
     public static void main(String[] args) {
-        Constraint2 c = new BasicConstraint();
+        Constraint c = new BasicConstraint();
         c.gen().setNVar(7);
         c.gen().addVar(1.5 / 7.0, 0, 10);
         c.gen().addVar(0.1, -10, 10);

@@ -1,6 +1,6 @@
 package oscar
 
-import checker.constraints.{AllDifferent, Constraint2}
+import checker.constraints.{AllDifferent, Constraint}
 import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._
@@ -10,7 +10,7 @@ import oscar.cp.core.CPPropagStrength
 object AllDifferentACTest {
 
   def main(args: Array[String]): Unit = {
-    val c = new Constraint2
+    val c = new Constraint
     c.gen.setRangeForAll(-5, 5)
     c.checkAC(filteringAllDifferentAC, allDifferent)
     val c2 = new AllDifferent

@@ -1,7 +1,7 @@
 package oscar
 
 import checker.NoSolutionException
-import checker.constraints.{Constraint, Constraint2}
+import checker.constraints.Constraint
 import oscar.algo.Inconsistency
 import oscar.cp.{CPIntVar, CPSolver}
 import oscar.cp.circuit
@@ -46,7 +46,7 @@ object CircuitTest extends App {
     internal(0, 1)
   }
 
-  val c = new Constraint2
+  val c = new Constraint
   c.gen.setRangeForAll((0, 4))
   c.gen.setDensityForAll(0.8)
   c.check(Circuit, checker)
