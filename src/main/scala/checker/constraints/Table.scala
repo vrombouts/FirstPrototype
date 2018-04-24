@@ -29,27 +29,56 @@ class Table(table: Set[Array[Int]]) extends Constraint with ACBasic {
   }
 
   override def limitCases(): Array[Array[Set[Int]]] = {
-    var result: Array[Array[Set[Int]]] = Array()
-    var maxValue: Int = 0
+    println("table: ")
+    table.foreach(x => println(x.toList))
+    println("-----------")
     if (table.isEmpty) return Array()
+
+    var result: Array[Array[Set[Int]]] = Array()
+
+    var maxValue: Int = 0
     table.foreach(x => x.foreach(y => if (y > maxValue) maxValue = y))
     val outVal: Int = maxValue + 1
+
     val domains: Array[Set[Int]] = transformTableInDom(table)
-    var test1: Array[Set[Int]] = Array() //basic test where values are filtered
-    for (i <- 0 until domains.length - 1)
-      test1 = test1 :+ domains(i)
-    test1 = test1 :+ domains(domains.length - 1) + outVal
+
+    val test1 = domains.clone() //basic test a values is filtered
+    test1(domains.length - 1) = test1(domains.length - 1) + outVal
     result = result :+ test1
-    var test2: Array[Set[Int]] = Array() //no value are filtered
-    for (i <- domains.indices)
-      test2 = test2 :+ domains(i)
+    println("test1 " + test1.toList)
+
+    val test2 = domains.clone() //no value are filtered
     result = result :+ test2
-    var test3: Array[Set[Int]] = Array()// todo
-    for (i <- 0 until domains.length - 1) {
-      test3 = test3 :+ domains(i)
+    println("test2 " + test2.toList)
+
+    val test3: Array[Set[Int]] = domains.clone() // one line of the table does not contain any value belonging to the domains of vars
+    for (i <- table.head.indices) {
+      test3(i) -= table.head(i)
     }
-    if (!test3.exists(x => x.isEmpty)) result = result :+ test3
-    result
+    if (!test3.exists(x => x.isEmpty)) {
+      result = result :+ test3
+      println("test3 " + test3.toList)
+    }
+
+    val test4: Array[Set[Int]] = domains.clone() //one value out of domains per line in table
+    println(test4.toList)
+    var k: Int = 0
+    for (instantiation <- table) {
+      if (test4(k).contains(instantiation(k)))
+        test4(k) -= instantiation(k)
+
+      k = (k + 1) % test4.length
+    }
+    if (!test4.exists(x => x.isEmpty)) {
+      result = result :+ test4
+      println("test4 " + test4.toList)
+    }
+
+    var test5: Array[Set[Int]] = domains.clone() // testing with sets of size 1
+    test5 = test5.map(x => Set(x.head))
+    result = result :+ test5
+    println("test5 " + test5.toList)
+
     /*(Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3)),
       Set(Array(1, 1, 1), Array(2, 2, 2), Array(3, 3, 3), Array(4, 4, 4))), //not a growing domain/line in table within no domains
     (Array(Set(1, 2), Set(2, 3)),
@@ -61,6 +90,7 @@ class Table(table: Set[Array[Int]]) extends Constraint with ACBasic {
     (Array(Set(1), Set(2), Set(10), Set(40)),
       Set(Array(1, 2, 10, 40), Array(40, 10, 2, 1), Array(0, 0, 0, 0))) // No problem with single value and ordering
   )*/
+    result
   }
 
   override def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
