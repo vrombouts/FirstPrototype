@@ -5,7 +5,7 @@ import org.chocosolver.solver.constraints.ConstraintsName
 import org.chocosolver.solver.constraints.nary.element.PropElementV_fast
 import org.chocosolver.solver.variables.IntVar
 
-object ChocoElementTest {
+object  ChocoElementTest {
   var size = 0
 
   def main(args: Array[String]) {

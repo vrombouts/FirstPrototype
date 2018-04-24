@@ -1,8 +1,11 @@
-package unit
-import checker.constraints.AllDifferent
+package unit.constraints
 
-class AllDifferentCheckerTests extends UnitSpec {
+import checker.constraints.AllDifferent
+import unit.UnitSpec
+
+class AllDifferentTests extends UnitSpec {
   val allDif = new AllDifferent
+
   "[1,1]" should "return false in allDifferent" in {
     assert(!allDif.checker(Array(1,1)))
   }
@@ -33,5 +36,19 @@ class AllDifferentCheckerTests extends UnitSpec {
 
   "[-1,0]" should "return true in allDifferent" in {
     assert(allDif.checker(Array(-1,0)))
+  }
+
+  //testing with limit Cases
+  "checkAC" should " perform the limitCases of allDifferent AC constraint" in {
+    val limitCases = allDif.limitCases()
+    //limitCases should exists
+    assert(limitCases.length != 0)
+    allDif.gen.setNbTests(1)
+    val ar = Array(0)
+    allDif.checkAC(x => {
+      ar(0) = ar(0) + 1
+      allDif.applyAC(x)
+    }, null)
+    assert(ar(0)==limitCases.length+1)
   }
 }

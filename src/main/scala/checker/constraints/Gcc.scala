@@ -17,6 +17,7 @@ class Gcc(values: Array[Int]) extends Constraint with ACBasic {
   }
 
   override def checker(solution: Array[Int]): Boolean = {
+    if(solution.length<values.length) return false
     var valuesCount: Map[Int, Int] = Map()
     val variables = solution.dropRight(values.length)
     val occurences = solution.drop(solution.length - values.length)

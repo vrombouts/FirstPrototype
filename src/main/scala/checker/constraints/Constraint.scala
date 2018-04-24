@@ -2,7 +2,7 @@ package checker.constraints
 
 import checker.{Statistics, StrictStatistics, UnstrictStats}
 import checker.constraints.incremental.{BranchOp, Incremental}
-import org.scalacheck.Prop.forAll
+import org.scalacheck.Prop.{forAllNoShrink, forAll}
 
 class Constraint extends Static with Incremental with ACFiltering with BCFiltering {
 
@@ -82,7 +82,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
 
   private[this] def forAllCheck(filteringTested: Array[Set[Int]] => Array[Set[Int]]): Unit = {
     forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
+      x.isEmpty || (x.length<gen.getNbVars) || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check(gen.getTestParameters)
     limitCases().forall(x => checkConstraint(x, filteringTested))
   }
@@ -90,7 +90,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   private[this] def forAllCheck(init: Array[Set[Int]] => Array[Set[Int]],
                                 filtering: BranchOp => Array[Set[Int]]): Unit = {
     forAll(gen.gen) { x =>
-      x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
+      x.isEmpty || (x.length<gen.getNbVars) || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check(gen.getTestParameters)
     limitCases().forall(x => checkConstraint(x, init, filtering))
   }

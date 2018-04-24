@@ -55,6 +55,8 @@ class VariablesGenerator {
     random.setSeed(new Random().nextLong)
   }
 
+  def getNbVars: Int = nbVars
+
   def setNbTests(n: Int): Unit = nbTests = Some(n)
 
   def getNbTests: Int = nbTests match {
