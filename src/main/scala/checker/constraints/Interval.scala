@@ -16,6 +16,8 @@ class Interval(private var dom: Set[Int]) {
 
   def domain: Set[Int] = dom
 
+  def getRange: Range = min to max
+
   def update_min(): Unit = {
     dom = domain - min
     min = domain.min

@@ -4,9 +4,12 @@ import checker.{Statistics, StrictStatistics, UnstrictStats}
 import checker.constraints.incremental.{BranchOp, Incremental}
 import org.scalacheck.Prop.forAll
 
-class Constraint extends Static with Incremental with ACFiltering with BCFiltering{
+class Constraint extends Static with Incremental with ACFiltering with BCFiltering {
   var stats: Statistics = new UnstrictStats // basically, it's unstrict stats
-  private[this] var checkFunction: Array[Int] => Boolean = {_=>{true}} // initial true checker
+  private[this] var checkFunction: Array[Int] => Boolean = { _ => {
+    true
+  }
+  } // initial true checker
 
   protected[this] def checker(solution: Array[Int]): Boolean = {
     checkFunction(solution)
@@ -16,7 +19,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
     applyAC(variables)
   }
 
-  protected[this] def limitCases() : Array[Array[Set[Int]]] = Array()
+  protected[this] def limitCases(): Array[Array[Set[Int]]] = Array()
 
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
@@ -79,7 +82,6 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   }
 
 
-
   private[this] def forAllCheck(filteringTested: Array[Set[Int]] => Array[Set[Int]]): Unit = {
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
@@ -88,7 +90,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   }
 
   private[this] def forAllCheck(init: Array[Set[Int]] => Array[Set[Int]],
-                            filtering: BranchOp => Array[Set[Int]]): Unit = {
+                                filtering: BranchOp => Array[Set[Int]]): Unit = {
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check(gen.getTestParameters)
@@ -102,4 +104,4 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
 
 }
 
-class BasicConstraint extends Constraint with ACBasic
+class BasicConstraint extends Constraint with ACBasic with BCBasic

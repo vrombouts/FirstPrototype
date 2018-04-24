@@ -2,7 +2,7 @@ package oscar
 
 import checker.constraints.incremental._
 import checker.NoSolutionException
-import checker.constraints.Constraint
+import checker.constraints.BasicConstraint
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints._
@@ -67,7 +67,7 @@ object SumBCIncrTest extends App {
     true
   }
 
-  val c = new Constraint
+  val c = new BasicConstraint
   c.gen.setSeed(1000)
   for (i <- -50 to 50 by 5)
     c.checkBC(init(_, i), filtering, checker(_, i))
