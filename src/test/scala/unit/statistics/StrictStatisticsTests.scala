@@ -8,7 +8,7 @@ import scala.util.Random
 
 class StrictStatisticsTests extends UnitSpec {
 
-  val stats = new StrictStatistics
+  val stats = new StrictStatistics("AC")
 
   "printNumber with a number with less than 10 digits ('-' included)" should " return a string of size 11 containing that number" in {
     var s: String = stats.printNumber(0)

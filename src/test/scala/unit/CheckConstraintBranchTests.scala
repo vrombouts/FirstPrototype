@@ -6,7 +6,7 @@ import checker.constraints.incremental.{BranchOp, Incremental, RestrictDomain}
 class CheckConstraintBranchTests extends UnitSpec {
 
   private[this] object DummyCheck extends Incremental {
-    var stats: Statistics = new StrictStatistics
+    var stats: Statistics = new StrictStatistics("global")
 
     def applyConstraintAC(variable: Array[Set[Int]]): Array[Set[Int]] = variable
     def applyConstraintBC(variable: Array[Set[Int]]): Array[Set[Int]] = variable

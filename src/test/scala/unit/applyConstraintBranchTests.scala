@@ -8,7 +8,7 @@ import scala.util.Random
 class applyConstraintBranchTests extends UnitSpec {
 
   private[this] object dummyCheck extends Incremental {
-    var stats: Statistics = new StrictStatistics
+    var stats: Statistics = new StrictStatistics("AC")
     propagation=AC
     def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = variables
     def applyConstraintBC(variables: Array[Set[Int]]): Array[Set[Int]] = variables
@@ -17,7 +17,7 @@ class applyConstraintBranchTests extends UnitSpec {
   }
 
   private[this] object SpecialCheck extends Incremental {
-    var stats: Statistics = new StrictStatistics
+    var stats: Statistics = new StrictStatistics("AC")
     propagation=AC
     def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
       variables(2) = Set(5)

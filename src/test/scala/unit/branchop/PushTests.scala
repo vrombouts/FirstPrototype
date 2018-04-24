@@ -1,7 +1,5 @@
 package unit.branchop
 
-import java.util
-
 import checker.constraints.incremental.Push
 import unit.UnitSpec
 

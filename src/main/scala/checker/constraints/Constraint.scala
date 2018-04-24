@@ -4,9 +4,13 @@ import checker.{Statistics, StrictStatistics, UnstrictStats}
 import checker.constraints.incremental.{BranchOp, Incremental}
 import org.scalacheck.Prop.forAll
 
-class Constraint extends Static with Incremental with ACFiltering with BCFiltering{
-  var stats: Statistics = new UnstrictStats // basically, it's unstrict stats
-  private[this] var checkFunction: Array[Int] => Boolean = {_=>{true}} // initial true checker
+class Constraint extends Static with Incremental with ACFiltering with BCFiltering {
+  var statistic: Array[Statistics] = Array(new UnstrictStats(nbBranchOp, "check"), new StrictStatistics(nbBranchOp, "AC"), new StrictStatistics(nbBranchOp, "BC")) // basically, it's unstrict stats
+  var stats: Statistics = statistic(propagation)
+  private[this] var checkFunction: Array[Int] => Boolean = { _ => {
+    true
+  }
+  } // initial true checker
 
   protected[this] def checker(solution: Array[Int]): Boolean = {
     checkFunction(solution)
@@ -16,14 +20,13 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
     applyAC(variables)
   }
 
-  protected[this] def limitCases() : Array[Array[Set[Int]]] = Array()
+  protected[this] def limitCases(): Array[Array[Set[Int]]] = Array()
 
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = new StrictStatistics
+    stats = statistic(propagation)
     forAllCheck(filteringTested)
-    //TODO: add simple case limit possible for all constraints
     stats.setGenerator(gen)
     stats.print
   }
@@ -31,16 +34,14 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = new StrictStatistics
+    stats= statistic(propagation)
     forAllCheck(filteringTested)
-    //TODO: add simple case limit possible for all constraints
     stats.setGenerator(gen)
     stats.print
   }
 
   def check(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    stats = new UnstrictStats
     forAllCheck(filteringTested)
     stats.setGenerator(gen)
     stats.print
@@ -51,7 +52,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = new StrictStatistics(nbBranchOp)
+    stats=statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
@@ -62,7 +63,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = new StrictStatistics(nbBranchOp)
+    stats=statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
@@ -72,12 +73,10 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
             filtering: BranchOp => Array[Set[Int]],
             checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    stats = new UnstrictStats(nbBranchOp)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
   }
-
 
 
   private[this] def forAllCheck(filteringTested: Array[Set[Int]] => Array[Set[Int]]): Unit = {
@@ -88,7 +87,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   }
 
   private[this] def forAllCheck(init: Array[Set[Int]] => Array[Set[Int]],
-                            filtering: BranchOp => Array[Set[Int]]): Unit = {
+                                filtering: BranchOp => Array[Set[Int]]): Unit = {
     forAll(gen.gen) { x =>
       x.isEmpty || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check(gen.getTestParameters)

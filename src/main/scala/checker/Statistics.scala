@@ -4,7 +4,7 @@ import java.io._
 
 import checker.constraints.incremental.BranchOp
 
-abstract class Statistics {
+abstract class Statistics(filename: String) {
 
   // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
@@ -15,6 +15,12 @@ abstract class Statistics {
   private[this] var nbBacktracks: Int = 0
   private[this] var nbNodes: Int = 0
   private[this] var nbLeaves: Int = 0
+
+  protected[this] val filenameStats: File = new File("out/statistics/"+filename+"/statistics.txt")
+
+  protected[this] val filenamePassed: File = new File("out/statistics/"+filename+"/passedTests.txt")
+
+  protected[this] val filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
 
   // stats about the generator
   protected[this] var generatorUsed: VariablesGenerator = _
@@ -73,14 +79,14 @@ abstract class Statistics {
 
   def print(implicit isInc: Boolean = false): Unit = {
     printStats(isInc)
-    printTests("passedTests.txt", testsPassed)
-    printTests("failedTests.txt", testsFailed)
+    printTests(filenamePassed, testsPassed)
+    printTests(filenameFailed, testsFailed)
   }
 
   private[this] def printStats(implicit isInc: Boolean = false): Unit = {
-    val f: File = new File("out/statistics.txt")
-    f.getParentFile.mkdirs
-    val prWriter = new PrintWriter(f)
+
+    filenameStats.getParentFile.mkdirs
+    val prWriter = new PrintWriter(filenameStats)
     prWriter.write(globalStatsToString(isInc))
     if (isInc)
       prWriter.write(branchingStatsToString())
@@ -113,8 +119,7 @@ abstract class Statistics {
     result
   }
 
-  private[this] def printTests(filename: String, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])]): Unit = {
-    val f: File = new File("out/" + filename)
+  private[this] def printTests(f: File, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])]): Unit = {
     f.getParentFile.mkdirs
     val prWriter = new PrintWriter(f)
     for (test <- tests) {

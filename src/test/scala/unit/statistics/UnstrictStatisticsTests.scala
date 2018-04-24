@@ -7,7 +7,7 @@ import scala.util.Random
 
 class UnstrictStatisticsTests extends UnitSpec {
 
-  val stats = new UnstrictStats
+  val stats = new UnstrictStats("check")
 
   "incorrectDomains" should "return false if both R1 and R2 possess empty sets" in {
     var R1: Array[Set[Int]] = Array(Set())
