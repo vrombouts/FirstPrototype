@@ -1,8 +1,10 @@
 package checker
 
-class UnstrictStats(nbBranchOp:Int) extends Statistics {
+import java.io.File
 
-  def this() = this(25)
+class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(filename: String) {
+
+  def this(filename: String) = this(25, filename)
 
   private[this] var nbCorrectTestsWithSolution: Int = 0
   private[this] var canBeMoreFiltered: Int = 0

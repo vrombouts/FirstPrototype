@@ -20,7 +20,7 @@ class CheckConstraintTests extends UnitSpec {
 
   val c: AllDifferent = new AllDifferent {
     propagation=AC
-    stats = new StrictStatistics
+    stats = new StrictStatistics("AC")
   }
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1]" should "return false" in {
@@ -81,7 +81,7 @@ class CheckConstraintTests extends UnitSpec {
 
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1,0] [0,1] [1,2] considering unstrict format(should not remove solution but does not check that it removes elements that are not solution)" should "return true" in {
-    c.stats = new UnstrictStats
+    c.stats = new UnstrictStats(null)
     assert(c.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), dummyConstraint))
   }
 

@@ -4,7 +4,7 @@ import java.io._
 
 import checker.constraints.incremental.BranchOp
 
-abstract class Statistics {
+abstract class Statistics(filename: String) {
 
   // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
@@ -15,6 +15,12 @@ abstract class Statistics {
   private[this] var nbBacktracks: Int = 0
   private[this] var nbNodes: Int = 0
   private[this] var nbLeaves: Int = 0
+
+  protected[this] val filenameStats: File = new File("out/statistics/"+filename+"/statistics.txt")
+
+  protected[this] val filenamePassed: File = new File("out/statistics/"+filename+"/passedTests.txt")
+
+  protected[this] val filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
 
   // stats about the generator
   protected[this] var generatorUsed: VariablesGenerator = _
@@ -50,9 +56,9 @@ abstract class Statistics {
 
   def globalStatsToString(isInc: Boolean): String
 
-  var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]])] = Array()
+  var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]])] = Array()
+  var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
 
   def printNumber(nb: Int): String = {
@@ -73,14 +79,14 @@ abstract class Statistics {
 
   def print(implicit isInc: Boolean = false): Unit = {
     printStats(isInc)
-    printTests("passedTests.txt", testsPassed)
-    printTests("failedTests.txt", testsFailed)
+    printTests(filenamePassed, testsPassed)
+    printTests(filenameFailed, testsFailed)
   }
 
   private[this] def printStats(implicit isInc: Boolean = false): Unit = {
-    val f: File = new File("out/statistics.txt")
-    f.getParentFile.mkdirs
-    val prWriter = new PrintWriter(f)
+
+    filenameStats.getParentFile.mkdirs
+    val prWriter = new PrintWriter(filenameStats)
     prWriter.write(globalStatsToString(isInc))
     if (isInc)
       prWriter.write(branchingStatsToString())
@@ -113,15 +119,27 @@ abstract class Statistics {
     result
   }
 
-  private[this] def printTests(filename: String, tests: Array[(Array[Set[Int]], Array[Set[Int]])]): Unit = {
-    val f: File = new File("out/" + filename)
+  private[this] def printTests(f: File, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])]): Unit = {
     f.getParentFile.mkdirs
     val prWriter = new PrintWriter(f)
     for (test <- tests) {
-      var maxLength: Int = "Initial domains ".length
+      var maxLength: Int = "Filtered domains ".length
       test._1.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
-      prWriter.write(extendString("Initial domains ", maxLength) + "|" + "Filtered domains \n")
-      (test._1 zip test._2).foreach(x => prWriter.write(extendString(domainToString(x._1), maxLength) + "|" + domainToString(x._2) + "\n"))
+      prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString("Filtered domains ", maxLength))
+      if(test._3 != null)
+        prWriter.write("|Your filtered domains ")
+      prWriter.write("\n")
+      var test3 : Array[Set[Int]] = Array()
+      if(test._3 == null)
+        test3 = Array.fill(test._1.length)(Set())
+      else
+        test3 = test._3
+      for(i <- test._1.indices){
+        val set:Set[Int] = test._1(i)
+        prWriter.write(extendString(domainToString(test._1(i)), maxLength)+"|" + extendString(domainToString(test._2(i)),maxLength))
+        if(test._3 != null) prWriter.write("|"+domainToString(test._3(i)))
+        prWriter.write("\n")
+      }
       prWriter.write("\n")
     }
     prWriter.close()
@@ -195,8 +213,8 @@ abstract class Statistics {
     }
     else
       strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
-    if (result) testsPassed = testsPassed :+ (init, ourReducedDomains)
-    else testsFailed = testsFailed :+ (init, ourReducedDomains)
+    if (result) testsPassed = testsPassed :+ (init, ourReducedDomains,null)
+    else testsFailed = testsFailed :+ (init, ourReducedDomains,reducedDomains)
     result
   }
 

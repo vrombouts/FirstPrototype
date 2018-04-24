@@ -5,7 +5,9 @@ import checker.constraints.incremental.{BranchOp, Incremental}
 import org.scalacheck.Prop.forAll
 
 class Constraint extends Static with Incremental with ACFiltering with BCFiltering {
-  var stats: Statistics = new UnstrictStats // basically, it's unstrict stats
+
+  var statistic: Array[Statistics] = Array(new UnstrictStats(nbBranchOp, "check"), new StrictStatistics(nbBranchOp, "AC"), new StrictStatistics(nbBranchOp, "BC")) // basically, it's unstrict stats
+  var stats: Statistics = statistic(propagation)
   private[this] var checkFunction: Array[Int] => Boolean = { _ => {
     true
   }
@@ -24,9 +26,8 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = new StrictStatistics
+    stats = statistic(propagation)
     forAllCheck(filteringTested)
-    //TODO: add simple case limit possible for all constraints
     stats.setGenerator(gen)
     stats.print
   }
@@ -34,16 +35,14 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = new StrictStatistics
+    stats = statistic(propagation)
     forAllCheck(filteringTested)
-    //TODO: add simple case limit possible for all constraints
     stats.setGenerator(gen)
     stats.print
   }
 
   def check(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    stats = new UnstrictStats
     forAllCheck(filteringTested)
     stats.setGenerator(gen)
     stats.print
@@ -54,7 +53,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = new StrictStatistics(nbBranchOp)
+    stats = statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
@@ -65,7 +64,7 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = new StrictStatistics(nbBranchOp)
+    stats = statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
@@ -75,7 +74,6 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
             filtering: BranchOp => Array[Set[Int]],
             checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
-    stats = new UnstrictStats(nbBranchOp)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)

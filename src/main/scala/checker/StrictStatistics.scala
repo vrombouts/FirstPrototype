@@ -1,8 +1,10 @@
 package checker
 
+import java.io.File
 
-class StrictStatistics(nbBranchOp:Int) extends Statistics {
-  def this() = this(25)
+
+class StrictStatistics(nbBranchOp: Int, filename: String) extends Statistics(filename: String) {
+  def this(filename: String) = this(25, filename)
 
   private[this] var nbRemoveNoValueTests: Int = 0
   private[this] var nbRemovingValueTests: Int = 0
