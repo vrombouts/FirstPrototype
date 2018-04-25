@@ -6,15 +6,21 @@ import scala.collection.mutable
 
 
 class Element extends Constraint {
-  gen.addNVar(5)
-  gen.addVar(0.2, (-1, 10))
-  gen.addVar(0.1, (-11, 11))
+  setGen(10)
+
+  def setGen(xLength: Int): Unit = {
+    gen.reset()
+    gen.setNVar(xLength)
+    gen.addVar(0.2, (-1, xLength+2))
+    gen.addVar(0.1, (-11, 11))
+  }
 
   override def checker(solution: Array[Int]): Boolean = {
+    if(solution.length<=2) return false
     val X: Array[Int] = solution.dropRight(2)
     val i: Int = solution(solution.length - 2)
     val v: Int = solution(solution.length - 1)
-    if (i > X.length) return false
+    if (i<0 || i >= X.length) return false
     X(i) == v
   }
 
