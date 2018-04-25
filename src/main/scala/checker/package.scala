@@ -28,21 +28,6 @@ package object Conversions {
     }
   }
 
-  implicit def tableFilterToScalaFunction(fun: BiFunction[Array[java.util.Set[Integer]], java.util.Set[Array[Integer]], Array[java.util.Set[Integer]]])
-  : (Array[Set[Int]], Set[Array[Int]]) => Array[Set[Int]] = {
-    (myArray, myTable) => {
-      val javaTable: java.util.Set[Array[Integer]] = new java.util.HashSet[Array[Integer]]()
-      for (tableElement <- myTable) {
-        val javaTableElement: Array[Integer] = new Array[Integer](tableElement.length)
-        for (i <- tableElement.indices) {
-          javaTableElement(i) = tableElement(i)
-        }
-        javaTable.add(javaTableElement)
-      }
-      fun.apply(myArray, javaTable)
-    }
-  }
-
   implicit def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
     myArray => {
       fun.apply(myArray)

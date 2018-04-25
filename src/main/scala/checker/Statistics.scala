@@ -94,13 +94,12 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     printTests(prWriterPassed, testsPassed)
     printTests(prWriterFailed, testsFailed)
     printIncStats(prWriterPassed, testsIncPassed)
-    printIncStats(prWriterFailed, testsIncFailed, false)
+    printIncStats(prWriterFailed, testsIncFailed, passed = false)
     prWriterFailed.close()
     prWriterPassed.close()
   }
 
   private[this] def printStats(implicit isInc: Boolean = false, prWriter: PrintWriter): Unit = {
-    //filenameStats.getParentFile.mkdirs
     prWriter.write(globalStatsToString(isInc))
     if (isInc)
       prWriter.write(branchingStatsToString())
@@ -126,15 +125,14 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
   private[this] def extendString(s: String, l: Int): String = {
     var result: String = s
     if (s.length != l) {
-      for (i <- s.length until l)
+      for (_ <- s.length until l)
         result += " "
     }
     result
   }
 
   private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false): Unit = {
-    //f.getParentFile.mkdirs
-    for (test <- tests) {
+    for ((init,ourDom,yourDom) <- tests) {
       var ourTitle: String = "Filtered domains "
       var yourTitle: String = "Your filtered domains "
       if (isInc) {
@@ -142,20 +140,14 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
         yourTitle = "Your domains "
       }
       var maxLength: Int = ourTitle.length
-      test._1.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
+      init.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
       prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString(ourTitle, maxLength))
-      if (test._3 != null)
+      if (yourDom != null)
         prWriter.write("|" + yourTitle)
       prWriter.write("\n")
-      var test3: Array[Set[Int]] = Array()
-      if (test._3 == null)
-        test3 = Array.fill(test._1.length)(Set())
-      else
-        test3 = test._3
-      for (i <- test._1.indices) {
-        val set: Set[Int] = test._1(i)
-        prWriter.write(extendString(domainToString(test._1(i)), maxLength) + "|" + extendString(domainToString(test._2(i)), maxLength))
-        if (test._3 != null) prWriter.write("|" + domainToString(test._3(i)))
+      for (i <- init.indices) {
+        prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(ourDom(i)), maxLength))
+        if (yourDom != null) prWriter.write("|" + domainToString(yourDom(i)))
         prWriter.write("\n")
       }
       prWriter.write("\n")
@@ -190,17 +182,15 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
           if (lastTest == null) {
             if (!passed) prWriter.write("TEST FAILED : \n")
             else prWriter.write("TEST PASSED : \n")
-            prWriter.write("Init : " + printOnALine(tests(i)._2) + "\n")
+            prWriter.write("Init : " + printOnALine(d1) + "\n")
           }
           lastTest = d2
           prWriter.write(b.toString + ": " + printOnALine(d2) + "\n")
-        case (b, d1, d2, d3) =>
+        case (b, _, d2, d3) =>
           if (!passed) {
             prWriter.write(b.toString + " failed: \n" + "After the application of " + b.toString + "\n")
-            printTests(prWriter, Array((lastTest, d2, d3)), true)
+            printTests(prWriter, Array((lastTest, d2, d3)), isInc = true)
           }
-          //else
-            //prWriter.write(b.toString + ": " + printOnALine(d2) + "\n")
           prWriter.write("------------------------------\n")
           lastTest = null
       }
