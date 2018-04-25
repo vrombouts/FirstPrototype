@@ -2,23 +2,19 @@ package checker.constraints
 
 import checker.{Statistics, StrictStatistics, UnstrictStats}
 import checker.constraints.incremental.{BranchOp, Incremental}
-import org.scalacheck.Prop.{forAllNoShrink, forAll}
+import org.scalacheck.Prop.forAll
 
-class Constraint extends Static with Incremental with ACFiltering with BCFiltering {
+/*
+ * This trait contains the check functions to check a constraint
+ */
+trait Checks extends Static with Incremental{
 
   var statistic: Array[Statistics] = Array(new UnstrictStats(nbBranchOp, "check"), new StrictStatistics(nbBranchOp, "AC"), new StrictStatistics(nbBranchOp, "BC")) // basically, it's unstrict stats
   var stats: Statistics = statistic(propagation)
-  private[this] var checkFunction: Array[Int] => Boolean = { _ => {
-    true
-  }
-  } // initial true checker
+  private[this] var checkFunction: Array[Int] => Boolean = _
 
   protected[this] def checker(solution: Array[Int]): Boolean = {
     checkFunction(solution)
-  }
-
-  protected[this] def applyConstraintSimple(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    applyAC(variables)
   }
 
   protected[this] def limitCases(): Array[Array[Set[Int]]] = Array()
@@ -102,4 +98,6 @@ class Constraint extends Static with Incremental with ACFiltering with BCFilteri
 
 }
 
-class BasicConstraint extends Constraint with ACBasic with BCBasic
+class Constraint extends Checks with ACFiltering with BCFiltering
+
+class BasicConstraint extends Checks with ACBasic with BCBasic

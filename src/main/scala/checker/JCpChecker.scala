@@ -1,14 +1,14 @@
 package checker
 
-import java.util.function.{BiFunction, Function}
+import java.util.function.Function
 import Conversions._
 import checker.constraints.incremental.BranchOp
 import checker.constraints._
 
-class JCpChecker(c: Constraint) {
+class JCpChecker(c: Checks) {
   def this() = this(new Constraint)
 
-  def gen() = c.gen
+  def gen(): VariablesGenerator = c.gen
 
   def checkAC(filtering: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]],
               checker: Function[Array[Integer], java.lang.Boolean]): Unit = {

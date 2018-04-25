@@ -1,16 +1,16 @@
 package checker.constraints
 
 import checker._
-import org.scalacheck.Prop.forAll
 
 class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
 
   def this(c:Int) = this("=", c)
-  setGen()
+  setGen(10)
 
-  private[this] def setGen() : Unit = {
-    gen.setNVar(10)
-    val middleValue = constant/10
+  def setGen(nbVars:Int) : Unit = {
+    gen.reset()
+    gen.setNVar(nbVars)
+    val middleValue = constant/nbVars
     if(operator.equals("=")) {
       gen.setRangeForAll(middleValue-1, middleValue+1)
       gen.setDensityForAll(0.7)
@@ -40,14 +40,13 @@ class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
 
 
   override def checker(solution:Array[Int]):Boolean = {
-    var result : Boolean = true
-    if(operator.equals("=")) result = solution.sum == constant
-    else if(operator.equals("!=")) result = solution.sum != constant
-    else if(operator.equals(">")) result = solution.sum > constant
-    else if(operator.equals("<")) result = solution.sum < constant
-    else if(operator.equals(">=")) result = solution.sum >= constant
-    else if(operator.equals("<=")) result = solution.sum <= constant
-    result
+    if(operator.equals("=")) return solution.sum == constant
+    else if(operator.equals("!=")) return solution.sum != constant
+    else if(operator.equals(">")) return solution.sum > constant
+    else if(operator.equals("<")) return solution.sum < constant
+    else if(operator.equals(">=")) return solution.sum >= constant
+    else if(operator.equals("<=")) return solution.sum <= constant
+    true
   }
 
 
@@ -66,15 +65,6 @@ class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
       Array(Set(2), Set(2), Set(constant - 4)) // constant == sMin == sMax
         //Array(Set(0), Set(0), Set(-3), Set(-5,0,4), Set(8,4,5,1))
     )
-  }
-
-  def sum(constant: Int, operation: String, nbVar: Int): Array[Int] => Boolean = sum(constant, operation, nbVar, _)
-
-  def sum(constant: Int, operation: String, nbVar: Int, solution: Array[Int]): Boolean = {
-    if (solution.length < nbVar - 1) return true
-    var sum: Int = 0
-    solution.foreach(x => sum += x)
-    Op.respectOp(operation, sum, constant)
   }
 
   def addWithoutOverflow(sum: Int, value: Int): Int = {
