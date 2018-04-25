@@ -64,6 +64,7 @@ class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
       Array(Set(1, 2), Set(2, 4), Set(constant - 2)), // constant > sMin
       Array(Set(1, 2), Set(2, 4), Set(constant - 4)), // constant < sMin
       Array(Set(2), Set(2), Set(constant - 4)) // constant == sMin == sMax
+        //Array(Set(0), Set(0), Set(-3), Set(-5,0,4), Set(8,4,5,1))
     )
   }
 

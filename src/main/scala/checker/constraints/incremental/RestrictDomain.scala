@@ -42,5 +42,5 @@ class RestrictDomain(val doms: Array[Set[Int]], val random: Random) extends Bran
     rd
   }
 
-  override def toString: String = "Restriction of domains: x_" + index + op + constant + "\n"
+  override def toString: String = "Restriction of domains (x_" + index + op + constant+")"
 }

@@ -1,8 +1,6 @@
 package checker
 
-import java.io.File
-
-class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(filename: String) {
+class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(nbBranchOp, filename) {
 
   def this(filename: String) = this(25, filename)
 

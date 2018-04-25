@@ -4,7 +4,9 @@ import java.io._
 
 import checker.constraints.incremental.BranchOp
 
-abstract class Statistics(filename: String) {
+abstract class Statistics(nbBranchOp: Int, filename: String) {
+
+  def this(filename: String) = this(25, filename)
 
   // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
@@ -16,16 +18,17 @@ abstract class Statistics(filename: String) {
   private[this] var nbNodes: Int = 0
   private[this] var nbLeaves: Int = 0
 
-  protected[this] val filenameStats: File = new File("out/statistics/"+filename+"/statistics.txt")
+  protected[this] val filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
+  filenameStats.getParentFile.mkdirs
 
-  protected[this] val filenamePassed: File = new File("out/statistics/"+filename+"/passedTests.txt")
+  protected[this] val filenamePassed: File = new File("out/statistics/" + filename + "/passedTests.txt")
+  filenamePassed.getParentFile.mkdirs
 
   protected[this] val filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
+  filenameFailed.getParentFile.mkdirs
 
   // stats about the generator
   protected[this] var generatorUsed: VariablesGenerator = _
-
-  //private[this] var lastTestFail:(Array[Set[Int]],Array[Set[Int]],Array[Set[Int]])=(null,null,null)
 
   def incNbExecutedTests(): Unit = nbExecutedTests += 1
 
@@ -56,10 +59,15 @@ abstract class Statistics(filename: String) {
 
   def globalStatsToString(isInc: Boolean): String
 
-  var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  protected[this] var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  protected[this] var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
+  protected[this] var storedResults: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+
+  protected[this] var testsIncPassed: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+
+  protected[this] var testsIncFailed: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
   def printNumber(nb: Int): String = {
     val nbOfChars: Int = nb.toString.length
@@ -78,22 +86,27 @@ abstract class Statistics(filename: String) {
   }
 
   def print(implicit isInc: Boolean = false): Unit = {
-    printStats(isInc)
-    printTests(filenamePassed, testsPassed)
-    printTests(filenameFailed, testsFailed)
+    val prWriterStats = new PrintWriter(filenameStats)
+    val prWriterPassed = new PrintWriter(filenamePassed)
+    val prWriterFailed = new PrintWriter(filenameFailed)
+    printStats(isInc, prWriterStats)
+    prWriterStats.close()
+    printTests(prWriterPassed, testsPassed)
+    printTests(prWriterFailed, testsFailed)
+    printIncStats(prWriterPassed, testsIncPassed)
+    printIncStats(prWriterFailed, testsIncFailed, false)
+    prWriterFailed.close()
+    prWriterPassed.close()
   }
 
-  private[this] def printStats(implicit isInc: Boolean = false): Unit = {
-
-    filenameStats.getParentFile.mkdirs
-    val prWriter = new PrintWriter(filenameStats)
+  private[this] def printStats(implicit isInc: Boolean = false, prWriter: PrintWriter): Unit = {
+    //filenameStats.getParentFile.mkdirs
     prWriter.write(globalStatsToString(isInc))
     if (isInc)
       prWriter.write(branchingStatsToString())
 
     if (!(generatorUsed == null))
       prWriter.write(generatorUsed.toString)
-    prWriter.close()
   }
 
   def domainToString(dom: Set[Int]): String = {
@@ -119,30 +132,79 @@ abstract class Statistics(filename: String) {
     result
   }
 
-  private[this] def printTests(f: File, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])]): Unit = {
-    f.getParentFile.mkdirs
-    val prWriter = new PrintWriter(f)
+  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false): Unit = {
+    //f.getParentFile.mkdirs
     for (test <- tests) {
-      var maxLength: Int = "Filtered domains ".length
+      var ourTitle: String = "Filtered domains "
+      var yourTitle: String = "Your filtered domains "
+      if (isInc) {
+        ourTitle = "Correct domains "
+        yourTitle = "Your domains "
+      }
+      var maxLength: Int = ourTitle.length
       test._1.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
-      prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString("Filtered domains ", maxLength))
-      if(test._3 != null)
-        prWriter.write("|Your filtered domains ")
+      prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString(ourTitle, maxLength))
+      if (test._3 != null)
+        prWriter.write("|" + yourTitle)
       prWriter.write("\n")
-      var test3 : Array[Set[Int]] = Array()
-      if(test._3 == null)
+      var test3: Array[Set[Int]] = Array()
+      if (test._3 == null)
         test3 = Array.fill(test._1.length)(Set())
       else
         test3 = test._3
-      for(i <- test._1.indices){
-        val set:Set[Int] = test._1(i)
-        prWriter.write(extendString(domainToString(test._1(i)), maxLength)+"|" + extendString(domainToString(test._2(i)),maxLength))
-        if(test._3 != null) prWriter.write("|"+domainToString(test._3(i)))
+      for (i <- test._1.indices) {
+        val set: Set[Int] = test._1(i)
+        prWriter.write(extendString(domainToString(test._1(i)), maxLength) + "|" + extendString(domainToString(test._2(i)), maxLength))
+        if (test._3 != null) prWriter.write("|" + domainToString(test._3(i)))
         prWriter.write("\n")
       }
       prWriter.write("\n")
     }
-    prWriter.close()
+  }
+
+  private[this] def printOnALine(domains: Array[Set[Int]]): String = {
+    var s: String = "["
+    for (dom <- domains) {
+      s += "["
+      if (dom.nonEmpty) {
+        s += dom.head
+        for (elem <- dom.tail) {
+          s += "," + elem
+        }
+      }
+      s += "]"
+    }
+    s += "]"
+    s
+  }
+
+  private[this] def printIncStats(prWriter: PrintWriter, tests: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], passed: Boolean = true): Unit = {
+    //val prWriter = new PrintWriter(f)
+    if (tests.isEmpty) {
+      return
+    }
+    var lastTest: Array[Set[Int]] = null
+    for (i <- tests.indices) {
+      tests(i) match {
+        case (b, d1, d2, null) =>
+          if (lastTest == null) {
+            if (!passed) prWriter.write("TEST FAILED : \n")
+            else prWriter.write("TEST PASSED : \n")
+            prWriter.write("Init : " + printOnALine(tests(i)._2) + "\n")
+          }
+          lastTest = d2
+          prWriter.write(b.toString + ": " + printOnALine(d2) + "\n")
+        case (b, d1, d2, d3) =>
+          if (!passed) {
+            prWriter.write(b.toString + " failed: \n" + "After the application of " + b.toString + "\n")
+            printTests(prWriter, Array((lastTest, d2, d3)), true)
+          }
+          //else
+            //prWriter.write(b.toString + ": " + printOnALine(d2) + "\n")
+          prWriter.write("------------------------------\n")
+          lastTest = null
+      }
+    }
   }
 
   private[this] def allFixed(variables: Array[Set[Int]]): Boolean = {
@@ -201,6 +263,7 @@ abstract class Statistics(filename: String) {
       if (b != null && allFixed(reducedDomains))
         incNbLeaves()
       if (incorrectDomains(ourReducedDomains, reducedDomains)) {
+        println(b)
         printer(returnValues)
         result = false
       }
@@ -213,8 +276,27 @@ abstract class Statistics(filename: String) {
     }
     else
       strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
-    if (result) testsPassed = testsPassed :+ (init, ourReducedDomains,null)
-    else testsFailed = testsFailed :+ (init, ourReducedDomains,reducedDomains)
+    if (result) {
+      if (b == null)
+        testsPassed = testsPassed :+ (init, ourReducedDomains, null)
+      else {
+        storedResults = storedResults :+ (b.head, init, ourReducedDomains, null)
+      }
+    }
+    else {
+      if (b == null)
+        testsFailed = testsFailed :+ (init, ourReducedDomains, reducedDomains)
+      else {
+        storedResults = storedResults :+ (b.head, init, ourReducedDomains, reducedDomains)
+        testsIncFailed = testsIncFailed ++ storedResults.clone()
+        storedResults = Array()
+      }
+    }
+    if (b != null && b.length == nbBranchOp) {
+      storedResults = storedResults :+ (b.head, init, ourReducedDomains, reducedDomains)
+      testsIncPassed = testsIncPassed ++ storedResults.clone()
+      storedResults = Array()
+    }
     result
   }
 
