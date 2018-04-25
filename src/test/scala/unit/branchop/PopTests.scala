@@ -22,6 +22,6 @@ class PopTests extends UnitSpec {
   }
   "toString" should " return Pop" in {
     val pop = new Pop(domains)
-    assert(pop.toString.equals("Pop\n"))
+    assert(pop.toString.equals("Pop"))
   }
 }

@@ -22,6 +22,6 @@ class PushTests extends UnitSpec {
   }
   "toString" should " return Push" in {
     val push = new Push(domains)
-    assert(push.toString.equals("Push\n"))
+    assert(push.toString.equals("Push"))
   }
 }
