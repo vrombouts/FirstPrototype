@@ -14,7 +14,7 @@ import java.util.Set;
 public class ElementACTest {
 
     public static void main(String[] args) {
-        Constraint c = new BasicConstraint();
+        BasicConstraint c = new BasicConstraint();
         c.gen().setNVar(7);
         c.gen().addVar(1.5 / 7.0, 0, 10);
         c.gen().addVar(0.1, -10, 10);

@@ -26,14 +26,12 @@ trait Base {
 
   def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
     propagation match {
-      case `notSpecified` => applyConstraintSimple(variables)
+      case `notSpecified` => applyConstraintAC(variables)
       case `AC` => applyConstraintAC(variables)
       case `BC` => applyConstraintBC(variables)
-      case _ => applyConstraintSimple(variables)
+      case _ => applyConstraintAC(variables)
     }
   }
-
-  protected[this] def applyConstraintSimple(variables: Array[Set[Int]]): Array[Set[Int]]
 
   protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]]
 
