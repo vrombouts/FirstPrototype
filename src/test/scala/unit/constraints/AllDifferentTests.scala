@@ -6,6 +6,12 @@ import unit.UnitSpec
 class AllDifferentTests extends UnitSpec {
   val allDif = new AllDifferent
 
+  "allDif propagation values " should "be correctly set" in{
+    assert(allDif.AC == 1)
+    assert(allDif.BC == 2)
+    assert(allDif.notSpecified == 0)
+  }
+
   "[1,1]" should "return false in allDifferent" in {
     assert(!allDif.checker(Array(1, 1)))
   }
