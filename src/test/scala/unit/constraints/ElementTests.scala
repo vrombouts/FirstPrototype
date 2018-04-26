@@ -1,6 +1,6 @@
 package unit.constraints
 
-import checker.constraints.{BasicConstraint, Element}
+import checker.constraints.{Constraint, Element}
 import unit.UnitSpec
 
 /*
@@ -47,7 +47,7 @@ class ElementTests extends UnitSpec {
   }
 
   "checkAC for 40 tests and applyACWithoutFiltering of BasicConstraint with the Element checker" should "run 40 tests + its limitCases" in {
-    val c = new BasicConstraint {
+    val c = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         e.checker(solution)
       }

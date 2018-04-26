@@ -2,15 +2,15 @@ package checker.constraints
 
 import checker.{Base, NoSolutionException}
 
-trait BCFiltering extends Base {
+trait BCPruning extends Base {
   override protected[this] def applyConstraintBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    applyBC(variables)
+    applyBCPruning(variables)
   }
 
 
   //applying BC with pruning //
   @throws[NoSolutionException]
-  def applyBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  def applyBCPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val intervals = getIntervals(variables)
     var changed: Boolean = true
     while (changed) {

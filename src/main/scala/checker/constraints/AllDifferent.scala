@@ -1,13 +1,13 @@
 package checker.constraints
 
-class AllDifferent extends Constraint {
+class AllDifferent extends PruningConstraint {
   gen.setRangeForAll((-5, 5))
   gen.setDensityForAll(0.3)
   gen.setNVar(7)
 
   override def checker(solution: Array[Int]): Boolean = solution.toSet.size == solution.length
 
-  override def limitCases(): Array[Array[Set[Int]]] = {
+  override def limitCases: Array[Array[Set[Int]]] = {
     Array(
       Array(Set(0, 1, 2), Set(0)),
       Array(Set(0, 1), Set(0, 1), Set(0, 1, 2)),

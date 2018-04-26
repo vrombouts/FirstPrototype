@@ -2,14 +2,14 @@ package checker.constraints
 
 import checker.{Base, NoSolutionException}
 
-trait ACFiltering extends Base {
+trait ACPruning extends Base {
   override protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    applyACWithFiltering(variables)
+    applyACPruning(variables)
   }
 
   // Applying AC with pruning //
   @throws[NoSolutionException]
-  def applyACWithFiltering(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  def applyACPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val sol = cartesianProduct(variables)
     if (sol.isEmpty)
       throw new NoSolutionException

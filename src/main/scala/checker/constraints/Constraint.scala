@@ -100,6 +100,6 @@ trait Checks extends Static with Incremental{
 
 }
 
-class Constraint extends Checks with ACFiltering with BCFiltering
+class Constraint extends Checks with ACBasic with BCBasic
 
-class BasicConstraint extends Checks with ACBasic with BCBasic
+class PruningConstraint extends Checks with ACPruning with BCPruning

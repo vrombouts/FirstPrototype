@@ -2,7 +2,7 @@ package choco;
 
 import checker.JCpChecker;
 import checker.NoSolutionException;
-import checker.constraints.BasicConstraint;
+import checker.constraints.Constraint;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.variables.IntVar;
@@ -13,11 +13,11 @@ import java.util.Set;
 public class ElementACTest {
 
     public static void main(String[] args) {
-        BasicConstraint c = new BasicConstraint();
+        Constraint c = new Constraint();
         c.gen().setNVar(7);
         c.gen().addVar(1.5 / 7.0, 0, 10);
         c.gen().addVar(0.1, -10, 10);
-        JCpChecker jc = new JCpChecker(new BasicConstraint());
+        JCpChecker jc = new JCpChecker(new Constraint());
         jc.checkAC(variables -> {
             if (variables.length < 3)
                 throw new NoSolutionException("Element must have at least three variables (x,i,v)");

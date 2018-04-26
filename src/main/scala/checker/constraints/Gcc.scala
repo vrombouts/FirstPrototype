@@ -3,7 +3,7 @@ package checker.constraints
 import checker._
 
 
-class Gcc(values: Array[Int]) extends Constraint with ACBasic {
+class Gcc(values: Array[Int]) extends Constraint {
   setGen()
 
   private[this] def setGen(): Unit = {

@@ -4,12 +4,12 @@ import checker.{Base, NoSolutionException}
 
 trait BCBasic extends Base {
   override protected[this] def applyConstraintBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    applyBCWithoutPruning(variables)
+    applyBC(variables)
   }
 
   //applying BC without pruning //
   @throws[NoSolutionException]
-  def applyBCWithoutPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  def applyBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val intervals = getIntervals(variables)
     while (changeBounds(intervals)) {}
     intervalsToVariables(intervals)

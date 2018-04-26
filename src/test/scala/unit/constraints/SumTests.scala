@@ -1,7 +1,7 @@
 package unit.constraints
 
 import checker.Op
-import checker.constraints.{BasicConstraint, Sum}
+import checker.constraints.{Constraint, Sum}
 import unit.UnitSpec
 
 class SumTests extends UnitSpec {
@@ -93,7 +93,7 @@ class SumTests extends UnitSpec {
 
   "eq.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
     val sum = eq
-    val b = new BasicConstraint {
+    val b = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         sum.checker(solution)
       }
@@ -101,13 +101,13 @@ class SumTests extends UnitSpec {
     sum.setGen(6)
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
-    sum.checkAC(b.applyBCWithoutPruning, null)
+    sum.checkAC(b.applyBC, null)
     assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "dif.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
     val sum = dif
-    val b = new BasicConstraint {
+    val b = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         sum.checker(solution)
       }
@@ -115,13 +115,13 @@ class SumTests extends UnitSpec {
     sum.setGen(6)
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
-    sum.checkAC(b.applyBCWithoutPruning, null)
+    sum.checkAC(b.applyBC, null)
     assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "lt.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
     val sum = lt
-    val b = new BasicConstraint {
+    val b = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         sum.checker(solution)
       }
@@ -129,13 +129,13 @@ class SumTests extends UnitSpec {
     sum.setGen(6)
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
-    sum.checkAC(b.applyBCWithoutPruning, null)
+    sum.checkAC(b.applyBC, null)
     assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "le.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
     val sum = le
-    val b = new BasicConstraint {
+    val b = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         sum.checker(solution)
       }
@@ -143,13 +143,13 @@ class SumTests extends UnitSpec {
     sum.setGen(6)
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
-    sum.checkAC(b.applyBCWithoutPruning, null)
+    sum.checkAC(b.applyBC, null)
     assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "gt.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
     val sum = gt
-    val b = new BasicConstraint {
+    val b = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         sum.checker(solution)
       }
@@ -157,13 +157,13 @@ class SumTests extends UnitSpec {
     sum.setGen(6)
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
-    sum.checkAC(b.applyBCWithoutPruning, null)
+    sum.checkAC(b.applyBC, null)
     assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "ge.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
     val sum = ge
-    val b = new BasicConstraint {
+    val b = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         sum.checker(solution)
       }
@@ -171,7 +171,7 @@ class SumTests extends UnitSpec {
     sum.setGen(6)
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
-    sum.checkAC(b.applyBCWithoutPruning, null)
+    sum.checkAC(b.applyBC, null)
     assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 

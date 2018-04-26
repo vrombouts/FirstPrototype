@@ -46,14 +46,14 @@ class AllDifferentTests extends UnitSpec {
 
   //testing with limit Cases
   "checkAC" should " perform the limitCases of allDifferent AC constraint" in {
-    val limitCases = allDif.limitCases()
+    val limitCases = allDif.limitCases
     //limitCases should exists
     assert(limitCases.length != 0)
     allDif.gen.setNbTests(1)
     val ar = Array(0)
     allDif.checkAC(x => {
       ar(0) = ar(0) + 1
-      allDif.applyACWithFiltering(x)
+      allDif.applyACPruning(x)
     }, null)
     assert(ar(0) == limitCases.length + 1)
   }

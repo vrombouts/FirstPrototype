@@ -2,7 +2,7 @@ package checker.constraints
 
 import checker._
 
-class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
+class Sum(operator:String, constant:Int) extends Constraint {
 
   def this(c:Int) = this("=", c)
   setGen(10)

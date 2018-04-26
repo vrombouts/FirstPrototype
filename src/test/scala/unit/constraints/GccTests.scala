@@ -1,6 +1,6 @@
 package unit.constraints
 
-import checker.constraints.{BasicConstraint, Gcc}
+import checker.constraints.{Constraint, Gcc}
 import unit.UnitSpec
 
 class GccTests extends UnitSpec {
@@ -50,7 +50,7 @@ class GccTests extends UnitSpec {
 
   //testing filtering of GCC
   "gcc special AC filtering" should "behave like a BasicConstraint with the checker of Gcc" in {
-    val c = new BasicConstraint {
+    val c = new Constraint {
       override def checker(solution: Array[Int]): Boolean = {
         gcc.checker(solution)
       }
