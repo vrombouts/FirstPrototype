@@ -19,7 +19,7 @@ class Table(table: Set[Array[Int]]) extends Constraint with ACBasic {
   private[this] def transformTableInDom(tab: Set[Array[Int]]): Array[Set[Int]] = {
     var length: Int = 0
     tab.foreach(x => if (x.length > length) length = x.length)
-    var res: Array[Set[Int]] = Array.fill(length)(Set())
+    val res: Array[Set[Int]] = Array.fill(length)(Set())
     for (sol <- tab) {
       for (i <- sol.indices) {
         res(i) += sol(i)
@@ -28,7 +28,7 @@ class Table(table: Set[Array[Int]]) extends Constraint with ACBasic {
     res
   }
 
-  override def limitCases(): Array[Array[Set[Int]]] = {
+  override def limitCases: Array[Array[Set[Int]]] = {
     println("table: ")
     table.foreach(x => println(x.toList))
     println("-----------")

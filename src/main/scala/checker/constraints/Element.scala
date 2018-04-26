@@ -28,7 +28,7 @@ class Element extends Constraint {
     elementAC(variables)
   }
 
-  override def limitCases() : Array[Array[Set[Int]]] = {
+  override def limitCases : Array[Array[Set[Int]]] = {
     Array(
       Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(0, 1, 2, 3), Set(1, 2)), // test with one i > x.size
       Array(Set(1, 2, 3), Set(1, 2, 3), Set(0, 1), Set(1, 2, 3)), // test with nothing to remove

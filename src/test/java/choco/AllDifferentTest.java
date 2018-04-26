@@ -7,6 +7,8 @@ import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffAC;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffBC;
 import org.chocosolver.solver.variables.IntVar;
+
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -73,18 +75,12 @@ public class AllDifferentTest {
 
     public static Function<Integer[], Boolean> applyAllDifferent() {
         return integers -> {
-            for (int i = 0; i < integers.length; i++) {
-                for (int j = 0; j < i; j++) {
-                    if (integers[i].equals(integers[j]))
-                        return false;
-                }
-            }
-            return true;
+            Set s = new HashSet<Integer>(Arrays.asList(integers));
+            return s.size()==integers.length;
         };
     }
 
     public static void main(String[] args) {
-        JCpChecker jc = new JCpChecker();
         System.out.println("Begin test allDifferentBC");
         testAllDifferentBC();
         System.out.println("End test allDifferentBC");

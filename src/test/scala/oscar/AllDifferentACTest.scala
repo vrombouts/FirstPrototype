@@ -13,8 +13,6 @@ object AllDifferentACTest {
     val c = new Constraint
     c.gen.setRangeForAll(-5, 5)
     c.checkAC(filteringAllDifferentAC, allDifferent)
-    val c2 = new AllDifferent
-    c2.checkAC(filteringAllDifferentAC,null)
   }
 
   def allDifferent(x: Array[Int]): Boolean = x.toSet.size == x.length

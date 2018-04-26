@@ -17,7 +17,7 @@ trait Checks extends Static with Incremental{
     checkFunction(solution)
   }
 
-  protected[this] def limitCases(): Array[Array[Set[Int]]] = Array()
+  protected[this] def limitCases: Array[Array[Set[Int]]] = Array()
 
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
@@ -80,7 +80,7 @@ trait Checks extends Static with Incremental{
     forAll(gen.gen) { x =>
       x.isEmpty || (x.length<gen.getNbVars) || checkEmpty(x) || checkConstraint(x.toArray, filteringTested)
     }.check(gen.getTestParameters)
-    limitCases().forall(x => checkConstraint(x, filteringTested))
+    limitCases.forall(x => checkConstraint(x, filteringTested))
   }
 
   private[this] def forAllCheck(init: Array[Set[Int]] => Array[Set[Int]],
@@ -88,7 +88,7 @@ trait Checks extends Static with Incremental{
     forAll(gen.gen) { x =>
       x.isEmpty || (x.length<gen.getNbVars) || checkEmpty(x) || checkConstraint(x.toArray, init, filtering)
     }.check(gen.getTestParameters)
-    limitCases().forall(x => checkConstraint(x, init, filtering))
+    limitCases.forall(x => checkConstraint(x, init, filtering))
   }
 
   private[this] def checkEmpty(variables: List[Set[Int]]): Boolean = {

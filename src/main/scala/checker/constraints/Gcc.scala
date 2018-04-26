@@ -46,7 +46,7 @@ class Gcc(values: Array[Int]) extends Constraint with ACBasic {
     Array.fill(array.length)(possibleValues)
   }
 
-  override def limitCases(): Array[Array[Set[Int]]] = {
+  override def limitCases: Array[Array[Set[Int]]] = {
     if (values.isEmpty) return Array()
     println("values " + values.toList)
 

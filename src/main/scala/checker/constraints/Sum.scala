@@ -50,7 +50,7 @@ class Sum(operator:String, constant:Int) extends Constraint with ACBasic {
   }
 
 
-  override def limitCases(): Array[Array[Set[Int]]] = {
+  override def limitCases: Array[Array[Set[Int]]] = {
     Array(
       //Array(Set(Integer.MAX_VALUE), Set(1), Set(Integer.MIN_VALUE)),
       //Array(Set(Integer.MIN_VALUE), Set(-1),Set(Integer.MAX_VALUE)),
