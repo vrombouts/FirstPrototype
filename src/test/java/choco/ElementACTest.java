@@ -3,7 +3,6 @@ package choco;
 import checker.JCpChecker;
 import checker.NoSolutionException;
 import checker.constraints.BasicConstraint;
-import checker.constraints.Constraint;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.variables.IntVar;

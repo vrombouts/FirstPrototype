@@ -67,9 +67,9 @@ class StrictStatistics(nbBranchOp : Int, filename: String) extends Statistics(nb
     }
   }
 
-  def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
-    if (ourReducedDomains.length != reducedDomains.length) return true
-    if (ourReducedDomains.exists(_.isEmpty) && reducedDomains.forall(_.nonEmpty)) return true
-    (ourReducedDomains zip reducedDomains).exists(x => !x._1.equals(x._2))
+  def correctDomains(solutionDoms: Array[Set[Int]], userReducedDomains: Array[Set[Int]]): Boolean = {
+    if (solutionDoms.length != userReducedDomains.length) return false
+    if (solutionDoms.exists(_.isEmpty) && userReducedDomains.forall(_.nonEmpty)) return false
+    !(solutionDoms zip userReducedDomains).exists(x => !x._1.equals(x._2))
   }
 }

@@ -62,6 +62,6 @@ class TableTests extends UnitSpec {
     t.gen.setSeed(11)
     t.gen.setNbTests(40)
     t.checkAC(t.applyConstraintAC, null)
-    assert(t.stats.getNbExecutedTests == 40 + t.limitCases().length)
+    assert(t.stats.getNbExecutedTests == 40 + t.limitCases.length)
   }
 }

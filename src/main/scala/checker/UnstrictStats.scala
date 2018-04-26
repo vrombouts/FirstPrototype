@@ -53,14 +53,14 @@ class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(nbBran
     }
   }
 
-  def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean = {
-    if (ourReducedDomains.exists(x => x.isEmpty)) {
+  def correctDomains(solutionDoms: Array[Set[Int]], userReducedDomains: Array[Set[Int]]): Boolean = {
+    if (solutionDoms.exists(x => x.isEmpty)) {
       // check that if no solution can be found, either you still have unfixed variables
       // or if all variables are instantiated, you should find there is no solution
-      reducedDomains.forall(x => x.size == 1)
+      !userReducedDomains.forall(x => x.size == 1)
     }
     else {
-      (ourReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
+      !(solutionDoms zip userReducedDomains).exists(x => !x._1.subsetOf(x._2))
     }
   }
 }

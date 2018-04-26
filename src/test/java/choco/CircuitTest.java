@@ -3,6 +3,7 @@ package choco;
 import checker.JCpChecker;
 import checker.NoSolutionException;
 import org.chocosolver.solver.Model;
+import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.constraints.ConstraintsName;
 import org.chocosolver.solver.constraints.nary.circuit.CircuitConf;
 import org.chocosolver.solver.constraints.nary.circuit.PropCircuitSCC;
@@ -29,7 +30,7 @@ public class CircuitTest {
                 int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
                 currentVars[i] = model.intVar("" + i, b);
             }
-            org.chocosolver.solver.constraints.Constraint ctr = new org.chocosolver.solver.constraints.Constraint(ConstraintsName.CIRCUIT,new PropCircuitSCC(currentVars, 0, CircuitConf.ALL));
+            Constraint ctr = new Constraint(ConstraintsName.CIRCUIT,new PropCircuitSCC(currentVars, 0, CircuitConf.ALL));
             model.post(ctr);
             try{model.getSolver().propagate();}
             catch (Exception e){throw new NoSolutionException("No solution");}

@@ -8,7 +8,6 @@ import org.chocosolver.solver.variables.IntVar;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 
 
 public class SumCheckBCTest {

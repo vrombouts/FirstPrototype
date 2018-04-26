@@ -102,7 +102,7 @@ class SumTests extends UnitSpec {
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
     sum.checkAC(b.applyBCWithoutPruning, null)
-    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases().length)
+    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "dif.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
@@ -116,7 +116,7 @@ class SumTests extends UnitSpec {
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
     sum.checkAC(b.applyBCWithoutPruning, null)
-    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases().length)
+    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "lt.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
@@ -130,7 +130,7 @@ class SumTests extends UnitSpec {
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
     sum.checkAC(b.applyBCWithoutPruning, null)
-    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases().length)
+    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "le.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
@@ -144,7 +144,7 @@ class SumTests extends UnitSpec {
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
     sum.checkAC(b.applyBCWithoutPruning, null)
-    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases().length)
+    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "gt.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
@@ -158,7 +158,7 @@ class SumTests extends UnitSpec {
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
     sum.checkAC(b.applyBCWithoutPruning, null)
-    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases().length)
+    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
   "ge.checkAC with BCBasic as filtering on 40 tests" should "run 40+limitCases tests" in {
@@ -172,7 +172,7 @@ class SumTests extends UnitSpec {
     sum.gen.setSeed(1111)
     sum.gen.setNbTests(40)
     sum.checkAC(b.applyBCWithoutPruning, null)
-    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases().length)
+    assert(sum.stats.getNbExecutedTests == 40 + sum.limitCases.length)
   }
 
 }

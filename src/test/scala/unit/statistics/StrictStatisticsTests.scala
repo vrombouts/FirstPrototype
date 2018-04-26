@@ -54,17 +54,17 @@ class StrictStatisticsTests extends UnitSpec {
   "strictStatistics incorrectDomains" should "return false only if the two array possess the same sets in the same order" in {
     var a = Array(Set(1), Set(2, 1))
     var b = Array(Set(1), Set(1, 2))
-    assert(!stats.incorrectDomains(a, b))
+    assert(stats.correctDomains(a, b))
     b = Array(Set(2, 1), Set(1))
-    assert(stats.incorrectDomains(a, b))
+    assert(!stats.correctDomains(a, b))
     a = Array(Set(1))
-    assert(stats.incorrectDomains(a, b))
+    assert(!stats.correctDomains(a, b))
     b = Array(Set(1))
-    assert(!stats.incorrectDomains(a, b))
+    assert(stats.correctDomains(a, b))
     a = Array()
-    assert(stats.incorrectDomains(a, b))
+    assert(!stats.correctDomains(a, b))
     b = Array()
-    assert(!stats.incorrectDomains(a, b))
+    assert(stats.correctDomains(a, b))
   }
 
   "strictStatistics strictDomainComparison" should "increment nbRemovingValues if ourReduceDomains is smaller than (and included in) init" in {

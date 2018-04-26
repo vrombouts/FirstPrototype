@@ -203,7 +203,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
 
   def strictDomainComparison(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
 
-  def incorrectDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
+  def correctDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
 
   private[this] def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
     val initial: Array[Set[Int]] = returnValues(0)
@@ -252,7 +252,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     else {
       if (b != null && allFixed(reducedDomains))
         incNbLeaves()
-      if (incorrectDomains(ourReducedDomains, reducedDomains)) {
+      if (!correctDomains(ourReducedDomains, reducedDomains)) {
         println(b)
         printer(returnValues)
         result = false

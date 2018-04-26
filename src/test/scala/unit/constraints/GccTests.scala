@@ -58,8 +58,8 @@ class GccTests extends UnitSpec {
     gcc.gen.setNbTests(40)
     gcc.gen.setSeed(1)
     //checkAC run 40 tests if no fails + the limitCases of Gcc
-    gcc.checkAC(c.applyACWithoutPruning, null)
-    assert(gcc.stats.getNbExecutedTests==40 + gcc.limitCases().length)
+    gcc.checkAC(c.applyAC, null)
+    assert(gcc.stats.getNbExecutedTests==40 + gcc.limitCases.length)
   }
 
 

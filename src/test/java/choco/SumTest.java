@@ -20,7 +20,7 @@ public class SumTest {
 
 
     public static void main(String[] args) {
-        Sum sum = new Sum("<", 20);
+        Sum sum = new Sum("=", 5);
         JCpChecker jc = new JCpChecker(sum);
         jc.checkBC(variables -> {
             Model model = new Model("sum problem");
@@ -30,7 +30,7 @@ public class SumTest {
                 x[i] = model.intVar("" + i, b);
             }
             if (x == null) System.out.println("x null!");
-            model.sum(x, "<", 20).post();
+            model.sum(x, "=", 5).post();
             Solver solver = model.getSolver();
             try {
                 solver.propagate();
@@ -58,4 +58,6 @@ public class SumTest {
         }
         return result;
     }
-}
+
+
+ }

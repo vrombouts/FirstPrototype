@@ -6,10 +6,10 @@ import scala.collection.mutable
 
 trait ACBasic extends Base {
   override protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    applyACWithoutPruning(variables)
+    applyAC(variables)
   }
 
-  def applyACWithoutPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  def applyAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     if (variables.isEmpty) throw NoSolutionException()
     val sols: Array[Array[Int]] = solutions(variables).filter(x => checker(x))
     if (sols.isEmpty) throw NoSolutionException()

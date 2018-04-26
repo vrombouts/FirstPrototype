@@ -1,11 +1,11 @@
 package unit
 
 import checker.NoSolutionException
-import checker.constraints.AllDifferent
+import checker.constraints.{ACBasic, AllDifferent, Constraint}
 
 class ApplyACTests extends UnitSpec {
 
-  val C = new AllDifferent
+  val C = new AllDifferent with ACBasic
 
   "Calling applyAC for AllDifferent on domains [1] [1]" should "return an exception" in {
     assertThrows[NoSolutionException] {
@@ -71,5 +71,13 @@ class ApplyACTests extends UnitSpec {
     assertThrows[NoSolutionException] {
       C.applyAC(Array())
     }
+  }
+
+  "Calling applyAC" should "should filter only the complete solutions" in {
+    val C = new Constraint with ACBasic {
+      override def checker(solution: Array[Int]): Boolean =  solution.length == 4}
+    val a: Array[Set[Int]] = C.applyAC(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
+    val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 }

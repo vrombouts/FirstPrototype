@@ -53,7 +53,7 @@ class AllDifferentTests extends UnitSpec {
     val ar = Array(0)
     allDif.checkAC(x => {
       ar(0) = ar(0) + 1
-      allDif.applyAC(x)
+      allDif.applyACWithFiltering(x)
     }, null)
     assert(ar(0) == limitCases.length + 1)
   }

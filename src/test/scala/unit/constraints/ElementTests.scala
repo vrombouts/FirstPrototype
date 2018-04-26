@@ -55,7 +55,7 @@ class ElementTests extends UnitSpec {
     e.setGen(7)
     e.gen.setNbTests(40)
     e.gen.setSeed(111)
-    e.checkAC(c.applyACWithoutPruning, null)
-    assert(e.stats.getNbExecutedTests == 40 + e.limitCases().length)
+    e.checkAC(c.applyAC, null)
+    assert(e.stats.getNbExecutedTests == 40 + e.limitCases.length)
   }
 }
