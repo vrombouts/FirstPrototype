@@ -48,28 +48,28 @@ class Gcc(values: Array[Int]) extends Constraint {
 
   override def limitCases: Array[Array[Set[Int]]] = {
     if (values.isEmpty) return Array()
-    println("values " + values.toList)
+    //println("values " + values.toList)
 
     def test(nb: Int, range: (Int, Int)): Array[Set[Int]] = createVars(values, nb) ++ createCounts(values, range)
 
     var test1: Array[Set[Int]] = test(2, (0, 2)) // filtering correctly the count variables
-    println(test1.toList)
+    //println(test1.toList)
 
     val test2: Array[Set[Int]] = test(values.length, (0, 1)) // allDifferent constraint
-    println(test2.toList)
+    //println(test2.toList)
     val test3: Array[Set[Int]] = test(values.length, (1, 1)) // count variables are set to 1
-    println(test3.toList)
+    //println(test3.toList)
     val test4: Array[Set[Int]] = test(values.length, (0, 0)) // no solution because of counts
-    println(test4.toList)
+    //println(test4.toList)
     val test5: Array[Set[Int]] = Array.fill(values.length)(Set(values(0))) ++ createCounts(values, (0, values.length)) // test with all variables being equal to the same val => filtering counts correctly
-    println(test5.toList)
+    //println(test5.toList)
     var result: Array[Array[Set[Int]]] = Array(test1, test2, test3, test4, test5)
     if (values.length > 1) {
       val test6: Array[Set[Int]] = test(values.length, (1, 1)) // permutation test
       test6(1) = Set(test6(0).min)
       test6(0) -= test6(1).max
       if (test6.forall(x => x.nonEmpty)) result = result :+ test6
-      println(test6.toList)
+      //println(test6.toList)
     }
     result
 

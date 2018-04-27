@@ -12,10 +12,7 @@ trait BCPruning extends Base {
   @throws[NoSolutionException]
   def applyBCPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val intervals = getIntervals(variables)
-    var changed: Boolean = true
-    while (changed) {
-      changed = checkBounds(intervals)
-    }
+    while (changeBounds(intervals)) {}
     intervalsToVariables(intervals)
   }
 
@@ -30,7 +27,7 @@ trait BCPruning extends Base {
   }
 
   @throws[NoSolutionException]
-  private[this] def checkBounds(intervals: Array[Interval]): Boolean = {
+  private[this] def changeBounds(intervals: Array[Interval]): Boolean = {
     var changed: Boolean = false
     for (i <- intervals.indices) {
       val modif: Boolean = cartesianBC(intervals, i, minOrMax = true)

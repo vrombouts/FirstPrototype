@@ -253,7 +253,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       if (b != null && allFixed(reducedDomains))
         incNbLeaves()
       if (!correctDomains(ourReducedDomains, reducedDomains)) {
-        println(b)
+        if(b != null) println(b)
         printer(returnValues)
         result = false
       }

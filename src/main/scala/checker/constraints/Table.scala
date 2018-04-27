@@ -29,9 +29,9 @@ class Table(table: Set[Array[Int]]) extends Constraint {
   }
 
   override def limitCases: Array[Array[Set[Int]]] = {
-    println("table: ")
+    /*println("table: ")
     table.foreach(x => println(x.toList))
-    println("-----------")
+    println("-----------")*/
     if (table.isEmpty) return Array()
 
     var result: Array[Array[Set[Int]]] = Array()
@@ -45,11 +45,11 @@ class Table(table: Set[Array[Int]]) extends Constraint {
     val test1 = domains.clone() //basic test a values is filtered
     test1(domains.length - 1) = test1(domains.length - 1) + outVal
     result = result :+ test1
-    println("test1 " + test1.toList)
+    //println("test1 " + test1.toList)
 
     val test2 = domains.clone() //no value are filtered
     result = result :+ test2
-    println("test2 " + test2.toList)
+    //println("test2 " + test2.toList)
 
     val test3: Array[Set[Int]] = domains.clone() // one line of the table does not contain any value belonging to the domains of vars
     for (i <- table.head.indices) {
@@ -57,11 +57,11 @@ class Table(table: Set[Array[Int]]) extends Constraint {
     }
     if (!test3.exists(x => x.isEmpty)) {
       result = result :+ test3
-      println("test3 " + test3.toList)
+      //println("test3 " + test3.toList)
     }
 
     val test4: Array[Set[Int]] = domains.clone() //one value out of domains per line in table
-    println(test4.toList)
+    //println(test4.toList)
     var k: Int = 0
     for (instantiation <- table) {
       if (test4(k).contains(instantiation(k)))
@@ -71,13 +71,13 @@ class Table(table: Set[Array[Int]]) extends Constraint {
     }
     if (!test4.exists(x => x.isEmpty)) {
       result = result :+ test4
-      println("test4 " + test4.toList)
+      //println("test4 " + test4.toList)
     }
 
     var test5: Array[Set[Int]] = domains.clone() // testing with sets of size 1
     test5 = test5.map(x => Set(x.head))
     result = result :+ test5
-    println("test5 " + test5.toList)
+    //println("test5 " + test5.toList)
 
     /*(Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3)),
       Set(Array(1, 1, 1), Array(2, 2, 2), Array(3, 3, 3), Array(4, 4, 4))), //not a growing domain/line in table within no domains

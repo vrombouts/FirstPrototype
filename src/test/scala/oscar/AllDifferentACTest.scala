@@ -1,6 +1,6 @@
 package oscar
 
-import checker.constraints.{AllDifferent, Constraint}
+import checker.constraints.Constraint
 import checker.NoSolutionException
 import oscar.algo.Inconsistency
 import oscar.cp._

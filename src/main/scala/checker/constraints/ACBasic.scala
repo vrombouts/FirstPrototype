@@ -9,6 +9,7 @@ trait ACBasic extends Base {
     applyAC(variables)
   }
 
+  @throws[NoSolutionException]
   def applyAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     if (variables.isEmpty) throw NoSolutionException()
     val sols: Array[Array[Int]] = solutions(variables).filter(x => checker(x))
