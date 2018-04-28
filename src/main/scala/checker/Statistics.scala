@@ -2,7 +2,7 @@ package checker
 
 import java.io._
 
-import checker.constraints.incremental.BranchOp
+import checker.constraints.incremental.{BranchOp, Pop, Push}
 
 abstract class Statistics(nbBranchOp: Int, filename: String) {
 
@@ -12,11 +12,6 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
   private[this] var nbExecutedTests: Int = 0
   private[this] var nbNoSolutionTests: Int = 0
   private[this] var nbFailedNoSolutionTests: Int = 0
-
-
-  private[this] var nbBacktracks: Int = 0
-  private[this] var nbNodes: Int = 0
-  private[this] var nbLeaves: Int = 0
 
   protected[this] val filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
   filenameStats.getParentFile.mkdirs
@@ -30,25 +25,23 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
   // stats about the generator
   protected[this] var generatorUsed: VariablesGenerator = _
 
+  protected[this] var nbPush: Int = 0
+  protected[this] var nbPop: Int = 0
+  protected[this] var nbRestriction: Int = 0
+
+  private[this] var nbTestCases: Int = 0
+
   def incNbExecutedTests(): Unit = nbExecutedTests += 1
 
   def incNbNoSolutionTests(): Unit = nbNoSolutionTests += 1
 
   def incNbFailedNoSolutionTests(): Unit = nbFailedNoSolutionTests += 1
 
-  def incNbBacktracks(): Unit = nbBacktracks += 1
-
-  def incNbNodes(): Unit = nbNodes += 1
-
-  def incNbLeaves(): Unit = nbLeaves += 1
-
   def getNbExecutedTests: Int = nbExecutedTests
 
   def getNbNoSolutionTests: Int = nbNoSolutionTests
 
   def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
-
-  def getNbLeaves: Int = nbLeaves
 
   def getGenerator: VariablesGenerator = generatorUsed
 
@@ -63,12 +56,21 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
 
   protected[this] var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  protected[this] var storedResults: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  protected[this] var storedResults: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  protected[this] var testsIncPassed: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  protected[this] var testsIncPassed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
 
-  protected[this] var testsIncFailed: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  protected[this] var testsIncFailed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
 
+  private[this] def updateBranching(b:List[BranchOp]):Unit = {
+    if(b != null && b.nonEmpty){
+      b.head match{
+        case _: Push => nbPush += 1
+        case _: Pop => nbPop += 1
+        case _ => nbRestriction += 1
+      }
+    }
+  }
   def printNumber(nb: Int): String = {
     val nbOfChars: Int = nb.toString.length
     var s: String = " " + nb
@@ -80,9 +82,15 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
 
 
   def branchingStatsToString(): String = {
-    "The average number of backtracks per test is " + nbBacktracks / nbExecutedTests + "\n" +
-      "The average number of nodes per test is " + nbNodes / nbExecutedTests + "\n" +
-      "The average number of leaves per test is " + nbLeaves / nbExecutedTests + "\n"
+    var nbPushOp : Int = 0
+    var nbPopOp : Int = 0
+    var nbRestrictOp : Int = 0
+    if(nbPush != 0 ) nbPushOp = nbPush / nbTestCases
+    if(nbPop != 0) nbPopOp = nbPop/nbTestCases
+    if(nbRestriction != 0) nbRestrictOp = nbRestriction/nbTestCases
+    "The average number of Push operation per test is " + nbPushOp + "\n" +
+      "The average number of Pop operation per test is " + nbPopOp + "\n" +
+      "The average number of Restrict Domain operation per test is " + nbRestrictOp + "\n"
   }
 
   def print(implicit isInc: Boolean = false): Unit = {
@@ -132,7 +140,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
   }
 
   private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false): Unit = {
-    for ((init,ourDom,yourDom) <- tests) {
+    for ((init, ourDom, yourDom) <- tests) {
       var ourTitle: String = "Filtered domains "
       var yourTitle: String = "Your filtered domains "
       if (isInc) {
@@ -170,30 +178,35 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     s
   }
 
-  private[this] def printIncStats(prWriter: PrintWriter, tests: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], passed: Boolean = true): Unit = {
+  private[this] def printIncStats(prWriter: PrintWriter, tests: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]], passed: Boolean = true): Unit = {
     //val prWriter = new PrintWriter(f)
     if (tests.isEmpty) {
       return
     }
     var lastTest: Array[Set[Int]] = null
     for (i <- tests.indices) {
-      tests(i) match {
-        case (b, d1, d2, null) =>
-          if (lastTest == null) {
-            if (!passed) prWriter.write("TEST FAILED : \n")
-            else prWriter.write("TEST PASSED : \n")
-            prWriter.write("Init : " + printOnALine(d1) + "\n")
-          }
-          lastTest = d2
-          prWriter.write(b.toString + ": " + printOnALine(d2) + "\n")
-        case (b, _, d2, d3) =>
-          if (!passed) {
-            prWriter.write(b.toString + " failed: \n" + "After the application of " + b.toString + "\n")
-            printTests(prWriter, Array((lastTest, d2, d3)), isInc = true)
-          }
-          prWriter.write("------------------------------\n")
-          lastTest = null
+      if (!tests(i).isEmpty) {
+        if (!passed) prWriter.write("TEST FAILED : \n")
+        else prWriter.write("TEST PASSED : \n")
+        val (_, initial, _) = tests(i)(0)
+        prWriter.write("Init : " + printOnALine(initial) + "\n")
+        for (j <- 0 until tests(i).length - 1) {
+          val (b, _, curr) = tests(i)(j)
+          prWriter.write(b.toString + ": " + printOnALine(curr) + "\n")
+          lastTest = curr
+        }
+        val (b, unk, curr) = tests(i)(tests(i).length - 1)
+        if (!passed) {
+          // in this case, unk refers to reducedDomains
+          prWriter.write(b.toString + " failed: \n" + "After the application of " + b.toString + ": \n")
+          printTests(prWriter, Array((lastTest, curr, unk)), isInc = true)
+        }
+        prWriter.write("------------------------------\n")
       }
+    }
+    if(storedResults.nonEmpty){
+      testsIncPassed = testsIncPassed :+ storedResults.clone()
+      storedResults = Array()
     }
   }
 
@@ -228,6 +241,11 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
    */
   def comparison(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null): Boolean = {
+    if (b != null && b.size == 1) {
+      nbTestCases += 1
+      testsIncPassed = testsIncPassed :+ storedResults.clone()
+      storedResults = Array()
+    }
     val ourReducedDomains: Array[Set[Int]] = returnValues(2)
     val reducedDomains: Array[Set[Int]] = returnValues(1)
     val init: Array[Set[Int]] = returnValues(0)
@@ -241,8 +259,6 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       result = false
     }
     else if (ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
-      if (b != null)
-        incNbLeaves()
       result = true
     }
     else if (ourReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty)) {
@@ -250,10 +266,8 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       result = false
     }
     else {
-      if (b != null && allFixed(reducedDomains))
-        incNbLeaves()
       if (!correctDomains(ourReducedDomains, reducedDomains)) {
-        if(b != null) println(b)
+        if (b != null) println(b)
         printer(returnValues)
         result = false
       }
@@ -270,24 +284,33 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       if (b == null)
         testsPassed = testsPassed :+ (init, ourReducedDomains, null)
       else {
-        storedResults = storedResults :+ (b.head, init, ourReducedDomains, null)
+        storedResults = storedResults :+ (b.head, init, ourReducedDomains)
       }
     }
     else {
       if (b == null)
         testsFailed = testsFailed :+ (init, ourReducedDomains, reducedDomains)
       else {
-        storedResults = storedResults :+ (b.head, init, ourReducedDomains, reducedDomains)
-        testsIncFailed = testsIncFailed ++ storedResults.clone()
+        storedResults = storedResults :+ (b.head, reducedDomains, ourReducedDomains)
+        testsIncFailed = testsIncFailed :+ storedResults.clone()
         storedResults = Array()
       }
     }
-    if (b != null && b.length == nbBranchOp) {
+
+    updateBranching(b)
+    /*if (b != null && b.length == nbBranchOp) {
+      nbTestCases += 1
+      for (branch <- b) {
+        branch match {
+          case _: Push => nbPush += 1
+          case _: Pop => nbPop += 1
+          case _ => nbRestriction += 1
+        }
+      }
       storedResults = storedResults :+ (b.head, init, ourReducedDomains, reducedDomains)
-      testsIncPassed = testsIncPassed ++ storedResults.clone()
+      testsIncPassed = testsIncPassed :+ storedResults.clone()
       storedResults = Array()
-    }
+    }*/
     result
   }
-
 }

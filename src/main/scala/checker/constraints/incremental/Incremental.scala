@@ -58,8 +58,8 @@ trait Incremental extends Base {
       branches ::= b
       b match {
         case _: Push => nPush += 1
-        case _: Pop => nPush -= 1; stats.incNbBacktracks()
-        case _: RestrictDomain => stats.incNbNodes()
+        case _: Pop => nPush -= 1
+        case _: RestrictDomain => {}
         case _: BranchOp => //no more BranchOp possible (should happen only if all variables are fixed before any Branch)
           println(branches)
           return true

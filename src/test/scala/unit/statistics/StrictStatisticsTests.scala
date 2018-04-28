@@ -283,7 +283,7 @@ class StrictStatisticsTests extends UnitSpec {
     new RestrictDomain(domains, new Random(1)),
     new Push(domains))
 
-  "StrictStatistics comparison with b!=null" should "increment nbLeaves if v(1) and v(2) both possess an empty set" in {
+  /*"StrictStatistics comparison with b!=null" should "increment nbLeaves if v(1) and v(2) both possess an empty set" in {
     var v: Array[Array[Set[Int]]] = Array(
       Array(Set(1, 2), Set(2)),
       Array(Set(1), Set()),
@@ -350,5 +350,5 @@ class StrictStatisticsTests extends UnitSpec {
     assert(nbLeaves == stats.getNbLeaves)
   }
 
-  "StrictStatistics comparison" should "return false if"
+  "StrictStatistics comparison" should "return false if"*/
 }

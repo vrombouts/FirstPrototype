@@ -24,7 +24,7 @@ class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(nbBran
   */
 
   def globalStatsToString(isInc: Boolean): String = {
-    var str = "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n"
+    var str = "Depending on the constraint being tested, two kinds of tests are possible : \n Tests having no solution. \n Tests having solutions. \n"
     if (isInc) str += "Note that since we make " + nbBranchOp + " branchings per test, the total number of tests will be >= " + generatorUsed.getNbTests + "\n"
     str + "Here are some stats of the tests being executed : \n\n" +
       "------------------------------------------------------------ \n" +
