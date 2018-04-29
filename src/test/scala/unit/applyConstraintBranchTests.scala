@@ -1,13 +1,13 @@
 package unit
 
-import checker.{Statistics, StrictStatistics}
+import checker.{Filterings, Statistics, StrictStatistics}
 import checker.constraints.incremental._
 
 import scala.util.Random
 
 class applyConstraintBranchTests extends UnitSpec {
 
-  private[this] object dummyCheck extends Incremental {
+  private[this] object dummyCheck extends Incremental with Filterings {
     var stats: Statistics = new StrictStatistics("AC")
     propagation=AC
     def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = variables
@@ -16,7 +16,7 @@ class applyConstraintBranchTests extends UnitSpec {
     override def checker(solution: Array[Int]): Boolean = true
   }
 
-  private[this] object SpecialCheck extends Incremental {
+  private[this] object SpecialCheck extends Incremental with Filterings{
     var stats: Statistics = new StrictStatistics("AC")
     propagation=AC
     def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {

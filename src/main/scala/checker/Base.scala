@@ -10,6 +10,10 @@ trait Base {
   final val BC = 2
   protected[this] var propagation: Int = notSpecified // 0 for simple, 1 for AC, 2 for BC
 
+  protected[this] def checker(solution:Array[Int]): Boolean
+
+  def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]]
+
   protected[this] def apply[T](size: Int, parameter: T,
                              filtering: T => Array[Set[Int]]): Array[Set[Int]] = {
     try {
@@ -21,18 +25,4 @@ trait Base {
         Array.fill(size)(Set[Int]())
     }
   }
-
-  protected[this] def checker(solution:Array[Int]): Boolean
-
-  def applyConstraint(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    propagation match {
-      case `AC` => applyConstraintAC(variables)
-      case `BC` => applyConstraintBC(variables)
-      case _ => applyConstraintAC(variables)
-    }
-  }
-
-  protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]]
-
-  protected[this] def applyConstraintBC(variables: Array[Set[Int]]): Array[Set[Int]]
 }

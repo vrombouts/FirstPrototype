@@ -1,11 +1,11 @@
 package unit
 
-import checker.{Statistics, StrictStatistics}
+import checker.{Filterings, Statistics, StrictStatistics}
 import checker.constraints.incremental.{BranchOp, Incremental, RestrictDomain}
 
 class CheckConstraintBranchTests extends UnitSpec {
 
-  private[this] object DummyCheck extends Incremental {
+  private[this] object DummyCheck extends Incremental with Filterings{
     var stats: Statistics = new StrictStatistics("AC")
 
     def applyConstraintAC(variable: Array[Set[Int]]): Array[Set[Int]] = variable

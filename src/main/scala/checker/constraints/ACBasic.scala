@@ -1,10 +1,10 @@
 package checker.constraints
 
-import checker.{Base, NoSolutionException}
+import checker.{Filterings, NoSolutionException}
 
 import scala.collection.mutable
 
-trait ACBasic extends Base {
+trait ACBasic extends Filterings {
   override protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     applyAC(variables)
   }

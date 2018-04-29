@@ -1,8 +1,8 @@
 package checker.constraints
 
-import checker.{Base, NoSolutionException}
+import checker.{Filterings, NoSolutionException}
 
-trait ACPruning extends Base {
+trait ACPruning extends Filterings {
   override protected[this] def applyConstraintAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     applyACPruning(variables)
   }

@@ -1,6 +1,6 @@
 package checker.constraints
 
-class AllDifferent extends PruningConstraint {
+class AllDifferent extends ConstraintPruning {
   gen.setRangeForAll((-5, 5))
   gen.setDensityForAll(0.3)
   gen.setNVar(7)

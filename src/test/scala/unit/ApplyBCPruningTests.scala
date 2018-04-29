@@ -1,7 +1,7 @@
 package unit
 
 import checker.NoSolutionException
-import checker.constraints.{AllDifferent, Constraint, PruningConstraint}
+import checker.constraints.{AllDifferent, ConstraintPruning}
 
 class ApplyBCPruningTests extends UnitSpec {
 
@@ -68,7 +68,7 @@ class ApplyBCPruningTests extends UnitSpec {
   }
 
   "calling applyBCPruning for false constraint on domain [1,2,3]" should "throw a noSolutionException" in {
-    val C = new PruningConstraint{
+    val C = new ConstraintPruning{
       override def checker(solution: Array[Int]): Boolean = false
     }
     assertThrows[NoSolutionException] {
