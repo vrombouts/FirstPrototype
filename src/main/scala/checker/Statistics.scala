@@ -100,7 +100,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     printStats(isInc, prWriterStats)
     prWriterStats.close()
     printTests(prWriterPassed, testsPassed)
-    printTests(prWriterFailed, testsFailed)
+    printTests(prWriterFailed, testsFailed, passed = false)
     printIncStats(prWriterPassed, testsIncPassed)
     printIncStats(prWriterFailed, testsIncFailed, passed = false)
     prWriterFailed.close()
@@ -139,7 +139,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     result
   }
 
-  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false): Unit = {
+  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed:Boolean=true): Unit = {
     for ((init, ourDom, yourDom) <- tests) {
       var ourTitle: String = "Filtered domains "
       var yourTitle: String = "Your filtered domains "
@@ -150,12 +150,12 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       var maxLength: Int = ourTitle.length
       init.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
       prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString(ourTitle, maxLength))
-      if (yourDom != null)
-        prWriter.write("|" + yourTitle)
+      prWriter.write("|" + yourTitle)
       prWriter.write("\n")
       for (i <- init.indices) {
         prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(ourDom(i)), maxLength))
         if (yourDom != null) prWriter.write("|" + domainToString(yourDom(i)))
+        else prWriter.write("|"+"null")
         prWriter.write("\n")
       }
       prWriter.write("\n")
@@ -282,7 +282,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
     if (result) {
       if (b == null)
-        testsPassed = testsPassed :+ (init, ourReducedDomains, null)
+        testsPassed = testsPassed :+ (init, ourReducedDomains, reducedDomains)
       else {
         storedResults = storedResults :+ (b.head, init, ourReducedDomains)
       }
@@ -298,19 +298,6 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     }
 
     updateBranching(b)
-    /*if (b != null && b.length == nbBranchOp) {
-      nbTestCases += 1
-      for (branch <- b) {
-        branch match {
-          case _: Push => nbPush += 1
-          case _: Pop => nbPop += 1
-          case _ => nbRestriction += 1
-        }
-      }
-      storedResults = storedResults :+ (b.head, init, ourReducedDomains, reducedDomains)
-      testsIncPassed = testsIncPassed :+ storedResults.clone()
-      storedResults = Array()
-    }*/
     result
   }
 }
