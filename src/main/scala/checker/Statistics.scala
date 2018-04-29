@@ -154,7 +154,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       prWriter.write("\n")
       for (i <- init.indices) {
         prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(ourDom(i)), maxLength))
-        if (yourDom != null) prWriter.write("|" + domainToString(yourDom(i)))
+        if (yourDom != null && yourDom(i)!=null) prWriter.write("|" + domainToString(yourDom(i)))
         else prWriter.write("|"+"null")
         prWriter.write("\n")
       }
@@ -210,32 +210,9 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     }
   }
 
-  private[this] def allFixed(variables: Array[Set[Int]]): Boolean = {
-    variables.forall(_.size == 1)
-  }
-
   def strictDomainComparison(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
 
   def correctDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
-
-  private[this] def printer(returnValues: Array[Array[Set[Int]]]): Unit = {
-    val initial: Array[Set[Int]] = returnValues(0)
-    val reduced: Array[Set[Int]] = returnValues(1)
-    val trueReduced: Array[Set[Int]] = returnValues(2)
-    if (reduced.exists(x => x.isEmpty) && trueReduced.forall(x => x.nonEmpty)) {
-      println("failed for: " + initial.toList)
-      println("you should have: " + trueReduced.toList)
-      println("but you claim there is no solution")
-    } else if (reduced.forall(x => x.nonEmpty) && trueReduced.exists(x => x.isEmpty)) {
-      println("failed for: " + initial.toList)
-      println("you should not have any solutions")
-      println("but you had: " + reduced.toList)
-    } else if (reduced.forall(x => x.nonEmpty) && trueReduced.forall(x => x.nonEmpty)) {
-      println("failed for: " + initial.toList)
-      println("you should have: " + trueReduced.toList)
-      println("but you had: " + reduced.toList)
-    }
-  }
 
   /*
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
@@ -247,7 +224,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       storedResults = Array()
     }
     val ourReducedDomains: Array[Set[Int]] = returnValues(2)
-    val reducedDomains: Array[Set[Int]] = returnValues(1)
+    var reducedDomains: Array[Set[Int]] = returnValues(1)
     val init: Array[Set[Int]] = returnValues(0)
     var result: Boolean = true
     if (reducedDomains == null) {
@@ -256,23 +233,21 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     }
     else if (ourReducedDomains.length != reducedDomains.length) {
       println("Incorrect output format : you don't return the correct number of domains variables")
+      if(reducedDomains.length<ourReducedDomains.length)
+        reducedDomains = reducedDomains ++ Array.fill(ourReducedDomains.length-reducedDomains.length)(null)
       result = false
     }
     else if (ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
       result = true
     }
     else if (ourReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty)) {
-      printer(returnValues)
       result = false
     }
     else {
       if (!correctDomains(ourReducedDomains, reducedDomains)) {
-        if (b != null) println(b)
-        printer(returnValues)
         result = false
       }
     }
-    if (b != null && !result) println("with all those branches in reverse order: " + b)
     incNbExecutedTests()
     if (ourReducedDomains.exists(_.isEmpty)) {
       incNbNoSolutionTests()

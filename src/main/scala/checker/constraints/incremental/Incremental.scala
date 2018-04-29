@@ -59,9 +59,8 @@ trait Incremental extends Base {
       b match {
         case _: Push => nPush += 1
         case _: Pop => nPush -= 1
-        case _: RestrictDomain => {}
+        case _: RestrictDomain =>
         case _: BranchOp => //no more BranchOp possible (should happen only if all variables are fixed before any Branch)
-          println(branches)
           return true
       }
       // apply our constraint and the constraint of the user for the branchOp b and the domains vars
@@ -74,7 +73,6 @@ trait Incremental extends Base {
       else
         return false
     }
-    println(branches)
     true
   }
 
