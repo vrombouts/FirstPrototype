@@ -4,7 +4,7 @@ package checker
 
 trait Base {
   val gen: VariablesGenerator = new VariablesGenerator
-  var stats: Statistics
+  def stats: Statistics
   final val notSpecified = 0
   final val AC = 1
   final val BC = 2

@@ -10,7 +10,7 @@ import org.scalacheck.Prop.forAll
 trait Checks extends Static with Incremental{
 
   var statistic: Array[Statistics] = Array(new UnstrictStats(nbBranchOp, "check"), new StrictStatistics(nbBranchOp, "AC"), new StrictStatistics(nbBranchOp, "BC")) // basically, it's unstrict stats
-  var stats: Statistics = statistic(propagation)
+  def stats: Statistics = statistic(propagation)
   private[this] var checkFunction: Array[Int] => Boolean = _
 
   protected[this] def checker(solution: Array[Int]): Boolean = {
@@ -22,7 +22,6 @@ trait Checks extends Static with Incremental{
   def checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = statistic(propagation)
     forAllCheck(filteringTested)
     stats.setGenerator(gen)
     stats.print
@@ -31,7 +30,6 @@ trait Checks extends Static with Incremental{
   def checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = statistic(propagation)
     forAllCheck(filteringTested)
     stats.setGenerator(gen)
     stats.print
@@ -40,7 +38,6 @@ trait Checks extends Static with Incremental{
   def check(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = notSpecified
-    stats = statistic(propagation)
     forAllCheck(filteringTested)
     stats.setGenerator(gen)
     stats.print
@@ -51,7 +48,6 @@ trait Checks extends Static with Incremental{
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = AC
-    stats = statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
@@ -62,7 +58,6 @@ trait Checks extends Static with Incremental{
               checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = BC
-    stats = statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)
@@ -73,7 +68,6 @@ trait Checks extends Static with Incremental{
             checker: Array[Int] => Boolean): Unit = {
     checkFunction = checker
     propagation = notSpecified
-    stats = statistic(propagation)
     forAllCheck(init, filtering)
     stats.setGenerator(gen)
     stats.print(isInc = true)

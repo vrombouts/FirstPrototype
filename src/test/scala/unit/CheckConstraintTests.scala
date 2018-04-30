@@ -1,6 +1,6 @@
 package unit
 
-import checker.{NoSolutionException, StrictStatistics, UnstrictStats}
+import checker.NoSolutionException
 import checker.constraints.AllDifferent
 
 class CheckConstraintTests extends UnitSpec {
@@ -19,8 +19,7 @@ class CheckConstraintTests extends UnitSpec {
   // add a constraint that makes the allDifferent constraint but only one time (no fix point reached)
 
   val c: AllDifferent = new AllDifferent {
-    propagation=AC
-    stats = new StrictStatistics("AC")
+    propagation = AC
   }
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1]" should "return false" in {
@@ -81,7 +80,9 @@ class CheckConstraintTests extends UnitSpec {
 
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1,0] [0,1] [1,2] considering unstrict format(should not remove solution but does not check that it removes elements that are not solution)" should "return true" in {
-    c.stats = new UnstrictStats("AC")
+    val c: AllDifferent = new AllDifferent {
+      propagation = notSpecified
+    }
     assert(c.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), dummyConstraint))
   }
 
