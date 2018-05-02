@@ -12,8 +12,12 @@ object Checkers {
     val X: Array[Int] = solution.dropRight(2)
     val i: Int = solution(solution.length - 2)
     val v: Int = solution(solution.length - 1)
-    if (i < 0 || i >= X.length) return false
-    X(i) == v
+    element(X, i, v)
+  }
+
+  def element(solution: Array[Int], i: Int, v: Int): Boolean = {
+    if (i < 0 || i >= solution.length) return false
+    solution(i) == v
   }
 
   def sum(solution: Array[Int], constant: Int = 0, operator: String = "="): Boolean = {
