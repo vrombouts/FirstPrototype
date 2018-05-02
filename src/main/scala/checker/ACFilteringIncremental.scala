@@ -1,6 +1,5 @@
-package checker.constraints
+package checker
 
-import checker.{FilterWithState, NoSolutionException}
 import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
 
 import scala.collection.mutable
