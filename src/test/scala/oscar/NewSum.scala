@@ -71,7 +71,7 @@ object NewSum extends App {
   implicit val generator: VariablesGenerator = new VariablesGenerator
   generator.setSeed(1000)
   for (i <- -50 to 50 by 5){
-    val bugFree = new BCFilteringIncremental(checker(_,i))
+    val bugFree = new BCFilteringIncremental(Checkers.sum(_,i))
     val tested = new FilterWithState {
       override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = filtering(branching)
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = init(variables,i)
