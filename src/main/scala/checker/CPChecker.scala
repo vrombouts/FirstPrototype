@@ -66,7 +66,6 @@ object CPChecker {
   ////////INCREMENTAL LOGIC /////////////
 
 
-  var nbBranchOp: Int = 25
 
   private[this] def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
@@ -87,13 +86,20 @@ object CPChecker {
     var vars: Array[Set[Int]] = returnValues(2).clone()
     var nPush: Int = 0
     var branches: List[BranchOp] = List()
-    for (_ <- 0 until nbBranchOp) {
+    var dives = 0
+    var lastPop = false
+    while(dives<generator.nbDive) {
       val b: BranchOp = getBranch(nPush, vars)
       branches ::= b
       b match {
-        case _: Push => nPush += 1
-        case _: Pop => nPush -= 1
-        case _: RestrictDomain =>
+        case _: Push =>
+          lastPop = false
+          nPush += 1
+        case _: Pop =>
+          if(!lastPop) dives += 1
+          lastPop = true
+          nPush -= 1
+        case _: RestrictDomain => lastPop = false
         case _: BranchOp => //no more BranchOp possible (should happen only if all variables are fixed before any Branch)
           return true
       }
@@ -113,30 +119,25 @@ object CPChecker {
 
   // part to get BranchOp's in an interesting random way (for exemple, avoid doing (push->pop->push->pop->...)
   private[this] var lastPush = false
-
+  private[this] var doNPop = 0
 
   private[this] def getBranch(nPush: Int, vars: Array[Set[Int]]): BranchOp = {
-    // creation of the table of operations with the operations that are allowed
-    // a Pop is not allowed if no push and a restrictDomain is not allowed if all variables are fixed to a value
-    var operations: List[BranchOp] = List()
-    if (vars.exists(_.isEmpty) && nPush > 0) return new Pop(vars)
-    if (!vars.forall(_.size == 1)) {
-      if (nPush == 0) {
-        lastPush = true
-        return new Push(vars)
-      }
-      if (!lastPush) operations ::= new Push(vars)
-      if (nPush > 0 && !lastPush) operations ::= new Pop(vars)
-      // give more weight to the RestrictDomain operation
-      // since it allows multiple operations (<,>,=,!=,<=,>=)
-      for (_ <- 0 until 4)
-        operations ::= new RestrictDomain(vars, generator.random)
-    } else if (nPush > 0) return new Pop(vars) //nothing to restrict anymore => pop
-    //random result
-    else return new BranchOp(vars) //should be taken if all Fixed before any branching
-    val indexOp = generator.random.nextInt(operations.size)
-    if (operations(indexOp).isInstanceOf[Push]) lastPush = true
-    else lastPush = false
-    operations(indexOp)
+    if(vars.forall(_.size==1) && nPush==0)
+      new BranchOp(vars) //no dives possible from the start
+    else if(nPush==0) {
+      doNPop = 0
+      lastPush = true
+      new Push(vars)
+    }else if(doNPop>0)
+      new Pop(vars)
+    else if(vars.exists(_.isEmpty) || vars.forall(_.size == 1)){
+      doNPop = generator.random.nextInt(nPush)
+      new Pop(vars)
+    }else if(!lastPush){
+      lastPush = true
+      new Push(vars)
+    }else{
+      new RestrictDomain(vars, generator.random)
+    }
   }
 }

@@ -13,7 +13,7 @@ import scala.util.Random
  */
 class VariablesGenerator {
 
-
+  var nbDive = 25
   private[this] var nbVars: Int = 5
   private[this] var densities: Array[Double] = Array.fill(nbVars)(4.0 / 20.0)
   private[this] var ranges: Array[(Int, Int)] = Array.fill(nbVars)((-10, 10))
