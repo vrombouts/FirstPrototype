@@ -15,4 +15,6 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 
-unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "main" / "examples"
+unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "main" / "examples" / "java"
+
+unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "main" / "examples" / "scala"

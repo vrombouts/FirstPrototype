@@ -11,10 +11,10 @@ object CPChecker {
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
            (implicit generator: VariablesGenerator): Unit = {
     this.generator = generator
-    val stats = new StrictStatistics(20,"AC")
+    val stats = new StrictStatistics(20, "AC")
     forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering,stats)
+        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
     }.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
@@ -23,32 +23,32 @@ object CPChecker {
   def stronger(strongerFiltering: Filter, filtering: Filter)
               (implicit generator: VariablesGenerator): Unit = {
     this.generator = generator
-    val stats = new UnstrictStats(20,"AC")
+    val stats = new UnstrictStats(20, "AC")
     forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
-      checkConstraint(x.toArray, strongerFiltering, filtering,stats)
-    }
+        checkConstraint(x.toArray, strongerFiltering, filtering, stats)
+    }.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
   }
 
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
            (implicit generator: VariablesGenerator): Unit = {
-    val stats = new StrictStatistics(20,"AC")
+    val stats = new StrictStatistics(20, "AC")
     forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering,stats)
+        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
     }.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
-           (implicit generator: VariablesGenerator): Unit = {
-    val stats = new UnstrictStats(20,"AC")
+              (implicit generator: VariablesGenerator): Unit = {
+    val stats = new UnstrictStats(20, "AC")
     forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, strongerFiltering, filtering,stats)
+        checkConstraint(x.toArray, strongerFiltering, filtering, stats)
     }.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
@@ -72,7 +72,7 @@ object CPChecker {
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: Filter,
                       testedFiltering: Filter,
-                     stats:Statistics)
+                      stats: Statistics)
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,
@@ -86,7 +86,6 @@ object CPChecker {
   ////////INCREMENTAL LOGIC /////////////
 
 
-
   private[this] def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
     false
@@ -95,7 +94,7 @@ object CPChecker {
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: FilterWithState,
                       testedFiltering: FilterWithState,
-                     stats:Statistics)
+                      stats: Statistics)
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,
@@ -109,7 +108,7 @@ object CPChecker {
     var branches: List[BranchOp] = List()
     var dives = 0
     var lastPop = false
-    while(dives<generator.nbDive) {
+    while (dives < generator.nbDive) {
       val b: BranchOp = getBranch(nPush, vars)
       branches ::= b
       b match {
@@ -117,7 +116,7 @@ object CPChecker {
           lastPop = false
           nPush += 1
         case _: Pop =>
-          if(!lastPop) dives += 1
+          if (!lastPop) dives += 1
           lastPop = true
           nPush -= 1
         case _: RestrictDomain => lastPop = false
@@ -143,21 +142,21 @@ object CPChecker {
   private[this] var doNPop = 0
 
   private[this] def getBranch(nPush: Int, vars: Array[Set[Int]]): BranchOp = {
-    if(vars.forall(_.size==1) && nPush==0)
+    if (vars.forall(_.size == 1) && nPush == 0)
       new BranchOp(vars) //no dives possible from the start
-    else if(nPush==0) {
+    else if (nPush == 0) {
       doNPop = 0
       lastPush = true
       new Push(vars)
-    }else if(doNPop>0)
+    } else if (doNPop > 0)
       new Pop(vars)
-    else if(vars.exists(_.isEmpty) || vars.forall(_.size == 1)){
+    else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
       doNPop = generator.random.nextInt(nPush)
       new Pop(vars)
-    }else if(!lastPush){
+    } else if (!lastPush) {
       lastPush = true
       new Push(vars)
-    }else{
+    } else {
       new RestrictDomain(vars, generator.random)
     }
   }
