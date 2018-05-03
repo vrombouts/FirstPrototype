@@ -6,27 +6,49 @@ import org.scalacheck.Prop.forAll
 
 object CPChecker {
 
-  var stats:Statistics = new StrictStatistics(20, "AC")
-
-
   private[this] var generator: VariablesGenerator = new VariablesGenerator
 
-  def check(bugFreeFiltering  :Filter, testedFiltering: Filter)
-           (implicit generator: VariablesGenerator):Unit = {
+  def check(bugFreeFiltering: Filter, testedFiltering: Filter)
+           (implicit generator: VariablesGenerator): Unit = {
     this.generator = generator
+    val stats = new StrictStatistics(20,"AC")
     forAll(generator.gen) { x =>
-      x.isEmpty || (x.length<generator.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering)
+      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering,stats)
     }.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
   }
 
-  def check(bugFreeFiltering  :FilterWithState, testedFiltering: FilterWithState)
-           (implicit generator: VariablesGenerator):Unit = {
+  def stronger(strongerFiltering: Filter, filtering: Filter)
+              (implicit generator: VariablesGenerator): Unit = {
+    this.generator = generator
+    val stats = new UnstrictStats(20,"AC")
     forAll(generator.gen) { x =>
-      x.isEmpty || (x.length<generator.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering)
+      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+      checkConstraint(x.toArray, strongerFiltering, filtering,stats)
+    }
+    stats.setGenerator(generator)
+    stats.print
+  }
+
+  def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
+           (implicit generator: VariablesGenerator): Unit = {
+    val stats = new StrictStatistics(20,"AC")
+    forAll(generator.gen) { x =>
+      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering,stats)
+    }.check(generator.getTestParameters)
+    stats.setGenerator(generator)
+    stats.print
+  }
+
+  def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
+           (implicit generator: VariablesGenerator): Unit = {
+    val stats = new UnstrictStats(20,"AC")
+    forAll(generator.gen) { x =>
+      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+        checkConstraint(x.toArray, strongerFiltering, filtering,stats)
     }.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
@@ -49,7 +71,8 @@ object CPChecker {
 
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: Filter,
-                      testedFiltering: Filter)
+                      testedFiltering: Filter,
+                     stats:Statistics)
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,
@@ -58,9 +81,6 @@ object CPChecker {
     //Then, we compare the two. If they are not equals, the constraint is not correct.
     stats.comparison(returnValues)
   }
-
-
-
 
 
   ////////INCREMENTAL LOGIC /////////////
@@ -74,7 +94,8 @@ object CPChecker {
 
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: FilterWithState,
-                      testedFiltering: FilterWithState)
+                      testedFiltering: FilterWithState,
+                     stats:Statistics)
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,

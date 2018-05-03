@@ -27,16 +27,16 @@ trait Incremental extends Base {
     }
   }
 
-  def push(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
-    domainsStorage.push(currentDomain)
-    currentDomain
+  def push(currentDomains: Array[Set[Int]]): Array[Set[Int]] = {
+    domainsStorage.push(currentDomains)
+    currentDomains
   }
 
-  def pop(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
+  def pop(currentDomains: Array[Set[Int]]): Array[Set[Int]] = {
     if (domainsStorage.nonEmpty)
       domainsStorage.pop()
     else
-      currentDomain
+      currentDomains
   }
 
   def checkConstraint(variables: Array[Set[Int]],

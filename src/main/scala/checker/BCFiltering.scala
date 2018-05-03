@@ -1,8 +1,14 @@
 package checker
 
+import java.util.function.Function
+
+import Conversions.checkerToScalaFunction
 import checker.constraints.Interval
 
 class BCFiltering(checker: Array[Int] => Boolean) extends Filter{
+
+  def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
+
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     applyBC(variables)
   }
