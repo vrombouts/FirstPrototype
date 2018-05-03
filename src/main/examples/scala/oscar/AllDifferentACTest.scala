@@ -13,7 +13,7 @@ object AllDifferentACTest {
     val c = new Constraint
     c.gen.setRangeForAll(-5, 5)
     c.checkAC(filteringAllDifferentAC, allDifferent)
-    val bugFree : Filter = new ACFiltering(allDifferent)
+    val bugFree : Filter = new ACFiltering(allDifferent _)
     val AllDiff : Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
         filteringAllDifferentAC(variables)

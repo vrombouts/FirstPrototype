@@ -68,6 +68,7 @@ object SumBCIncrTest extends App {
   }
 
   val c = new Constraint
+  //c.nbBranchOp = 35
   c.gen.setSeed(1000)
   for (i <- -50 to 50 by 5)
     c.checkBC(init(_, i), filtering, checker(_, i))
