@@ -16,7 +16,7 @@ object GCCACTest {
     }
     implicit val generator:VariablesGenerator = Generators.gcc(values)
     generator.setSeed(100)
-    CPChecker.check(new ACFiltering(Checkers.gcc(_,values)), myFilter)
+    CPChecker.check(new ACFiltering(Checkers.gccVar(_,values)), myFilter)
   }
 
   private def gccACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {

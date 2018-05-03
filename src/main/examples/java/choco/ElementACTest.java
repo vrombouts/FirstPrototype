@@ -51,7 +51,8 @@ public class ElementACTest {
         generator.setNVar(7);
         generator.addVar(1.5 / 7.0, 0, 10);
         generator.addVar(0.1, -10, 10);
-        CPChecker.check(new ACFiltering(elementChecker()), new MyFilter(), generator);
+        ACFiltering elementary = new ACFiltering(Checkers.element());
+        CPChecker.check(elementary, new MyFilter(), generator);
     }
 
     private static Function<Integer[], Boolean> elementChecker() {
