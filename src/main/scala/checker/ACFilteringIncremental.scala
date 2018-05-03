@@ -1,10 +1,16 @@
 package checker
 
+import java.util.function.Function
+
+import Conversions.checkerToScalaFunction
 import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
 
 import scala.collection.mutable
 
-class ACFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWithState{
+class ACFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWithState {
+
+  def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
+
   private[this] var domainsStorage: mutable.Stack[Array[Set[Int]]] = _
 
   override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
