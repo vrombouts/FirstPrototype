@@ -11,16 +11,6 @@ import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
  */
 class CheckTests extends UnitSpec {
 
-  def dummyConstraint(x: Array[Set[Int]]): Array[Set[Int]] = x
-
-  @throws[NoSolutionException]
-  def throwExceptionConstraint(x: Array[Set[Int]]): Array[Set[Int]] = throw new NoSolutionException
-
-  def noSolutionConstraint(x: Array[Set[Int]]): Array[Set[Int]] = Array.fill(x.length)(Set[Int]())
-
-  def trueChecker(x: Array[Int]): Boolean = true
-
-  def falseChecker(x: Array[Int]): Boolean = false
   val acTrue  = new ACFiltering(Checkers.trueConstraint _)
   val acFalse = new ACFiltering(Checkers.falseConstraint _)
 
@@ -106,7 +96,7 @@ class CheckTests extends UnitSpec {
       }
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
-        currentVars = dummyConstraint(variables)
+        currentVars = variables
         if (variables(4).size > 1) currentVars(4) = variables(4).tail
         currentVars
       }
@@ -216,7 +206,7 @@ class CheckTests extends UnitSpec {
       }
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
-        currentVars = dummyConstraint(variables)
+        currentVars = variables
         if (variables(4).size > 1) currentVars(4) = variables(4).tail
         currentVars
       }
@@ -325,7 +315,7 @@ class CheckTests extends UnitSpec {
       }
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
-        currentVars = dummyConstraint(variables)
+        currentVars = variables
         if (variables(4).size > 1) currentVars(4) = variables(4).tail
         currentVars
       }
