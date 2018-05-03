@@ -1,7 +1,6 @@
 package choco;
 
-import checker.JCpChecker;
-import checker.NoSolutionException;
+import checker.*;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.constraints.ConstraintsName;
@@ -9,6 +8,7 @@ import org.chocosolver.solver.constraints.nary.circuit.CircuitConf;
 import org.chocosolver.solver.constraints.nary.circuit.PropCircuitSCC;
 import org.chocosolver.solver.variables.IntVar;
 
+import java.lang.reflect.Array;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -19,10 +19,24 @@ public class CircuitTest {
         JCpChecker jc = new JCpChecker();
         jc.gen().setRangeForAll(0,4);
         jc.gen().setDensityForAll(0.8);
-        jc.check(filter(),isSolution());
+        //jc.check(filtering(),isSolution());
+        class MyFilter extends JFilter {
+            public Set<Integer>[] filterJava(Set<Integer>[] variables){
+                return filtering().apply(variables);
+            }
+        }
+        /*Filter bugfree = new ACFiltering(variables -> {
+        if(variables.length != currentVars.length) return true;
+        boolean[] isVisited = new boolean[variables.length];
+        return isSol(variables,0,0,isVisited);
+        });*/
+        VariablesGenerator gen = new VariablesGenerator();
+        Filter bugfree = new ACFiltering(isSolution());
+        Filter tested =  new MyFilter();
+        CPChecker.check(bugfree , tested, gen);
     }
 
-    private static Function<Set<Integer>[], Set<Integer>[]> filter(){
+    private static Function<Set<Integer>[], Set<Integer>[]> filtering(){
         return variables ->{
             Model model = new Model("Testing circuitSCC implementation");
             currentVars = new IntVar[variables.length];

@@ -1,6 +1,6 @@
 package oscar
 
-import checker.NoSolutionException
+import checker._
 import checker.constraints.Constraint
 import oscar.algo.Inconsistency
 import oscar.cp.{CPIntVar, CPSolver}
@@ -11,7 +11,7 @@ object CircuitTest extends App {
   implicit private var solver: CPSolver = new CPSolver
   private var currentVars: Array[CPIntVar] = _
 
-  private def Circuit(vars: Array[Set[Int]]): Array[Set[Int]] = {
+  private def circuitFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     solver = CPSolver()
     currentVars = vars.map(x => CPIntVar(x))
     val ad = circuit(currentVars)
@@ -49,5 +49,10 @@ object CircuitTest extends App {
   val c = new Constraint
   c.gen.setRangeForAll((0, 4))
   c.gen.setDensityForAll(0.8)
-  c.check(Circuit, checker)
+  c.check(circuitFiltering, checker)
+  val ci:Filter = new Filter{
+    def filter(variables: Array[Set[Int]]): Array[Set[Int]] = circuitFiltering(variables)
+  }
+  implicit val generator: VariablesGenerator = new VariablesGenerator
+  CPChecker.stronger(new ACFiltering(checker _), ci)
 }
