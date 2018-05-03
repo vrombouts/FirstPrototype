@@ -1,8 +1,12 @@
 package checker
 
 import scala.collection.mutable
-
+import java.util.function.Function
+import Conversions.checkerToScalaFunction
 class ACFiltering(checker: Array[Int] => Boolean) extends Filter{
+
+  def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
+
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     applyAC(variables)
   }
@@ -55,10 +59,9 @@ class ACFiltering(checker: Array[Int] => Boolean) extends Filter{
       var set:Set[Array[Int]] = Set[Array[Int]]()
       x.foreach(elem => acc.foreach(y => set += y:+elem))
       set
-    })
-    val sols:Set[Array[Int]] = solutions.filter(x => checker(x))
-    if(sols.isEmpty) return Array.fill(variables.length)(Set[Int]())
-    toDomainsAC(sols.toArray)
+    }).filter(x => checker(x))
+    if(solutions.isEmpty) return Array.fill(variables.length)(Set[Int]())
+    toDomainsAC(solutions.toArray)
   }*/
 
 }
