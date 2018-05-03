@@ -29,6 +29,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckAC for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acFalse, dummyFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -36,6 +37,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckAC for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, throwExceptionFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -43,6 +45,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckAC for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, noSolFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -50,6 +53,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckAC for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, dummyFilter)
     assert(CPChecker.stats.nbFailedTests == 0)
   }
@@ -57,6 +61,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckAC with all tests correct " should "perform 100 tests" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, dummyFilter)
     assert(CPChecker.stats.getNbExecutedTests == 100)
   }
@@ -70,6 +75,7 @@ class CheckTests extends UnitSpec {
     generator.setRange(1, (-2, 2))
     generator.setDensity(4, 0.3)
     generator.setSeed(125)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, dummyFilter)
     assert(CPChecker.stats.getGenerator == generator)
     assert(CPChecker.stats.getNbExecutedTests == 150)
@@ -102,6 +108,7 @@ class CheckTests extends UnitSpec {
       }
     }
     val acIncTrue:FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acIncTrue, dummyInc)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -131,6 +138,7 @@ class CheckTests extends UnitSpec {
       }
     }
     val acIncTrue:FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acIncTrue, dummyInc)
     assert(CPChecker.stats.nbFailedTests == 0)
   }
@@ -142,6 +150,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckBC for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcFalse, dummyFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -149,6 +158,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckBC for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue , throwExceptionFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -156,6 +166,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckBC for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, noSolFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -163,6 +174,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckBC for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, dummyFilter)
     assert(CPChecker.stats.nbFailedTests == 0)
   }
@@ -170,6 +182,7 @@ class CheckTests extends UnitSpec {
   "Calling CheckBC with all tests correct " should "perform 100 tests" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, dummyFilter)
     assert(CPChecker.stats.getNbExecutedTests == 100)
   }
@@ -181,6 +194,7 @@ class CheckTests extends UnitSpec {
     generator.setRange(1, (-2, 2))
     generator.setDensity(4, 0.3)
     generator.setSeed(125)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, dummyFilter)
     assert(CPChecker.stats.getGenerator == generator)
     assert(CPChecker.stats.getNbExecutedTests == 150)
@@ -212,6 +226,7 @@ class CheckTests extends UnitSpec {
       }
     }
     val bcIncTrue = new BCFilteringIncremental(Checkers.trueConstraint _)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcIncTrue, dummyInc)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -241,6 +256,7 @@ class CheckTests extends UnitSpec {
       }
     }
     val bcIncTrue = new BCFilteringIncremental(Checkers.trueConstraint _)
+    CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcIncTrue, dummyInc)
     assert(CPChecker.stats.nbFailedTests == 0)
   }
@@ -249,6 +265,7 @@ class CheckTests extends UnitSpec {
   "Calling Check for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect no error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acFalse, dummyFilter)
     assert(CPChecker.stats.nbFailedTests == 0)
   }
@@ -256,6 +273,7 @@ class CheckTests extends UnitSpec {
   "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, throwExceptionFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -263,6 +281,7 @@ class CheckTests extends UnitSpec {
   "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "have at least one error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, noSolFilter)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -270,6 +289,7 @@ class CheckTests extends UnitSpec {
   "Calling Check for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, dummyFilter)
     assert(CPChecker.stats.nbFailedTests == 0)
   }
@@ -277,6 +297,7 @@ class CheckTests extends UnitSpec {
   "Calling Check with all tests correct " should "perform 100 tests" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, dummyFilter)
     assert(CPChecker.stats.getNbExecutedTests == 100)
   }
@@ -290,6 +311,7 @@ class CheckTests extends UnitSpec {
     generator.setRange(1, (-2, 2))
     generator.setDensity(4, 0.3)
     generator.setSeed(125)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, dummyFilter)
     assert(CPChecker.stats.getGenerator == generator)
     assert(CPChecker.stats.getNbExecutedTests == 150)
@@ -321,6 +343,7 @@ class CheckTests extends UnitSpec {
       }
     }
     val acIncTrue = new ACFilteringIncremental(Checkers.trueConstraint _)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acIncTrue, dummyInc)
     assert(CPChecker.stats.nbFailedTests > 0)
   }
@@ -328,6 +351,7 @@ class CheckTests extends UnitSpec {
   "Calling Check Incremental on a constraint that returns always true with an init removing no value " should " detect no error" in {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
+    CPChecker.stats = new UnstrictStats(20,"AC")
     val dummyInc :FilterWithState = new FilterWithState {
       var currentVars: Array[Set[Int]] = Array()
       val stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
