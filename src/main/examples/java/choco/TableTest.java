@@ -53,7 +53,8 @@ public class TableTest {
                 return transform(x);
             }
         }
-        CPChecker.check(new ACFiltering(tableChecker()), new MyFilter(), new VariablesGenerator());
+        VariablesGenerator gen = Generators.table(table);
+        CPChecker.check(new ACFiltering(tableChecker()), new MyFilter(), gen);
     }
 
     private static Function<Integer[], Boolean> tableChecker() {

@@ -1,7 +1,6 @@
 package oscar
 
-import checker.constraints.Constraint
-import checker.NoSolutionException
+import checker.{NoSolutionException, _}
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.ElementVarAC
@@ -16,15 +15,33 @@ import oscar.cp.core.CPPropagStrength
  *  - a variable v
  *  Then the constraint is x[i]=v
  */
-object ElementACTest extends App {
+object ElementACTest {
   var size = 0
+
+  def main(args: Array[String]): Unit = {
+    val myFilter: Filter = new Filter {
+      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
+    }
+    implicit val generator: VariablesGenerator = new VariablesGenerator()
+    //First we set the seed:
+    generator.setSeed(123456)
+    generator.setNbTests(124)
+
+    //Then we set x with a size of 7
+    generator.setNVar(7)
+    //add variable i in generator
+    generator.addVar(0.5, (0, 6))
+    //add variable v in generator
+    generator.addVar(0.1, (-11, 11))
+    CPChecker.check(new ACFiltering(elementChecker _), myFilter)
+  }
 
   /*
    * This function apply the ElementVarAC constraint of OscaR on the variables
    * passed in argument in this format: vars = [x1,x2,...xn, i,v]
    * It then return those variables filtered
    */
-  private def elementAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
+  private def elementACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
     size = vars.length
     val variables = vars.dropRight(2).map(x => CPIntVar(x))
@@ -44,7 +61,7 @@ object ElementACTest extends App {
    * respect the element constraint with its last two element being
    * the variables i and v (solution = [x1,x2,..xn, i,v]
    */
-  private def elementCheck(solution: Array[Int]): Boolean = {
+  private def elementChecker(solution: Array[Int]): Boolean = {
     if (size == solution.length) {
       val i = solution(size - 2)
       val v = solution(size - 1)
@@ -53,17 +70,5 @@ object ElementACTest extends App {
     true
   }
 
-  val c = new Constraint
 
-  //First we set the seed:
-  c.gen.setSeed(123456)
-  c.gen.setNbTests(124)
-
-  //Then we set x with a size of 7
-  c.gen.setNVar(7)
-  //add variable i in generator
-  c.gen.addVar(0.5, (0, 6))
-  //add variable v in generator
-  c.gen.addVar(0.1, (-11, 11))
-  c.checkAC(elementAC, elementCheck)
 }

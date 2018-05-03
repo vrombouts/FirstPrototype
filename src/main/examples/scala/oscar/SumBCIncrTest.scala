@@ -1,18 +1,32 @@
 package oscar
 
 import checker.constraints.incremental._
-import checker.NoSolutionException
-import checker.constraints.Constraint
+import checker.{NoSolutionException, _}
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints._
 
-object SumBCIncrTest extends App {
+object SumBCIncrTest {
 
   implicit private var solver: CPSolver = new CPSolver
   private var currentVars: Array[CPIntVar] = _
 
-  private def init(vars: Array[Set[Int]], c: Int): Array[Set[Int]] = {
+  def main(args: Array[String]): Unit = {
+    implicit val generator: VariablesGenerator = new VariablesGenerator
+    generator.setSeed(1000)
+    for (i <- -50 to 50 by 5) {
+      val bugFree = new BCFilteringIncremental(Checkers.sum(_, i))
+      val tested = new FilterWithState {
+        override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = sumFiltering(branching)
+
+        override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = sumSetup(variables, i)
+      }
+      CPChecker.check(bugFree, tested)
+    }
+  }
+
+
+  private def sumSetup(vars: Array[Set[Int]], c: Int): Array[Set[Int]] = {
     solver = CPSolver()
     currentVars = vars.map(x => CPIntVar(x))
     val ad = sum(currentVars).eq(c)
@@ -25,7 +39,7 @@ object SumBCIncrTest extends App {
     currentVars.map(x => x.toArray.toSet)
   }
 
-  private def filtering(branch: BranchOp): Array[Set[Int]] = {
+  private def sumFiltering(branch: BranchOp): Array[Set[Int]] = {
     branch match {
       case _: Push =>
         solver.propagate()
@@ -59,17 +73,9 @@ object SumBCIncrTest extends App {
     }
   }
 
-  def checker(sol: Array[Int], c: Int): Boolean = {
-    if (sol.length == currentVars.length) {
-      if (sol.sum == c) return true
-      else return false
-    }
-    true
+  def sumChecker(sol: Array[Int], c: Int): Boolean = {
+    if (sol.sum == c) true
+    else false
   }
 
-  val c = new Constraint
-  //c.nbBranchOp = 35
-  c.gen.setSeed(1000)
-  for (i <- -50 to 50 by 5)
-    c.checkBC(init(_, i), filtering, checker(_, i))
 }

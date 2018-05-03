@@ -1,16 +1,25 @@
 package oscar
 
-import checker.NoSolutionException
-import checker.constraints.Gcc
+import checker.{NoSolutionException, _}
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.GCCVarAC
 import oscar.cp.core.CPPropagStrength
 
-object GCCACTest extends App {
+object GCCACTest {
   val values = Array(1,2,3)
 
-  private def gccAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
+  def main(args:Array[String]):Unit={
+
+    val myFilter: Filter = new Filter{
+      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = gccACFiltering(variables)
+    }
+    implicit val generator:VariablesGenerator = Generators.gcc(values)
+    generator.setSeed(100)
+    CPChecker.check(new ACFiltering(Checkers.gcc(_,values)), myFilter)
+  }
+
+  private def gccACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
     val assignment = vars.dropRight(values.length).map(x => CPIntVar(x))
     val cards = vars.drop(vars.length - values.length).map(x => CPIntVar(x))
@@ -25,7 +34,5 @@ object GCCACTest extends App {
     assignment.map(x => x.toArray.toSet) ++ cards.map(x => x.toArray.toSet)
   }
 
-  val c = new Gcc(values)
-  c.gen.setSeed(100)
-  c.checkAC(gccAC,null)
+
 }
