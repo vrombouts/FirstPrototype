@@ -1,8 +1,6 @@
 package choco;
 
-import checker.JCpChecker;
-import checker.NoSolutionException;
-import checker.constraints.AllDifferent;
+import checker.*;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffAC;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffBC;
@@ -15,31 +13,31 @@ import java.util.function.Function;
 
 public class AllDifferentTest {
 
-    public static void testAllDifferentBC() {
-        JCpChecker jc = new JCpChecker();
-        jc.gen().setRangeForAll(-5,5);
-        jc.checkBC(applyBC(), applyAllDifferent());
+    private static void testAllDifferentBC() {
+        class MyFilter extends JFilter {
+            public Set<Integer>[] filterJava(Set<Integer>[] domains) {
+                return filteringBC().apply(domains);
+            }
+        }
+        VariablesGenerator generator = new VariablesGenerator();
+        generator.setRangeForAll(-5, 5);
+        CPChecker.check(new BCFiltering(checkerAllDifferent()), new MyFilter(), generator);
     }
 
-    public static void testAllDifferentAC() {
-        JCpChecker jc = new JCpChecker();
-        jc.gen().setRangeForAll(-5,5);
-        jc.checkAC(applyAC(), applyAllDifferent());
+    private static void testAllDifferentAC() {
+        class MyFilter extends JFilter {
+            public Set<Integer>[] filterJava(Set<Integer>[] domains) {
+                return filteringAC().apply(domains);
+            }
+        }
+        VariablesGenerator generator = new VariablesGenerator();
+        generator.setRangeForAll(-5, 5);
+        CPChecker.check(new ACFiltering(checkerAllDifferent()), new MyFilter(), generator);
     }
 
-    public static void testAllDifferentBC2() {
-        JCpChecker jc = new JCpChecker(new AllDifferent());
-        jc.checkBC(applyBC(), null);
-    }
-
-    public static void testAllDifferentAC2() {
-        JCpChecker jc = new JCpChecker(new AllDifferent());
-        jc.checkAC(applyAC(), null);
-    }
-
-    public static Function<Set<Integer>[], Set<Integer>[]> applyAC() {
+    private static Function<Set<Integer>[], Set<Integer>[]> filteringAC() {
         return variables -> {
-            Model model = new Model("allDifferent problem");
+            Model model = new Model("testing choco's filtering for allDifferent");
             IntVar[] x = new IntVar[variables.length];
             for (int i = 0; i < variables.length; i++) {
                 int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
@@ -55,7 +53,7 @@ public class AllDifferentTest {
         };
     }
 
-    public static Function<Set<Integer>[], Set<Integer>[]> applyBC() {
+    private static Function<Set<Integer>[], Set<Integer>[]> filteringBC() {
         return variables -> {
             Model model = new Model("allDifferent problem");
             IntVar[] x = new IntVar[variables.length];
@@ -73,10 +71,10 @@ public class AllDifferentTest {
         };
     }
 
-    public static Function<Integer[], Boolean> applyAllDifferent() {
+    private static Function<Integer[], Boolean> checkerAllDifferent() {
         return integers -> {
             Set s = new HashSet<Integer>(Arrays.asList(integers));
-            return s.size()==integers.length;
+            return s.size() == integers.length;
         };
     }
 
@@ -88,21 +86,13 @@ public class AllDifferentTest {
         System.out.println("Begin test allDifferentAC");
         testAllDifferentAC();
         System.out.println("End test allDifferentAC");
-
-        System.out.println("Begin test allDifferentBC2");
-        testAllDifferentBC2();
-        System.out.println("End test allDifferentBC2");
-
-        System.out.println("Begin test allDifferentAC2");
-        testAllDifferentAC2();
-        System.out.println("End test allDifferentAC2");
     }
 
     /*
      * returns the domains in the type Set<Integer> from the choco
      * domains type IntVar
      */
-    public static Set<Integer>[] transform(IntVar[] input) {
+    private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {
             result[i] = new HashSet<Integer>();

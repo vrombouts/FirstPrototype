@@ -8,65 +8,60 @@ import org.chocosolver.solver.constraints.nary.circuit.CircuitConf;
 import org.chocosolver.solver.constraints.nary.circuit.PropCircuitSCC;
 import org.chocosolver.solver.variables.IntVar;
 
-import java.lang.reflect.Array;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
 public class CircuitTest {
     private static IntVar[] currentVars;
-    public static void main(String [] args){
-        JCpChecker jc = new JCpChecker();
-        jc.gen().setRangeForAll(0,4);
-        jc.gen().setDensityForAll(0.8);
-        //jc.check(filtering(),isSolution());
+
+    public static void main(String[] args) {
         class MyFilter extends JFilter {
-            public Set<Integer>[] filterJava(Set<Integer>[] variables){
-                return filtering().apply(variables);
+            public Set<Integer>[] filterJava(Set<Integer>[] variables) {
+                return circuitFiltering().apply(variables);
             }
         }
-        /*Filter bugfree = new ACFiltering(variables -> {
-        if(variables.length != currentVars.length) return true;
-        boolean[] isVisited = new boolean[variables.length];
-        return isSol(variables,0,0,isVisited);
-        });*/
         VariablesGenerator gen = new VariablesGenerator();
-        Filter bugfree = new ACFiltering(isSolution());
-        Filter tested =  new MyFilter();
-        CPChecker.check(bugfree , tested, gen);
+        gen.setRangeForAll(0, 4);
+        gen.setDensityForAll(0.8);
+        Filter bugfree = new ACFiltering(circuitChecker());
+        Filter tested = new MyFilter();
+        CPChecker.stronger(bugfree, tested, gen);
     }
 
-    private static Function<Set<Integer>[], Set<Integer>[]> filtering(){
-        return variables ->{
-            Model model = new Model("Testing circuitSCC implementation");
+    private static Function<Set<Integer>[], Set<Integer>[]> circuitFiltering() {
+        return variables -> {
+            Model model = new Model("Testing choco's circuitSCC filtering");
             currentVars = new IntVar[variables.length];
-            for(int i=0; i<variables.length;i++) {
+            for (int i = 0; i < variables.length; i++) {
                 int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
                 currentVars[i] = model.intVar("" + i, b);
             }
-            Constraint ctr = new Constraint(ConstraintsName.CIRCUIT,new PropCircuitSCC(currentVars, 0, CircuitConf.ALL));
+            Constraint ctr = new Constraint(ConstraintsName.CIRCUIT, new PropCircuitSCC(currentVars, 0, CircuitConf.ALL));
             model.post(ctr);
-            try{model.getSolver().propagate();}
-            catch (Exception e){throw new NoSolutionException("No solution");}
+            try {
+                model.getSolver().propagate();
+            } catch (Exception e) {
+                throw new NoSolutionException("No solution");
+            }
             return transform(currentVars);
         };
     }
 
-    private static boolean isSol(Integer [] variables, int index, int acc, boolean [] isVisited){
-        if(variables[index]<0 || variables[index]>=variables.length)return false;
-        if(isVisited[variables[index]]) return false;
+    private static boolean circChecker(Integer[] variables, int index, int acc, boolean[] isVisited) {
+        if (variables[index] < 0 || variables[index] >= variables.length) return false;
+        if (isVisited[variables[index]]) return false;
         isVisited[variables[index]] = true;
-        if(acc == variables.length-1){
-            if(variables[index]==0) return true;
-            else return false;
+        if (acc == variables.length - 1) {
+            return (variables[index] == 0);
         }
-        return isSol(variables,variables[index],acc+1,isVisited);
+        return circChecker(variables, variables[index], acc + 1, isVisited);
     }
-    private static Function<Integer[], Boolean> isSolution(){
+
+    private static Function<Integer[], Boolean> circuitChecker() {
         return variables -> {
-            if(variables.length != currentVars.length) return true;
             boolean[] isVisited = new boolean[variables.length];
-            return isSol(variables,0,0,isVisited);
+            return circChecker(variables, 0, 0, isVisited);
         };
     }
 
