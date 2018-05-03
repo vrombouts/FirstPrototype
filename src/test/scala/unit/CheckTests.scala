@@ -139,7 +139,7 @@ class CheckTests extends UnitSpec {
     val acIncTrue:FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acIncTrue, dummyInc)
-    //assert(CPChecker.stats.nbFailedTests == 0)
+    assert(CPChecker.stats.nbFailedTests == 0)
   }
 
 

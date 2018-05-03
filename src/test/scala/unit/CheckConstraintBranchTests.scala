@@ -32,8 +32,6 @@ class CheckConstraintBranchTests extends UnitSpec {
   generator.setSeed(100)
   generator.setNbTests(1)
   //set seed of CPChecker
-  CPChecker.check(new ACFiltering(Checkers.trueConstraint _),
-    new ACFiltering(Checkers.trueConstraint _))
 
   "checkConstraint with an empty domain or empty" should "return false if init return non-empty domains" in {
     val inc: FilterWithState = new FilterWithState {
