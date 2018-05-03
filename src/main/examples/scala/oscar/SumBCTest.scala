@@ -1,13 +1,21 @@
 package oscar
 
-import checker.constraints.Sum
-import checker.NoSolutionException
+import checker.{NoSolutionException, _}
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.core.CPPropagStrength
 
-object SumBCTest extends App {
-  private def GT(vars: Array[Set[Int]]): Array[Set[Int]] = {
+object SumBCTest {
+
+  def main(args: Array[String]): Unit = {
+    val myFilter: Filter = new Filter {
+      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = sumGTFiltering(variables)
+    }
+    implicit val generator: VariablesGenerator = new VariablesGenerator()
+    CPChecker.check(new BCFiltering(sumChecker _), myFilter)
+  }
+
+  private def sumGTFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
     val variables = vars.map(x => CPIntVar(x))
     val ad = sum(variables) > 15
@@ -19,6 +27,9 @@ object SumBCTest extends App {
     variables.map(x => x.toArray.toSet)
   }
 
-  val s:Sum = new Sum(">",15)
-  s.checkBC(GT, null)
+  def sumChecker(sol: Array[Int]): Boolean = {
+    if (sol.sum > 15) true
+    else false
+  }
+
 }
