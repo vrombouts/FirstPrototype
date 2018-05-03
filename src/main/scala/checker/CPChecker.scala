@@ -149,15 +149,18 @@ object CPChecker {
       doNPop = 0
       lastPush = true
       new Push(vars)
-    } else if (doNPop > 0)
+    } else if (doNPop > 0) {
+      lastPush = false
       new Pop(vars)
-    else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
+    }else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
       doNPop = generator.random.nextInt(nPush)
+      lastPush=false
       new Pop(vars)
     } else if (!lastPush) {
       lastPush = true
       new Push(vars)
     } else {
+      lastPush = false
       new RestrictDomain(vars, generator.random)
     }
   }
