@@ -250,7 +250,7 @@ class CheckTests extends UnitSpec {
     implicit val generator: VariablesGenerator = new VariablesGenerator
     generator.setSeed(100)
     CPChecker.stronger(acFalse, dummyFilter)
-    assert(CPChecker.stats.nbFailedTests > 0)
+    assert(CPChecker.stats.nbFailedTests == 0)
   }
 
   "Calling Check for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
