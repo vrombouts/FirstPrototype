@@ -2,9 +2,9 @@ package checker.constraints
 
 class Interval(private var dom: Set[Int]) {
 
-  private var min: Int = domain.min
-  private var max: Int = domain.max
-  private var pos: Int = min
+  var min: Int = domain.min
+  var max: Int = domain.max
+  var pos: Int = min
 
   def position: Int = pos
 

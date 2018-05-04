@@ -77,4 +77,5 @@ class BCFiltering(checker: Array[Int] => Boolean) extends Filter{
     }
     false
   }
+
 }

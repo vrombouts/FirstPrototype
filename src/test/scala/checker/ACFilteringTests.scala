@@ -1,11 +1,11 @@
-package unit
+package checker
 
-import checker.{ACFiltering, Checkers, NoSolutionException}
+import org.scalatest.FlatSpec
 
-class ACFilteringTests extends UnitSpec {
+class ACFilteringTests extends FlatSpec {
 
   val ACTrue = new ACFiltering(Checkers.trueConstraint _)
-  val ACAllDiff = new ACFiltering(Checkers.allDifferent _)
+  val ACAllDiff = new ACFiltering(Checkers.allDifferent())
 
   "Calling filter for trueConstraint" should "return the input domains except if there is an empty domain" in {
     var a: Array[Set[Int]] = ACTrue.filter(Array(Set(0), Set(1)))

@@ -1,11 +1,11 @@
-package unit
+package checker
 
 import java.util
 
-import checker._
 import checker.constraints.incremental._
+import org.scalatest.FlatSpec
 
-class CheckConstraintBranchTests extends UnitSpec {
+class CheckConstraintBranchTests extends FlatSpec {
 
   val dummyInc : FilterWithState = new FilterWithState {
     var currentVars: Array[Set[Int]] = Array()

@@ -15,7 +15,7 @@ class BCFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWithS
 
   override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
     domainsStorage = mutable.Stack()
-    push(filteringBC(variables))
+    filteringBC(variables)
   }
 
   override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = {

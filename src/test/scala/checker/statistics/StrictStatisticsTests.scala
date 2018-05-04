@@ -1,12 +1,12 @@
-package unit.statistics
+package checker.statistics
 
 import checker.StrictStatistics
 import checker.constraints.incremental._
-import unit.UnitSpec
+import org.scalatest.FlatSpec
 
 import scala.util.Random
 
-class StrictStatisticsTests extends UnitSpec {
+class StrictStatisticsTests extends FlatSpec {
 
   val stats = new StrictStatistics("AC")
 

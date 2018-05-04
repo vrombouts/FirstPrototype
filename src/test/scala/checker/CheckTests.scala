@@ -1,14 +1,14 @@
-package unit
+package checker
 
 import java.util
 
-import checker._
 import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import org.scalatest.FlatSpec
 
 /*
  * This class contains the tests for the CheckAC, CheckBC and Check functions
  */
-class CheckTests extends UnitSpec {
+class CheckTests extends FlatSpec {
 
   val acTrue  = new ACFiltering(Checkers.trueConstraint _)
   val acFalse = new ACFiltering(Checkers.falseConstraint _)

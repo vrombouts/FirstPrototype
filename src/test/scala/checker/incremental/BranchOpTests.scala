@@ -1,9 +1,10 @@
-package unit.branchop
+package checker.incremental
 
 
 import checker.constraints.incremental.BranchOp
-import unit.UnitSpec
-class BranchOpTests extends UnitSpec {
+import org.scalatest.FlatSpec
+
+class BranchOpTests extends FlatSpec {
   val set1= Set(1)
   val set2 = Set(2)
   val set3=Set(3)

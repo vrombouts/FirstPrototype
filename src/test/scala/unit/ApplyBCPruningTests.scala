@@ -2,8 +2,9 @@ package unit
 
 import checker.NoSolutionException
 import checker.constraints.{AllDifferent, ConstraintPruning}
+import org.scalatest.FlatSpec
 
-class ApplyBCPruningTests extends UnitSpec {
+class ApplyBCPruningTests extends FlatSpec {
 
   val C = new AllDifferent
 

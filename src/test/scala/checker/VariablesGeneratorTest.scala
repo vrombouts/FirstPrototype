@@ -1,11 +1,12 @@
-package unit
+package checker
 
-import checker.VariablesGenerator
 import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
+import org.scalatest.FlatSpec
+
 import scala.util.Random
 
-class VariablesGeneratorTest extends UnitSpec {
+class VariablesGeneratorTest extends FlatSpec {
 
   var gen = new VariablesGenerator
   gen.random.setSeed(10000)

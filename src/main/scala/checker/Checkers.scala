@@ -38,7 +38,7 @@ object Checkers {
     false
   }
 
-  def sum(constant: Int, operator: String = "="): Array[Int] => Boolean = x => sum(x, constant, operator)
+  def sum(constant: Int, operator: String): Array[Int] => Boolean = x => sum(x, constant, operator)
 
   def table(solution: Array[Int], table: Set[Array[Int]]): Boolean = {
     table.exists(x => x.sameElements(solution))

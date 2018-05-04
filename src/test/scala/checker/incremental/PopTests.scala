@@ -1,9 +1,9 @@
-package unit.branchop
+package checker.incremental
 
 import checker.constraints.incremental.Pop
-import unit.UnitSpec
+import org.scalatest.FlatSpec
 
-class PopTests extends UnitSpec {
+class PopTests extends FlatSpec {
   val set1 = Set(1)
   val set2 = Set(2)
   val set3 = Set(3)

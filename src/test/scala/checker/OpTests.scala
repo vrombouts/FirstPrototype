@@ -1,9 +1,10 @@
-package unit
+package checker
 
-import checker.Op
+import org.scalatest.FlatSpec
+
 import scala.util.Random
 
-class OpTests extends UnitSpec {
+class OpTests extends FlatSpec {
   "opposite for an existing operation" should "return the opposite operation" in {
     assert(Op.opposite(">") == "<=")
     assert(Op.opposite(">=") == "<")

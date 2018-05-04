@@ -1,12 +1,12 @@
-package unit.branchop
+package checker.incremental
 
 import checker.Op
 import checker.constraints.incremental.RestrictDomain
-import unit.UnitSpec
+import org.scalatest.FlatSpec
 
 import scala.util.Random
 
-class RestrictDomainTests extends UnitSpec {
+class RestrictDomainTests extends FlatSpec {
 
   "RestrictDomain" should "set randomly its own restriction (x_index op constant) intelligently" in {
     val set1 = Set(1, 2)

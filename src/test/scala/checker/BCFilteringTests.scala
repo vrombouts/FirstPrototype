@@ -1,10 +1,10 @@
-package unit
+package checker
 
-import checker.{BCFiltering, Checkers, NoSolutionException}
+import org.scalatest.FlatSpec
 
-class BCFilteringTests extends UnitSpec {
+class BCFilteringTests extends FlatSpec {
 
-  val BCAllDiff = new BCFiltering(Checkers.allDifferent _)
+  val BCAllDiff = new BCFiltering(Checkers.allDifferent())
 
   "Calling filter for AllDifferent on domains [1] [1]" should "return an exception" in {
     assertThrows[NoSolutionException] {
