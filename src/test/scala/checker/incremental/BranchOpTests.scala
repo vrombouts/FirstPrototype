@@ -1,7 +1,5 @@
 package checker.incremental
 
-
-import checker.constraints.incremental.BranchOp
 import org.scalatest.FlatSpec
 
 class BranchOpTests extends FlatSpec {

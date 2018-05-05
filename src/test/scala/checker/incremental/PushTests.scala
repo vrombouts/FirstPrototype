@@ -1,6 +1,5 @@
 package checker.incremental
 
-import checker.constraints.incremental.Push
 import org.scalatest.FlatSpec
 
 class PushTests extends FlatSpec {

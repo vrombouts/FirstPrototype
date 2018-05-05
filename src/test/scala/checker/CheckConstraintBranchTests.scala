@@ -2,7 +2,8 @@ package checker
 
 import java.util
 
-import checker.constraints.incremental._
+import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.statistics.{Statistics, StrictStatistics}
 import org.scalatest.FlatSpec
 
 class CheckConstraintBranchTests extends FlatSpec {

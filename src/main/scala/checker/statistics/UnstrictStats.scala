@@ -1,4 +1,4 @@
-package checker
+package checker.statistics
 
 class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(nbBranchOp, filename) {
 

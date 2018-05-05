@@ -1,6 +1,6 @@
 package checker
 
-import checker.constraints.incremental._
+import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 import org.scalatest.FlatSpec
 
 import scala.util.Random

@@ -1,7 +1,7 @@
 package checker
 
-import checker.constraints.incremental.BranchOp
 import Conversions._
+import checker.incremental.BranchOp
 
 abstract class FilterWithState {
   def setup(variables: Array[Set[Int]]): Array[Set[Int]]

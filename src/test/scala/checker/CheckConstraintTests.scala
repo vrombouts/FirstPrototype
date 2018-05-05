@@ -1,5 +1,6 @@
 package checker
 
+import checker.statistics.{StrictStatistics, UnstrictStats}
 import org.scalatest.FlatSpec
 
 

@@ -1,7 +1,5 @@
 package checker.statistics
 
-import checker.UnstrictStats
-import checker.constraints.incremental._
 import org.scalatest.FlatSpec
 
 import scala.util.Random

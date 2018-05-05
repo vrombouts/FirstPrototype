@@ -1,6 +1,6 @@
 package oscar
 
-import checker.constraints.incremental._
+import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 import checker.{NoSolutionException, _}
 import oscar.algo.Inconsistency
 import oscar.cp._

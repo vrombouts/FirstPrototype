@@ -1,8 +1,9 @@
-package checker
+package checker.statistics
 
 import java.io._
 
-import checker.constraints.incremental.{BranchOp, Pop, Push}
+import checker.VariablesGenerator
+import checker.incremental.{BranchOp, Pop, Push}
 
 abstract class Statistics(nbBranchOp: Int, filename: String) {
 

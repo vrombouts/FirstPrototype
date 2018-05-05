@@ -1,5 +1,4 @@
-package checker
-
+package checker.statistics
 
 class StrictStatistics(nbBranchOp : Int, filename: String) extends Statistics(nbBranchOp, filename) {
 

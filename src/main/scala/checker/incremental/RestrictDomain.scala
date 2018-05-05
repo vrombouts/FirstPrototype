@@ -1,4 +1,4 @@
-package checker.constraints.incremental
+package checker.incremental
 
 import checker.Op
 import scala.util.Random

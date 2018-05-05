@@ -3,7 +3,6 @@ package checker
 import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
-import checker.constraints.Interval
 
 class BCFiltering(checker: Array[Int] => Boolean) extends Filter{
 

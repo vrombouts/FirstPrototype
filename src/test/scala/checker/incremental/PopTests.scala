@@ -1,6 +1,5 @@
 package checker.incremental
 
-import checker.constraints.incremental.Pop
 import org.scalatest.FlatSpec
 
 class PopTests extends FlatSpec {

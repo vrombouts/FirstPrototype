@@ -1,6 +1,7 @@
 package checker
 
-import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.statistics.{Statistics, StrictStatistics, UnstrictStats}
 import org.scalacheck.Prop.forAll
 
 

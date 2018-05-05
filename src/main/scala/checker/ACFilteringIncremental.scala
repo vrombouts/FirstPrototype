@@ -3,7 +3,7 @@ package checker
 import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
-import checker.constraints.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 
 import scala.collection.mutable
 

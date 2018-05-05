@@ -2,7 +2,10 @@ package choco;
 
 
 import checker.*;
-import checker.constraints.incremental.*;
+import checker.incremental.BranchOp;
+import checker.incremental.Pop;
+import checker.incremental.Push;
+import checker.incremental.RestrictDomain;
 import org.chocosolver.memory.IEnvironment;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;

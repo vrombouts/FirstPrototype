@@ -1,4 +1,4 @@
-package checker.constraints.incremental
+package checker.incremental
 
 class BranchOp(var domains: Array[Set[Int]]) {
   override def clone = new BranchOp(domains.clone)

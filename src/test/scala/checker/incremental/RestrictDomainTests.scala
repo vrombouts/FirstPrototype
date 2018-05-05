@@ -1,7 +1,6 @@
 package checker.incremental
 
 import checker.Op
-import checker.constraints.incremental.RestrictDomain
 import org.scalatest.FlatSpec
 
 import scala.util.Random
