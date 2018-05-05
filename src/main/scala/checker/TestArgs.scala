@@ -11,7 +11,7 @@ import scala.util.Random
  * Basic density: 0.2 for each variable
  * Basic range: [-10,10] for each variable
  */
-class VariablesGenerator {
+class TestArgs {
 
   var nbDive = 25
   private[this] var nbVars: Int = 5

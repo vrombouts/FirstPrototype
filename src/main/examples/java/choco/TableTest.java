@@ -6,10 +6,8 @@ import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.extension.Tuples;
 import org.chocosolver.solver.variables.IntVar;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 
 public class TableTest {
     private static Set<Integer[]> table = new HashSet();
@@ -53,7 +51,7 @@ public class TableTest {
                 return transform(x);
             }
         }
-        VariablesGenerator gen = Generators.table(table);
+        TestArgs gen = Generators.table(table);
         CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), gen);
     }
 

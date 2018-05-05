@@ -14,7 +14,7 @@ object GCCACTest {
     val myFilter: Filter = new Filter{
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = gccACFiltering(variables)
     }
-    implicit val generator:VariablesGenerator = Generators.gcc(values)
+    implicit val generator:TestArgs = Generators.gcc(values)
     generator.setSeed(100)
     CPChecker.check(new ACFiltering(Checkers.gccVar(_,values)), myFilter)
   }

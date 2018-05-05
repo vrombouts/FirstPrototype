@@ -29,7 +29,7 @@ class CheckConstraintBranchTests extends FlatSpec {
       currentVars
     }
   }
-  implicit val generator: VariablesGenerator = new VariablesGenerator
+  implicit val generator: TestArgs = new TestArgs
   generator.setSeed(100)
   generator.setNbTests(1)
   //set seed of CPChecker

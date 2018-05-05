@@ -12,7 +12,7 @@ object SumBCIncrTest {
   private var currentVars: Array[CPIntVar] = _
 
   def main(args: Array[String]): Unit = {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(1000)
     for (i <- -50 to 50 by 5) {
       val bugFree = new BCFilteringIncremental(Checkers.sum(_, i))

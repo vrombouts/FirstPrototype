@@ -7,11 +7,11 @@ import org.scalacheck.Prop.forAll
 
 object CPChecker {
 
-  private[this] var generator: VariablesGenerator = new VariablesGenerator
+  private[this] var generator: TestArgs = new TestArgs
   var stats: Statistics = new StrictStatistics(20, "AC")
 
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
-           (implicit generator: VariablesGenerator): Unit = {
+           (implicit generator: TestArgs): Unit = {
     this.generator = generator
     stats = new StrictStatistics(20, "AC")
     forAll(generator.gen) { x =>
@@ -23,7 +23,7 @@ object CPChecker {
   }
 
   def stronger(strongerFiltering: Filter, filtering: Filter)
-              (implicit generator: VariablesGenerator): Unit = {
+              (implicit generator: TestArgs): Unit = {
     this.generator = generator
     stats = new UnstrictStats(20, "AC")
     forAll(generator.gen) { x =>
@@ -35,7 +35,7 @@ object CPChecker {
   }
 
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
-           (implicit generator: VariablesGenerator): Unit = {
+           (implicit generator: TestArgs): Unit = {
     stats = new StrictStatistics(20, "AC")
     forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
@@ -46,7 +46,7 @@ object CPChecker {
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
-              (implicit generator: VariablesGenerator): Unit = {
+              (implicit generator: TestArgs): Unit = {
     stats = new UnstrictStats(20, "AC")
     forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||

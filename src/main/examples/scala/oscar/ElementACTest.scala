@@ -22,7 +22,7 @@ object ElementACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
     }
-    implicit val generator: VariablesGenerator = new VariablesGenerator()
+    implicit val generator: TestArgs = new TestArgs()
     //First we set the seed:
     generator.setSeed(123456)
     generator.setNbTests(124)

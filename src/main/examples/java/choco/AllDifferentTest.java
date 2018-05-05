@@ -19,7 +19,7 @@ public class AllDifferentTest {
                 return filteringBC().apply(domains);
             }
         }
-        VariablesGenerator generator = new VariablesGenerator();
+        TestArgs generator = new TestArgs();
         generator.setRangeForAll(-5, 5);
         CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), generator);
     }
@@ -30,7 +30,7 @@ public class AllDifferentTest {
                 return filteringAC().apply(domains);
             }
         }
-        VariablesGenerator generator = new VariablesGenerator();
+        TestArgs generator = new TestArgs();
         generator.setRangeForAll(-5, 5);
         CPChecker.check(new ACPruning(checkerAllDifferent()), new MyFilter(), generator);
     }

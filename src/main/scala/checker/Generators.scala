@@ -3,22 +3,22 @@ import Conversions._
 
 object Generators {
 
-  def table(t:Set[Array[Int]]):VariablesGenerator = {
+  def table(t:Set[Array[Int]]):TestArgs = {
     val min: Int = t.map(x => x.min).min
     val max: Int = t.map(x => x.max).max
-    val gen:VariablesGenerator = new VariablesGenerator
+    val gen:TestArgs = new TestArgs
     gen.setNVar(t.last.length)
     gen.setRangeForAll(min, max)
     gen.setDensityForAll(3 * 1 / (max - min))
     gen
   }
 
-  def table(t:java.util.Set[Array[Integer]]):VariablesGenerator = {
+  def table(t:java.util.Set[Array[Integer]]):TestArgs = {
     table(tableToScala(t))
   }
 
-  def gcc(values:Array[Int]):VariablesGenerator = {
-    val gen:VariablesGenerator = new VariablesGenerator
+  def gcc(values:Array[Int]):TestArgs = {
+    val gen:TestArgs = new TestArgs
     gen.baseRange = (values.min, values.max)
     gen.baseDensity = 3 / values.length
     gen.setNVar(8)
@@ -28,8 +28,8 @@ object Generators {
     gen
   }
 
-  def sum(operator:String, constant:Int):VariablesGenerator = {
-    val gen:VariablesGenerator = new VariablesGenerator
+  def sum(operator:String, constant:Int):TestArgs = {
+    val gen:TestArgs = new TestArgs
     gen.reset()
     gen.setNVar(10)
     val middleValue = constant/10
@@ -61,8 +61,8 @@ object Generators {
     gen
   }
 
-  def element:VariablesGenerator = {
-    val gen: VariablesGenerator = new VariablesGenerator
+  def element:TestArgs = {
+    val gen: TestArgs = new TestArgs
     gen.reset()
     gen.setNVar(10)
     gen.addVar(0.2, (-1, 12))
@@ -70,8 +70,8 @@ object Generators {
     gen
   }
 
-  def allDifferent:VariablesGenerator = {
-    val gen:VariablesGenerator  =new VariablesGenerator
+  def allDifferent:TestArgs = {
+    val gen:TestArgs  =new TestArgs
     gen.setRangeForAll((-5, 5))
     gen
   }

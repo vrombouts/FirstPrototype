@@ -27,7 +27,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with ACFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acFalse, dummyFilter)
@@ -35,7 +35,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, throwExceptionFilter)
@@ -43,7 +43,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, noSolFilter)
@@ -51,7 +51,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with ACFiltering for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, dummyFilter)
@@ -59,7 +59,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with ACFiltering with all tests correct " should "perform 100 tests" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(acTrue, dummyFilter)
@@ -67,7 +67,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with ACFiltering after having set a generator " should " consider the good generator " in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     generator.setSeed(100)
     generator.setNbTests(150)
@@ -82,7 +82,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check Incremental with ACFiltering on a constraint that returns always true with an init removing some values " should " detect at least a failed test" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.check(acFalse, dummyFilter)
     val dummyInc :FilterWithState = new FilterWithState {
@@ -114,7 +114,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check Incremental with ACFiltering on a constraint that returns always true with an init removing no value " should " detect no failed test" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(102)
     val dummyInc :FilterWithState = new FilterWithState {
       var currentVars: Array[Set[Int]] = Array()
@@ -148,7 +148,7 @@ class CheckTests extends FlatSpec {
   val bcFalse: Filter = new BCFiltering(Checkers.falseConstraint _)
 
   "Calling check with BCFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcFalse, dummyFilter)
@@ -156,7 +156,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with BCFiltering for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue , throwExceptionFilter)
@@ -164,7 +164,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with BCFiltering for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, noSolFilter)
@@ -172,7 +172,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with BCFiltering for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, dummyFilter)
@@ -180,7 +180,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with BCFiltering with all tests correct " should "perform 100 tests" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new StrictStatistics(20,"AC")
     CPChecker.check(bcTrue, dummyFilter)
@@ -188,7 +188,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check with BCFiltering after having set a generator " should " consider the good generator " in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setNbTests(150)
     generator.setRangeForAll((-5, 5))
     generator.setRange(1, (-2, 2))
@@ -201,7 +201,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check Incremental with BCFiltering on a constraint that returns always true with an init removing some values " should " detect at least an error " in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     val dummyInc :FilterWithState = new FilterWithState {
       var currentVars: Array[Set[Int]] = Array()
@@ -232,7 +232,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling check Incremental with BCFiltering on a constraint that returns always true with an init removing no value " should " detect no error " in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     val dummyInc :FilterWithState = new FilterWithState {
       var currentVars: Array[Set[Int]] = Array()
@@ -263,7 +263,7 @@ class CheckTests extends FlatSpec {
 
 
   "Calling stronger with ACFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect no error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acFalse, dummyFilter)
@@ -271,7 +271,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, throwExceptionFilter)
@@ -279,7 +279,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "have at least one error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, noSolFilter)
@@ -287,7 +287,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger with ACFiltering for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, dummyFilter)
@@ -295,7 +295,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger with ACFiltering with all tests correct " should "perform 100 tests" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new UnstrictStats(20,"AC")
     CPChecker.stronger(acTrue, dummyFilter)
@@ -303,7 +303,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger with ACFiltering after having set a generator " should " consider the good generator " in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     generator.setSeed(100)
     generator.setNbTests(150)
@@ -318,7 +318,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger Incremental with ACFiltering on a constraint that returns always true with an init removing some values " should " detect at least an error " in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     val dummyInc :FilterWithState = new FilterWithState {
       var currentVars: Array[Set[Int]] = Array()
@@ -349,7 +349,7 @@ class CheckTests extends FlatSpec {
   }
 
   "Calling stronger Incremental with ACFiltering on a constraint that returns always true with an init removing no value " should " detect no error" in {
-    implicit val generator: VariablesGenerator = new VariablesGenerator
+    implicit val generator: TestArgs = new TestArgs
     generator.setSeed(100)
     CPChecker.stats = new UnstrictStats(20,"AC")
     val dummyInc :FilterWithState = new FilterWithState {

@@ -21,7 +21,7 @@ public class CircuitTest {
                 return circuitFiltering().apply(variables);
             }
         }
-        VariablesGenerator gen = new VariablesGenerator();
+        TestArgs gen = new TestArgs();
         gen.setRangeForAll(0, 4);
         gen.setDensityForAll(0.8);
         Filter bugfree = new ACFiltering(circuitChecker());

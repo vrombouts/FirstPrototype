@@ -6,9 +6,9 @@ import org.scalatest.FlatSpec
 
 import scala.util.Random
 
-class VariablesGeneratorTest extends FlatSpec {
+class TestArgsTest extends FlatSpec {
 
-  var gen = new VariablesGenerator
+  var gen = new TestArgs
   gen.random.setSeed(10000)
 
   "gen" should "not have a set seed when initialized" in {
@@ -21,7 +21,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
 
-  "variablesGenerator as basis" should "give a gen returning 5 variables with domains of max size 4 in ranges (-10,10)" in {
+  "TestArgs as basis" should "give a gen returning 5 variables with domains of max size 4 in ranges (-10,10)" in {
     val gg: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
       override val rng: Random = new Random(100)
       override val size: Int = 100
@@ -47,7 +47,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "addNVar" should "add N (or 0 if N<0) variables to the generated samples" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.addNVar(-1)
@@ -73,7 +73,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "addVar and addNVar " should "accept a density and range for the variables to add" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.addVar(0.5, (1, 4))
@@ -99,7 +99,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "setNVar" should "reset the number of variables to n (if n<1 => 1 variable)" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.setNVar(-5)
@@ -125,7 +125,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "setDensity" should "set the density of the given variable" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.setDensity(0, 0.5)
@@ -193,7 +193,7 @@ class VariablesGeneratorTest extends FlatSpec {
 
 
   "setRange" should "set the range of the asked variable" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.setRange(0, (100, 120))
@@ -209,7 +209,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "setRangeForAll" should "set the range of all the variables" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.setRangeForAll((100, 120))
@@ -226,7 +226,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "remove" should "remove the told variable in the generator" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     gen.setRange(0, (100, 120))
@@ -245,7 +245,7 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "randomSeed" should "unfixed the seed" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
     val str1 = gen.toString
@@ -254,10 +254,10 @@ class VariablesGeneratorTest extends FlatSpec {
   }
 
   "getTestParameters" should "permit to run nbTests with the set seed using forAll" in {
-    gen = new VariablesGenerator
+    gen = new TestArgs
     gen.random.setSeed(10000)
     gen.setSeed(1)
-    val gen2 = new VariablesGenerator
+    val gen2 = new TestArgs
     gen2.random.setSeed(10000)
     gen2.setSeed(1)
     var x: List[List[Set[Int]]] = List()
@@ -269,7 +269,7 @@ class VariablesGeneratorTest extends FlatSpec {
     var z = 0
     forAll(gen.gen) { y => z += 1; true }.check(gen.getTestParameters)
     assert(z == 10)
-    gen = new VariablesGenerator
+    gen = new TestArgs
     x = List()
     y = List()
     forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)

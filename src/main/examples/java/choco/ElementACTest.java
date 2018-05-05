@@ -47,7 +47,7 @@ public class ElementACTest {
                 return transform(finalVars);
             }
         }
-        VariablesGenerator generator = new VariablesGenerator();
+        TestArgs generator = new TestArgs();
         generator.setNVar(7);
         generator.addVar(1.5 / 7.0, 0, 10);
         generator.addVar(0.1, -10, 10);

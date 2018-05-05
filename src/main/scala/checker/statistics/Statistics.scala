@@ -2,7 +2,7 @@ package checker.statistics
 
 import java.io._
 
-import checker.VariablesGenerator
+import checker.TestArgs
 import checker.incremental.{BranchOp, Pop, Push}
 
 abstract class Statistics(nbBranchOp: Int, filename: String) {
@@ -24,7 +24,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
   filenameFailed.getParentFile.mkdirs
 
   // stats about the generator
-  protected[this] var generatorUsed: VariablesGenerator = _
+  protected[this] var generatorUsed: TestArgs = _
 
   protected[this] var nbPush: Int = 0
   protected[this] var nbPop: Int = 0
@@ -44,12 +44,12 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
 
   def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
 
-  def getGenerator: VariablesGenerator = generatorUsed
+  def getGenerator: TestArgs = generatorUsed
 
   def nbFailedTests: Int
 
 
-  def setGenerator(gen: VariablesGenerator): Unit = generatorUsed = gen
+  def setGenerator(gen: TestArgs): Unit = generatorUsed = gen
 
   def globalStatsToString(isInc: Boolean): String
 

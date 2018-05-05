@@ -11,7 +11,7 @@ object SumBCTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = sumGTFiltering(variables)
     }
-    implicit val generator: VariablesGenerator = new VariablesGenerator()
+    implicit val generator: TestArgs = new TestArgs()
     CPChecker.check(new BCFiltering(sumChecker _), myFilter)
   }
 

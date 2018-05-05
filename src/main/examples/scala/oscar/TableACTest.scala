@@ -17,7 +17,7 @@ object TableACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = tableACFiltering(variables)
     }
-    implicit val generator: VariablesGenerator = Generators.table(myTable)
+    implicit val generator: TestArgs = Generators.table(myTable)
     CPChecker.check(new ACFiltering(Checkers.table(_, myTable)), myFilter)
   }
 
