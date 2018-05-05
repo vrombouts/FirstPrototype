@@ -9,7 +9,7 @@ import oscar.cp.core.CPPropagStrength
 object AllDifferentACTest {
 
   def main(args: Array[String]): Unit = {
-    val bugFree: Filter = new ACFiltering(allDifferentChecker _)
+    val bugFree: Filter = new ACPruning(allDifferentChecker _)
     val AllDiff: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
         filteringAllDifferentAC(variables)

@@ -21,7 +21,7 @@ public class AllDifferentTest {
         }
         VariablesGenerator generator = new VariablesGenerator();
         generator.setRangeForAll(-5, 5);
-        CPChecker.check(new BCFiltering(checkerAllDifferent()), new MyFilter(), generator);
+        CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), generator);
     }
 
     private static void testAllDifferentAC() {
@@ -32,7 +32,7 @@ public class AllDifferentTest {
         }
         VariablesGenerator generator = new VariablesGenerator();
         generator.setRangeForAll(-5, 5);
-        CPChecker.check(new ACFiltering(checkerAllDifferent()), new MyFilter(), generator);
+        CPChecker.check(new ACPruning(checkerAllDifferent()), new MyFilter(), generator);
     }
 
     private static Function<Set<Integer>[], Set<Integer>[]> filteringAC() {

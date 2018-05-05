@@ -54,17 +54,7 @@ public class TableTest {
             }
         }
         VariablesGenerator gen = Generators.table(table);
-        CPChecker.check(new ACFiltering(tableChecker()), new MyFilter(), gen);
-    }
-
-    private static Function<Integer[], Boolean> tableChecker() {
-        return solution -> {
-            for (Integer[] element : table) {
-                if (Arrays.equals(element, solution))
-                    return true;
-            }
-            return false;
-        };
+        CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), gen);
     }
 
     private static Set<Integer>[] transform(IntVar[] input) {
