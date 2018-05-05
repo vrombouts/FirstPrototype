@@ -9,7 +9,7 @@ resolvers += "Oscar Snapshots" at "http://artifactory.info.ucl.ac.be/artifactory
 updateOptions := updateOptions.value.withLatestSnapshots(false) // to be added because of a bad behaviour in the sbt version
 
 libraryDependencies += "oscar" %% "oscar-cp" % "4.0.0-SNAPSHOT" withSources()
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.4"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0"
 libraryDependencies += "org.choco-solver" % "choco-solver" % "4.0.5"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"

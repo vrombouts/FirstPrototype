@@ -1,6 +1,6 @@
 package checker
 
-import org.scalacheck.Test.TestCallback
+import org.scalacheck.Test.Parameters
 import org.scalacheck.{Gen, Test}
 
 import scala.util.Random
@@ -19,30 +19,15 @@ class TestArgs {
   private[this] var ranges: Array[(Int, Int)] = Array.fill(nbVars)((-10, 10))
   var baseRange: (Int, Int) = (-10, 10)
   var baseDensity: Double = 4.0 / 20.0
-  val random = new Random()
+  val random: Random = new Random()
   private[this] var seed: Option[Long] = None
   private[this] var nbTests: Option[Int] = None
 
-  private[checker] class testParams(seed: Long, nbTests: Int) extends Test.Parameters {
-    def this(seed: Long) = this(seed, 100)
-
-    def this(nbTests: Int) = this(random.nextLong, nbTests)
-
-    def this() = this(random.nextLong, 100)
-
-    override val minSuccessfulTests: Int = nbTests
-    val minSize: Int = 0
-    val maxSize: Int = Gen.Parameters.default.size
-    override val rng: scala.util.Random = new Random(seed)
-    val workers: Int = 1
-    val testCallback: TestCallback = new TestCallback {}
-    val maxDiscardRatio: Float = 5
-    val customClassLoader: Option[ClassLoader] = None
-  }
+  private[this] var param: Parameters = Test.Parameters.default
 
   def setSeed(sd: Long): Unit = {
     seed = Some(sd)
-    random.setSeed(sd)
+    param = param.withInitialSeed(sd)
   }
 
   def getSeed: Long = seed match {
@@ -53,25 +38,22 @@ class TestArgs {
   def randomSeed(): Unit = {
     seed = None
     random.setSeed(new Random().nextLong)
+    param = param.withInitialSeed(random.nextLong())
   }
 
   def getNbVars: Int = nbVars
 
-  def setNbTests(n: Int): Unit = nbTests = Some(n)
+  def setNbTests(n: Int): Unit = {
+    nbTests = Some(n)
+    param = param.withMinSuccessfulTests(n)
+  }
 
   def getNbTests: Int = nbTests match {
     case Some(n) => n
     case _ => 100
   }
 
-  def getTestParameters: testParams = {
-    (seed, nbTests) match {
-      case (Some(l), Some(t)) => new testParams(l, t)
-      case (Some(l), None) => new testParams(l)
-      case (None, Some(t)) => new testParams(t)
-      case _ => new testParams
-    }
-  }
+  def getTestParameters: Parameters = param
 
   def gen: Gen[List[Set[Int]]] =
     for {
@@ -85,6 +67,7 @@ class TestArgs {
     }
     l
   }
+
 
   private[this] def genVar(i: Int): Gen[Set[Int]] = {
     val min = ranges(i)._1
