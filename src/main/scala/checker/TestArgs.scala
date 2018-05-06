@@ -1,6 +1,7 @@
 package checker
 
 import org.scalacheck.Test.Parameters
+import org.scalacheck.rng.Seed
 import org.scalacheck.{Gen, Test}
 
 import scala.util.Random
@@ -26,8 +27,8 @@ class TestArgs {
   private[this] var param: Parameters = Test.Parameters.default
 
   def setSeed(sd: Long): Unit = {
+    param=param.withInitialSeed(sd)
     seed = Some(sd)
-    param = param.withInitialSeed(sd)
   }
 
   def getSeed: Long = seed match {
@@ -38,7 +39,6 @@ class TestArgs {
   def randomSeed(): Unit = {
     seed = None
     random.setSeed(new Random().nextLong)
-    param = param.withInitialSeed(random.nextLong())
   }
 
   def getNbVars: Int = nbVars
@@ -53,12 +53,16 @@ class TestArgs {
     case _ => 100
   }
 
-  def getTestParameters: Parameters = param
+  def getTestParameters: Parameters = {
+    param
+  }
+
 
   def gen: Gen[List[Set[Int]]] =
     for {
       seq <- Gen.sequence(genList)
     } yield seq.toArray(new Array[Set[Int]](seq.size())).toList
+
 
   private[this] def genList: List[Gen[Set[Int]]] = {
     var l: List[Gen[Set[Int]]] = List()

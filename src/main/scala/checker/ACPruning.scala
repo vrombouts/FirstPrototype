@@ -65,4 +65,28 @@ class ACPruning(checker: Array[Int] => Boolean) extends Filter {
     variables
   }
 
+  //Retrieval of the domains filtered
+  /*protected[this] def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
+    val variables: Array[Set[Int]] = Array.fill(solutions(0).length)(Set.empty)
+    solutions.foreach { sol =>
+      for (i <- variables.indices) {
+        variables(i) += sol(i)
+      }
+    }
+    variables
+  }
+
+  // applyAC that seems to work in 8 lines! :)
+  // inconvenient : generate all solutions and then filter. So, not slower but uses
+  // a lot more memory
+  def applyACPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
+    val solutions: Array[Array[Int]] = variables.foldLeft(Array[Array[Int]](Array()))((acc: Array[Array[Int]], x: Set[Int]) => {
+      var sol: Array[Array[Int]] = Array[Array[Int]]()
+      x.foreach(elem => acc.foreach(y => sol = sol :+ (y :+ elem)))
+      sol.filter(x => checker(x))
+    })
+    if (solutions.isEmpty) return Array.fill(variables.length)(Set[Int]())
+    toDomainsAC(solutions)
+  }*/
+
 }

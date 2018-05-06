@@ -2,7 +2,8 @@ name := "GenericChecker"
 
 version := "1.0"
 
-scalaVersion := "2.11.4"
+
+scalaVersion := "2.12.6"
 
 resolvers += "Oscar Snapshots" at "http://artifactory.info.ucl.ac.be/artifactory/libs-snapshot/"
 

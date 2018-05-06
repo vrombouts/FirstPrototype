@@ -2,7 +2,9 @@ package checker
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 import checker.statistics.{Statistics, StrictStatistics, UnstrictStats}
+import org.scalacheck.Prop
 import org.scalacheck.Prop.forAll
+import org.scalacheck.rng.Seed
 
 
 object CPChecker {
@@ -14,10 +16,12 @@ object CPChecker {
            (implicit generator: TestArgs): Unit = {
     this.generator = generator
     stats = new StrictStatistics(20, "AC")
-    forAll(generator.gen) { x =>
+    var p:Prop=forAll(generator.gen) { x =>
       x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
-    }.check(generator.getTestParameters)
+    }//.check(generator.getTestParameters)
+    //p=p.useSeed("nb",Seed(100))
+    p.check(generator.getTestParameters)
     stats.setGenerator(generator)
     stats.print
   }
@@ -153,9 +157,9 @@ object CPChecker {
     } else if (doNPop > 0) {
       lastPush = false
       new Pop(vars)
-    }else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
+    } else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
       doNPop = generator.random.nextInt(nPush)
-      lastPush=false
+      lastPush = false
       new Pop(vars)
     } else if (!lastPush) {
       lastPush = true

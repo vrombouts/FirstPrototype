@@ -9,13 +9,13 @@ class BCFiltering(checker: Array[Int] => Boolean) extends Filter{
   def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
 
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    applyBC(variables)
+    filterBC(variables)
   }
 
 
   //applying BC without pruning //
   @throws[NoSolutionException]
-  def applyBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  def filterBC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val intervals = getIntervals(variables)
     while (changeBounds(intervals)) {}
     intervalsToVariables(intervals)
