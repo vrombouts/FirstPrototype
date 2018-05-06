@@ -21,6 +21,7 @@ public class AllDifferentTest {
         }
         TestArgs generator = new TestArgs();
         generator.setRangeForAll(-5, 5);
+        generator.setSeed(150);
         CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), generator);
     }
 
@@ -32,6 +33,7 @@ public class AllDifferentTest {
         }
         TestArgs generator = new TestArgs();
         generator.setRangeForAll(-5, 5);
+        generator.setSeed(150);
         CPChecker.check(new ACPruning(checkerAllDifferent()), new MyFilter(), generator);
     }
 
