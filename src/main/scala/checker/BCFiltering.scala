@@ -34,47 +34,39 @@ class BCFiltering(checker: Array[Int] => Boolean) extends Filter{
   private[this] def changeBounds(intervals: Array[Interval]): Boolean = {
     var changed: Boolean = false
     for (i <- intervals.indices) {
-      val modif: Boolean = applyBCOnOneValue(intervals, i)
-      val other_modif: Boolean = applyBCOnOneValue(intervals, i, isMin = false)
-      if (modif || other_modif) changed = true
+      val removeMin: Boolean = applyBCOnOneValue(intervals, i, intervals(i).min)
+      val removeMax: Boolean = applyBCOnOneValue(intervals, i, intervals(i).max)
+      if (removeMin || removeMax) changed = true
     }
     changed
   }
 
   @throws[NoSolutionException]
-  private[this] def applyBCOnOneValue(intervals: Array[Interval], index: Int, isMin: Boolean = true): Boolean = {
-    if (findASolution(intervals, index, isMin))
-      false
+  private[this] def applyBCOnOneValue(intervals: Array[Interval], index: Int, value: Int): Boolean = {
+    if (findASolution(intervals, index, value)) false
     else {
-      if (intervals(index).domain.size == 1) throw new NoSolutionException
-      intervals(index).update(isMin)
+      intervals(index).remove(value)
       true
     }
   }
 
-  //Generation of all the solutions
-  private[this] def findASolution(intervals: Array[Interval], index: Int, isMin: Boolean): Boolean = {
+  //Generation of all the solutions to find a solution accepted by `checker´
+  private[this] def findASolution(intervals: Array[Interval], index: Int, value: Int): Boolean = {
     val currentSol: Array[Int] = Array.fill(intervals.length)(0)
-    currentSol(index) = intervals(index).giveValue(isMin)
-    setIthVariable(intervals, 0, currentSol, index)
-  }
-
-  private[this] def setIthVariable(intervals: Array[Interval], currentIndex: Int, currentSol: Array[Int], index: Int): Boolean = {
-    val range = if (currentIndex == index) 0 until 1 else intervals(currentIndex).getRange
-    for (i <- range) {
-      if (currentIndex != index)
+    currentSol(index) = value
+    def setIthVariable(currentIndex: Int): Boolean = {
+      if(currentIndex==index) return setIthVariable(currentIndex + 1)
+      if(currentIndex==intervals.length) return checker(currentSol)
+      for (i <- intervals(currentIndex).getRange) {
         currentSol(currentIndex) = i
-      if (currentIndex == intervals.length - 1) {
-        if (checker(currentSol)) {
-          return true
-
-        }
-      } else {
-        if(setIthVariable(intervals, currentIndex + 1, currentSol, index))
+        if(setIthVariable(currentIndex + 1))
           return true
       }
+      false
     }
-    false
+
+    setIthVariable(0)
   }
+
 
 }
