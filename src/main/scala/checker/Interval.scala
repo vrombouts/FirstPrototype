@@ -1,9 +1,9 @@
 package checker
 
-class Interval(private var dom: Set[Int]) {
+class Interval(var dom: Set[Int]) {
 
-  var min: Int = domain.min
-  var max: Int = domain.max
+  def min: Int = domain.min
+  def max: Int = domain.max
   var pos: Int = min
 
   def position: Int = pos
@@ -20,12 +20,10 @@ class Interval(private var dom: Set[Int]) {
 
   def update_min(): Unit = {
     dom = domain - min
-    min = domain.min
   }
 
   def update_max(): Unit = {
     dom = domain - max
-    max = domain.max
   }
 
   def update(minOrMax: Boolean): Unit = {
