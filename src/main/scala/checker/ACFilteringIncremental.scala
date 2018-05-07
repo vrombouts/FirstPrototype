@@ -18,7 +18,6 @@ class ACFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWithS
   override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
     domainsStorage = mutable.Stack()
     acFilter.filter(variables)
-    // why doing a push here??? setup should only make a static application of filtering
   }
 
   override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = {
