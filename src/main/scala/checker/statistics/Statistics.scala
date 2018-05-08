@@ -30,7 +30,7 @@ abstract class Statistics(var filename: String) {
 
   private[this] var nbTestCases: Int = 0
 
-  def setFileName(filename: String) = {
+  def setFileName(filename: String):Unit = {
     filenameStats = new File("out/statistics/" + filename + "/statistics.txt")
     filenameStats.getParentFile.mkdirs
     filenamePassed = new File("out/statistics/" + filename + "/passedTests.txt")
@@ -220,9 +220,9 @@ abstract class Statistics(var filename: String) {
     }
   }
 
-  def strictDomainComparison(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
+  def updateStats(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
 
-  def correctDomains(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
+  def correctDomains(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
 
   /*
    * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
@@ -233,7 +233,7 @@ abstract class Statistics(var filename: String) {
       testsIncPassed = testsIncPassed :+ storedResults.clone()
       storedResults = Array()
     }
-    val ourReducedDomains: Array[Set[Int]] = returnValues(2)
+    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
     var reducedDomains: Array[Set[Int]] = returnValues(1)
     val init: Array[Set[Int]] = returnValues(0)
     var result: Boolean = true
@@ -241,42 +241,42 @@ abstract class Statistics(var filename: String) {
       println("You returned a null array instead of an array of filtered domains")
       result = false
     }
-    else if (ourReducedDomains.length != reducedDomains.length) {
+    else if (bugFreeReducedDomains.length != reducedDomains.length) {
       println("Incorrect output format : you don't return the correct number of domains variables")
-      if (reducedDomains.length < ourReducedDomains.length)
-        reducedDomains = reducedDomains ++ Array.fill(ourReducedDomains.length - reducedDomains.length)(null)
+      if (reducedDomains.length < bugFreeReducedDomains.length)
+        reducedDomains = reducedDomains ++ Array.fill(bugFreeReducedDomains.length - reducedDomains.length)(null)
       result = false
     }
-    else if (ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
+    else if (bugFreeReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
       result = true
     }
-    else if (ourReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty)) {
+    else if (bugFreeReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty)) {
       result = false
     }
     else {
-      if (!correctDomains(ourReducedDomains, reducedDomains)) {
+      if (!correctDomains(bugFreeReducedDomains, reducedDomains)) {
         result = false
       }
     }
     incNbExecutedTests()
-    if (ourReducedDomains.exists(_.isEmpty)) {
+    if (bugFreeReducedDomains.exists(_.isEmpty)) {
       incNbNoSolutionTests()
       if (!result) incNbFailedNoSolutionTests()
     }
     else
-      strictDomainComparison(ourReducedDomains, reducedDomains, init, result)
+      updateStats(bugFreeReducedDomains, reducedDomains, init, result)
     if (result) {
       if (b == null)
-        testsPassed = testsPassed :+ (init, ourReducedDomains, reducedDomains)
+        testsPassed = testsPassed :+ (init, bugFreeReducedDomains, reducedDomains)
       else {
-        storedResults = storedResults :+ (b.head, init, ourReducedDomains)
+        storedResults = storedResults :+ (b.head, init, bugFreeReducedDomains)
       }
     }
     else {
       if (b == null)
-        testsFailed = testsFailed :+ (init, ourReducedDomains, reducedDomains)
+        testsFailed = testsFailed :+ (init, bugFreeReducedDomains, reducedDomains)
       else {
-        storedResults = storedResults :+ (b.head, reducedDomains, ourReducedDomains)
+        storedResults = storedResults :+ (b.head, reducedDomains, bugFreeReducedDomains)
         testsIncFailed = testsIncFailed :+ storedResults.clone()
         storedResults = Array()
       }

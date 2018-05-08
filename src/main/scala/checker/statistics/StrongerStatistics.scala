@@ -42,7 +42,7 @@ class StrongerStatistics(filename: String) extends Statistics("stronger/" + file
   def nbFailedTests: Int = getNbExecutedTests - getNbNoSolutionTests - nbCorrectTestsWithSolution + getNbFailedNoSolutionTests
 
 
-  def strictDomainComparison(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit = {
+  def updateStats(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit = {
     if ((ourReducedDomains zip reducedDomains).forall(x => x._1.subsetOf(x._2))) {
       nbCorrectTestsWithSolution += 1
       if ((ourReducedDomains zip reducedDomains).exists(x => !x._1.equals(x._2))) {

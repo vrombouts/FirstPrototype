@@ -70,9 +70,9 @@ class CheckStatisticsTests extends FlatSpec {
     val a = Array(Set(1), Set(1, 2, 3), Set(1, 2))
     val b = Array(Set(1), Set(1, 2), Set(1, 2))
     val remove = stats.getNbRemovingValueTests
-    stats.strictDomainComparison(b, b, a, result = true)
+    stats.updateStats(b, b, a, result = true)
     assert(remove + 1 == stats.getNbRemovingValueTests)
-    stats.strictDomainComparison(b, b, b, result = true)
+    stats.updateStats(b, b, b, result = true)
     assert(remove + 1 == stats.getNbRemovingValueTests)
   }
 
@@ -80,9 +80,9 @@ class CheckStatisticsTests extends FlatSpec {
     val a = Array(Set(1), Set(1, 2, 3), Set(1, 2))
     val b = Array(Set(1), Set(1, 2), Set(1, 2))
     val remove = stats.getNbRemoveNoValueTests
-    stats.strictDomainComparison(b, b, a, result = true)
+    stats.updateStats(b, b, a, result = true)
     assert(remove == stats.getNbRemoveNoValueTests)
-    stats.strictDomainComparison(b, b, b, result = true)
+    stats.updateStats(b, b, b, result = true)
     assert(remove + 1 == stats.getNbRemoveNoValueTests)
   }
 
@@ -91,16 +91,16 @@ class CheckStatisticsTests extends FlatSpec {
     val b = Array(Set(1), Set(1, 2), Set(1, 2))
     val remove = stats.getNbRemovingValueTests
     val remove2 = stats.getNbFailedRemovingValueTests
-    stats.strictDomainComparison(b, b, a, result = true)
+    stats.updateStats(b, b, a, result = true)
     assert(remove + 1 == stats.getNbRemovingValueTests &&
       remove2 == stats.getNbFailedRemovingValueTests)
-    stats.strictDomainComparison(b, b, a, result = false)
+    stats.updateStats(b, b, a, result = false)
     assert(remove + 2 == stats.getNbRemovingValueTests &&
       remove2 + 1 == stats.getNbFailedRemovingValueTests)
-    stats.strictDomainComparison(b, b, b, result = true)
+    stats.updateStats(b, b, b, result = true)
     assert(remove + 2 == stats.getNbRemovingValueTests &&
       remove2 + 1 == stats.getNbFailedRemovingValueTests)
-    stats.strictDomainComparison(b, b, b, result = false)
+    stats.updateStats(b, b, b, result = false)
     assert(remove + 2 == stats.getNbRemovingValueTests &&
       remove2 + 1 == stats.getNbFailedRemovingValueTests)
   }
@@ -110,16 +110,16 @@ class CheckStatisticsTests extends FlatSpec {
     val b = Array(Set(1), Set(1, 2), Set(1, 2))
     val remove = stats.getNbRemoveNoValueTests
     val remove2 = stats.getNbFailedRemoveNoValueTests
-    stats.strictDomainComparison(b, b, a, result = true)
+    stats.updateStats(b, b, a, result = true)
     assert(remove == stats.getNbRemoveNoValueTests &&
       remove2 == stats.getNbFailedRemoveNoValueTests)
-    stats.strictDomainComparison(b, b, a, result = false)
+    stats.updateStats(b, b, a, result = false)
     assert(remove == stats.getNbRemoveNoValueTests &&
       remove2 == stats.getNbFailedRemoveNoValueTests)
-    stats.strictDomainComparison(b, b, b, result = true)
+    stats.updateStats(b, b, b, result = true)
     assert(remove + 1 == stats.getNbRemoveNoValueTests &&
       remove2 == stats.getNbFailedRemoveNoValueTests)
-    stats.strictDomainComparison(b, b, b, result = false)
+    stats.updateStats(b, b, b, result = false)
     assert(remove + 2 == stats.getNbRemoveNoValueTests &&
       remove2 + 1 == stats.getNbFailedRemoveNoValueTests)
   }

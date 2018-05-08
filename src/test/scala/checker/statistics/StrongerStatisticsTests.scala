@@ -105,32 +105,32 @@ class StrongerStatisticsTests extends FlatSpec {
     var R1 = Array(Set(1))
     var R2 = Array(Set(2))
     var f = stats.nbFailedTests
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     stats.incNbExecutedTests()
     assert(f + 1 == stats.nbFailedTests)
     R1 = Array(Set(1), Set(1))
     R2 = Array(Set(1), Set(2))
     f = stats.nbFailedTests
     stats.incNbExecutedTests()
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(f + 1 == stats.nbFailedTests)
     R1 = Array(Set(1), Set(1, 2))
     R2 = Array(Set(1, 2), Set(1))
     f = stats.nbFailedTests
     stats.incNbExecutedTests()
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(f + 1 == stats.nbFailedTests)
     R1 = Array(Set(1), Set(1, 2))
     R2 = Array(Set(1), Set(1))
     f = stats.nbFailedTests
     stats.incNbExecutedTests()
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(f + 1 == stats.nbFailedTests)
     R1 = Array(Set(1), Set(1, 3))
     R2 = Array(Set(1), Set(1, 2))
     f = stats.nbFailedTests
     stats.incNbExecutedTests()
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(f + 1 == stats.nbFailedTests)
   }
 
@@ -138,17 +138,17 @@ class StrongerStatisticsTests extends FlatSpec {
     var R1 = Array(Set(1))
     var R2 = Array(Set(1))
     var n = stats.getNbCorrectTestsWithSolution
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     R1 = Array(Set(1), Set(1, 2))
     R2 = Array(Set(1), Set(1, 2))
     n = stats.getNbCorrectTestsWithSolution
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     R1 = Array(Set(1, 3, 2))
     R2 = Array(Set(1, 2, 3))
     n = stats.getNbCorrectTestsWithSolution
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
   }
 
@@ -157,21 +157,21 @@ class StrongerStatisticsTests extends FlatSpec {
     var R2 = Array(Set(1, 2))
     var n = stats.getNbCorrectTestsWithSolution
     var c = stats.getCanBeMoreFiltered
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     R1 = Array(Set(1), Set(1))
     R2 = Array(Set(1, 2), Set(1))
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     R1 = Array(Set(1), Set(1))
     R2 = Array(Set(1, 2), Set(1, 2))
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
   }
@@ -182,7 +182,7 @@ class StrongerStatisticsTests extends FlatSpec {
     var n = stats.getNbCorrectTestsWithSolution
     var c = stats.getCanBeMoreFiltered
     var cs = stats.getCanBeMoreFilteredAndIsSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndIsSol)
@@ -191,7 +191,7 @@ class StrongerStatisticsTests extends FlatSpec {
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
     cs = stats.getCanBeMoreFilteredAndIsSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndIsSol)
@@ -200,7 +200,7 @@ class StrongerStatisticsTests extends FlatSpec {
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
     cs = stats.getCanBeMoreFilteredAndIsSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndIsSol)
@@ -209,7 +209,7 @@ class StrongerStatisticsTests extends FlatSpec {
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
     cs = stats.getCanBeMoreFilteredAndIsSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndIsSol)
@@ -221,7 +221,7 @@ class StrongerStatisticsTests extends FlatSpec {
     var n = stats.getNbCorrectTestsWithSolution
     var c = stats.getCanBeMoreFiltered
     var cs = stats.getCanBeMoreFilteredAndHasNoSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndHasNoSol)
@@ -230,7 +230,7 @@ class StrongerStatisticsTests extends FlatSpec {
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
     cs = stats.getCanBeMoreFilteredAndHasNoSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndHasNoSol)
@@ -239,7 +239,7 @@ class StrongerStatisticsTests extends FlatSpec {
     n = stats.getNbCorrectTestsWithSolution
     c = stats.getCanBeMoreFiltered
     cs = stats.getCanBeMoreFilteredAndHasNoSol
-    stats.strictDomainComparison(R1, R2, null, result = false)
+    stats.updateStats(R1, R2, null, result = false)
     assert(n + 1 == stats.getNbCorrectTestsWithSolution)
     assert(c + 1 == stats.getCanBeMoreFiltered)
     assert(cs + 1 == stats.getCanBeMoreFilteredAndHasNoSol)

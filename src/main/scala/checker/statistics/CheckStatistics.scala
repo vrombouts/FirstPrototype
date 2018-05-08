@@ -55,8 +55,7 @@ class CheckStatistics(filename: String) extends Statistics("check/" + filename) 
       "------------------------------------------------------------ \n"
   }
 
-  def strictDomainComparison(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit = {
-
+  def updateStats(ourReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit = {
     if ((ourReducedDomains zip init).forall(x => x._1.equals(x._2))) {
       incNbRemoveNoValueTests()
       if (!result) incNbFailedRemoveNoValueTests()
