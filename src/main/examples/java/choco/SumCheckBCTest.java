@@ -34,9 +34,9 @@ public class SumCheckBCTest {
                 return transform(x);
             }
         }
-        TestArgs generator = new TestArgs();
+        TestArgs parameters = new TestArgs();
 
-        CPChecker.check(new BCFiltering(sumChecker()), new MyFilter(), generator);
+        CPChecker.check(new BCFiltering(sumChecker()), new MyFilter(), parameters);
     }
 
     private static Function<Integer[], Boolean> sumChecker() {

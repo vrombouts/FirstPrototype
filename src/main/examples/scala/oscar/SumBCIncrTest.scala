@@ -12,10 +12,10 @@ object SumBCIncrTest {
   private var currentVars: Array[CPIntVar] = _
 
   def main(args: Array[String]): Unit = {
-    implicit val generator: TestArgs = new TestArgs
-    generator.setSeed(1000)
+    implicit val parameters: TestArgs = new TestArgs
+    parameters.setSeed(1000)
     for (i <- -50 to 50 by 5) {
-      val bugFree = new BCFilteringIncremental(Checkers.sum(i,"="))
+      val bugFree = new BCFilteringIncremental(Checkers.sum(i, "="))
       val tested = new FilterWithState {
         override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = sumFiltering(branching)
 

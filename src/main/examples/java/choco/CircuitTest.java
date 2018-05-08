@@ -21,12 +21,12 @@ public class CircuitTest {
                 return circuitFiltering().apply(variables);
             }
         }
-        TestArgs gen = new TestArgs();
-        gen.setRangeForAll(0, 4);
-        gen.setDensityForAll(0.8);
+        TestArgs parameters = new TestArgs();
+        parameters.setRangeForAll(0, 4);
+        parameters.setDensityForAll(0.8);
         Filter bugfree = new ACFiltering(circuitChecker());
         Filter tested = new MyFilter();
-        CPChecker.stronger(bugfree, tested, gen);
+        CPChecker.stronger(bugfree, tested, parameters);
     }
 
     private static Function<Set<Integer>[], Set<Integer>[]> circuitFiltering() {

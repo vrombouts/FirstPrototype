@@ -7,54 +7,54 @@ import org.scalacheck.Prop.forAll
 
 object CPChecker {
 
-  private[this] var generator: TestArgs = new TestArgs
+  private[this] var testArguments: TestArgs = new TestArgs
   var stats: Statistics = new StrictStatistics(20, "AC")
 
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
-           (implicit generator: TestArgs): Unit = {
-    this.generator = generator
+           (implicit testArguments: TestArgs): Unit = {
+    this.testArguments = testArguments
     stats = new StrictStatistics(20, "AC")
-    forAll(generator.gen) { x =>
-      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+    forAll(testArguments.gen) { x =>
+      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
-    }.check(generator.getTestParameters)
-    stats.setGenerator(generator)
+    }.check(testArguments.getTestParameters)
+    stats.setGenerator(testArguments)
     stats.print
   }
 
-
-
   def stronger(strongerFiltering: Filter, filtering: Filter)
-              (implicit generator: TestArgs): Unit = {
-    this.generator = generator
+              (implicit testArguments: TestArgs): Unit = {
+    this.testArguments = testArguments
     stats = new UnstrictStats(20, "AC")
-    forAll(generator.gen) { x =>
-      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+    forAll(testArguments.gen) { x =>
+      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, stats)
-    }.check(generator.getTestParameters)
-    stats.setGenerator(generator)
+    }.check(testArguments.getTestParameters)
+    stats.setGenerator(testArguments)
     stats.print
   }
 
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
-           (implicit generator: TestArgs): Unit = {
+           (implicit testArguments: TestArgs): Unit = {
+    this.testArguments = testArguments
     stats = new StrictStatistics(20, "AC")
-    forAll(generator.gen) { x =>
-      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+    forAll(testArguments.gen) { x =>
+      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
-    }.check(generator.getTestParameters)
-    stats.setGenerator(generator)
+    }.check(testArguments.getTestParameters)
+    stats.setGenerator(testArguments)
     stats.print
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
-              (implicit generator: TestArgs): Unit = {
+              (implicit testArguments: TestArgs): Unit = {
+    this.testArguments = testArguments
     stats = new UnstrictStats(20, "AC")
-    forAll(generator.gen) { x =>
-      x.isEmpty || (x.length < generator.getNbVars) || checkEmpty(x) ||
+    forAll(testArguments.gen) { x =>
+      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, stats)
-    }.check(generator.getTestParameters)
-    stats.setGenerator(generator)
+    }.check(testArguments.getTestParameters)
+    stats.setGenerator(testArguments)
     stats.print
   }
 
@@ -112,7 +112,7 @@ object CPChecker {
     var branches: List[BranchOp] = List()
     var dives = 0
     var lastPop = false
-    while (dives < generator.nbDive) {
+    while (dives < testArguments.nbDive) {
       val b: BranchOp = getBranch(nPush, vars)
       branches ::= b
       b match {
@@ -156,7 +156,7 @@ object CPChecker {
       lastPush = false
       new Pop(vars)
     } else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
-      doNPop = generator.random.nextInt(nPush)
+      doNPop = testArguments.random.nextInt(nPush)
       lastPush = false
       new Pop(vars)
     } else if (!lastPush) {
@@ -164,7 +164,7 @@ object CPChecker {
       new Push(vars)
     } else {
       lastPush = false
-      new RestrictDomain(vars, generator.random)
+      new RestrictDomain(vars, testArguments.random)
     }
   }
 }

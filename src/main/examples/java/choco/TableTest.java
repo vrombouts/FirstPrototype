@@ -51,8 +51,8 @@ public class TableTest {
                 return transform(x);
             }
         }
-        TestArgs gen = Generators.table(table);
-        CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), gen);
+        TestArgs parameters = Generators.table(table);
+        CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), parameters);
     }
 
     private static Set<Integer>[] transform(IntVar[] input) {

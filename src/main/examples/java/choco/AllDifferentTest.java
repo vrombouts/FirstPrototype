@@ -19,10 +19,10 @@ public class AllDifferentTest {
                 return filteringBC().apply(domains);
             }
         }
-        TestArgs generator = new TestArgs();
-        generator.setRangeForAll(-5, 5);
-        generator.setSeed(150);
-        CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), generator);
+        TestArgs parameters = new TestArgs();
+        parameters.setRangeForAll(-5, 5);
+        parameters.setSeed(150);
+        CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), parameters);
     }
 
     private static void testAllDifferentAC() {

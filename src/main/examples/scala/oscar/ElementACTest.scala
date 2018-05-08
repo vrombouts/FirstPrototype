@@ -22,17 +22,17 @@ object ElementACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
     }
-    implicit val generator: TestArgs = new TestArgs()
+    implicit val parameters: TestArgs = new TestArgs()
     //First we set the seed:
-    generator.setNbTests(124)
+    parameters.setNbTests(124)
 
     //Then we set x with a size of 7
-    generator.setNVar(7)
+    parameters.setNVar(7)
     //add variable i in generator
-    generator.addVar(0.5, (0, 6))
+    parameters.addVar(0.5, (0, 6))
     //add variable v in generator
-    generator.addVar(0.1, (-11, 11))
-    generator.setSeed(123456)
+    parameters.addVar(0.1, (-11, 11))
+    parameters.setSeed(123456)
     CPChecker.check(new ACFiltering(elementChecker _), myFilter)
   }
 

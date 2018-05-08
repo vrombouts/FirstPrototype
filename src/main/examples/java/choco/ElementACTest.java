@@ -47,12 +47,12 @@ public class ElementACTest {
                 return transform(finalVars);
             }
         }
-        TestArgs generator = new TestArgs();
-        generator.setNVar(7);
-        generator.addVar(1.5 / 7.0, 0, 10);
-        generator.addVar(0.1, -10, 10);
+        TestArgs parameters = new TestArgs();
+        parameters.setNVar(7);
+        parameters.addVar(1.5 / 7.0, 0, 10);
+        parameters.addVar(0.1, -10, 10);
         ACFiltering elementary = new ACFiltering(Checkers.element());
-        CPChecker.check(elementary, new MyFilter(), generator);
+        CPChecker.check(elementary, new MyFilter(), parameters);
     }
 
     private static Function<Integer[], Boolean> elementChecker() {

@@ -93,8 +93,8 @@ public class SumIncrementalTest {
                 return transform(x);
             }
         }
-        TestArgs generator = new TestArgs();
-        CPChecker.check(new BCFilteringIncremental(sumChecker()), new MyFilter(), generator);
+        TestArgs parameters = new TestArgs();
+        CPChecker.check(new BCFilteringIncremental(sumChecker()), new MyFilter(), parameters);
     }
 
     private static Function<Integer[], Boolean> sumChecker() {
