@@ -1,6 +1,7 @@
 package oscar
 
 import checker.{NoSolutionException, _}
+import checker.CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.AllDiffAC
@@ -9,18 +10,16 @@ import oscar.cp.core.CPPropagStrength
 object AllDifferentACTest {
 
   def main(args: Array[String]): Unit = {
-    val bugFree: Filter = new ACPruning(allDifferentChecker _)
-    val AllDiff: Filter = new Filter {
+    val CPCheckerAllDifferentAC: Filter = new ACFiltering(Checkers.allDifferent())
+    val oscarAllDifferentAC: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
         filteringAllDifferentAC(variables)
       }
     }
-    implicit val generator: TestArgs = new TestArgs
+    //implicit val parameters: TestArgs = new TestArgs
     generator.setRangeForAll(-5, 5)
-    CPChecker.check(bugFree, AllDiff)
+    check(CPCheckerAllDifferentAC, oscarAllDifferentAC)
   }
-
-  def allDifferentChecker(x: Array[Int]): Boolean = x.toSet.size == x.length
 
   def filteringAllDifferentAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
