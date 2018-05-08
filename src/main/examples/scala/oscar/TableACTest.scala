@@ -1,6 +1,7 @@
 package oscar
 
 import checker.{NoSolutionException, _}
+import CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp.{table, _}
 import oscar.cp.core.CPPropagStrength
@@ -17,7 +18,7 @@ object TableACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = tableACFiltering(variables)
     }
-    implicit val parameters: TestArgs = Generators.table(myTable)
+    testArguments = Generators.table(myTable)
     CPChecker.check(new ACFiltering(Checkers.table(myTable)), myFilter)
   }
 

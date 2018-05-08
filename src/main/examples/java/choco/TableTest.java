@@ -1,6 +1,7 @@
 package choco;
 
 import checker.*;
+import checker.statistics.CheckStatistics;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.extension.Tuples;
@@ -52,7 +53,8 @@ public class TableTest {
             }
         }
         TestArgs parameters = Generators.table(table);
-        CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), parameters);
+        CheckStatistics stats = new CheckStatistics("");
+        CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), parameters, stats);
     }
 
     private static Set<Integer>[] transform(IntVar[] input) {

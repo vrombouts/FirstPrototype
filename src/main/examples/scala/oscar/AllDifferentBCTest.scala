@@ -1,6 +1,7 @@
 package oscar
 
 import checker.{NoSolutionException, _}
+import CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.AllDiffBC
@@ -15,8 +16,7 @@ object AllDifferentBCTest {
         allDiffBCFiltering(variables)
       }
     }
-    implicit val parameters: TestArgs = new TestArgs
-    parameters.setRangeForAll(-5, 5)
+    testArguments.setRangeForAll(-5, 5)
     CPChecker.check(bugFree, AllDiff)
   }
 

@@ -1,19 +1,19 @@
 package checker
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
-import checker.statistics.{Statistics, StrictStatistics, UnstrictStats}
+import checker.statistics.{Statistics, CheckStatistics, StrongerStatistics}
 import org.scalacheck.Prop.forAll
 
 
 object CPChecker {
 
   implicit var testArguments: TestArgs = new TestArgs
-  var stats: Statistics = new StrictStatistics(20, "AC")
+  implicit var checkStats: CheckStatistics = new CheckStatistics("")
+  implicit var strongerStats: StrongerStatistics = new StrongerStatistics("")
 
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
-           (implicit testArguments: TestArgs): Unit = {
+           (implicit testArguments: TestArgs, stats: CheckStatistics): Unit = {
     this.testArguments = testArguments
-    stats = new StrictStatistics(20, "AC")
     forAll(testArguments.gen) { x =>
       x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
@@ -23,9 +23,8 @@ object CPChecker {
   }
 
   def stronger(strongerFiltering: Filter, filtering: Filter)
-              (implicit testArguments: TestArgs): Unit = {
+              (implicit testArguments: TestArgs, stats: StrongerStatistics): Unit = {
     this.testArguments = testArguments
-    stats = new UnstrictStats(20, "AC")
     forAll(testArguments.gen) { x =>
       x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, stats)
@@ -35,9 +34,8 @@ object CPChecker {
   }
 
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
-           (implicit testArguments: TestArgs): Unit = {
+           (implicit testArguments: TestArgs, stats: CheckStatistics): Unit = {
     this.testArguments = testArguments
-    stats = new StrictStatistics(20, "AC")
     forAll(testArguments.gen) { x =>
       x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
@@ -47,9 +45,8 @@ object CPChecker {
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
-              (implicit testArguments: TestArgs): Unit = {
+              (implicit testArguments: TestArgs, stats: StrongerStatistics): Unit = {
     this.testArguments = testArguments
-    stats = new UnstrictStats(20, "AC")
     forAll(testArguments.gen) { x =>
       x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, stats)

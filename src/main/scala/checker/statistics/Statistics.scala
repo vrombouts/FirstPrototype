@@ -5,22 +5,20 @@ import java.io._
 import checker.TestArgs
 import checker.incremental.{BranchOp, Pop, Push}
 
-abstract class Statistics(nbBranchOp: Int, filename: String) {
-
-  def this(filename: String) = this(25, filename)
+abstract class Statistics(var filename: String) {
 
   // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
   private[this] var nbNoSolutionTests: Int = 0
   private[this] var nbFailedNoSolutionTests: Int = 0
 
-  protected[this] val filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
+  protected[this] var filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
   filenameStats.getParentFile.mkdirs
 
-  protected[this] val filenamePassed: File = new File("out/statistics/" + filename + "/passedTests.txt")
+  protected[this] var filenamePassed: File = new File("out/statistics/" + filename + "/passedTests.txt")
   filenamePassed.getParentFile.mkdirs
 
-  protected[this] val filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
+  protected[this] var filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
   filenameFailed.getParentFile.mkdirs
 
   // stats about the generator
@@ -31,6 +29,16 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
   protected[this] var nbRestriction: Int = 0
 
   private[this] var nbTestCases: Int = 0
+
+  def setFileName(filename: String) = {
+    filenameStats = new File("out/statistics/" + filename + "/statistics.txt")
+    filenameStats.getParentFile.mkdirs
+    filenamePassed = new File("out/statistics/" + filename + "/passedTests.txt")
+    filenamePassed.getParentFile.mkdirs
+    filenameFailed = new File("out/statistics/" + filename + "/failedTests.txt")
+    filenameFailed.getParentFile.mkdirs
+    this.filename = filename
+  }
 
   def incNbExecutedTests(): Unit = nbExecutedTests += 1
 
@@ -63,15 +71,16 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
 
   protected[this] var testsIncFailed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
 
-  private[this] def updateBranching(b:List[BranchOp]):Unit = {
-    if(b != null && b.nonEmpty){
-      b.head match{
+  private[this] def updateBranching(b: List[BranchOp]): Unit = {
+    if (b != null && b.nonEmpty) {
+      b.head match {
         case _: Push => nbPush += 1
         case _: Pop => nbPop += 1
         case _ => nbRestriction += 1
       }
     }
   }
+
   def printNumber(nb: Int): String = {
     val nbOfChars: Int = nb.toString.length
     var s: String = " " + nb
@@ -83,12 +92,12 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
 
 
   def branchingStatsToString(): String = {
-    var nbPushOp : Int = 0
-    var nbPopOp : Int = 0
-    var nbRestrictOp : Int = 0
-    if(nbPush != 0 ) nbPushOp = nbPush / nbTestCases
-    if(nbPop != 0) nbPopOp = nbPop/nbTestCases
-    if(nbRestriction != 0) nbRestrictOp = nbRestriction/nbTestCases
+    var nbPushOp: Int = 0
+    var nbPopOp: Int = 0
+    var nbRestrictOp: Int = 0
+    if (nbPush != 0) nbPushOp = nbPush / nbTestCases
+    if (nbPop != 0) nbPopOp = nbPop / nbTestCases
+    if (nbRestriction != 0) nbRestrictOp = nbRestriction / nbTestCases
     "The average number of Push operation per test is " + nbPushOp + "\n" +
       "The average number of Pop operation per test is " + nbPopOp + "\n" +
       "The average number of Restrict Domain operation per test is " + nbRestrictOp + "\n"
@@ -140,7 +149,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     result
   }
 
-  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed:Boolean=true): Unit = {
+  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): Unit = {
     for ((init, ourDom, yourDom) <- tests) {
       var ourTitle: String = "Filtered domains "
       var yourTitle: String = "Your filtered domains "
@@ -155,8 +164,8 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
       prWriter.write("\n")
       for (i <- init.indices) {
         prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(ourDom(i)), maxLength))
-        if (yourDom != null && yourDom(i)!=null) prWriter.write("|" + domainToString(yourDom(i)))
-        else prWriter.write("|"+"null")
+        if (yourDom != null && yourDom(i) != null) prWriter.write("|" + domainToString(yourDom(i)))
+        else prWriter.write("|" + "null")
         prWriter.write("\n")
       }
       prWriter.write("\n")
@@ -205,7 +214,7 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
         prWriter.write("------------------------------\n")
       }
     }
-    if(storedResults.nonEmpty){
+    if (storedResults.nonEmpty) {
       testsIncPassed = testsIncPassed :+ storedResults.clone()
       storedResults = Array()
     }
@@ -234,8 +243,8 @@ abstract class Statistics(nbBranchOp: Int, filename: String) {
     }
     else if (ourReducedDomains.length != reducedDomains.length) {
       println("Incorrect output format : you don't return the correct number of domains variables")
-      if(reducedDomains.length<ourReducedDomains.length)
-        reducedDomains = reducedDomains ++ Array.fill(ourReducedDomains.length-reducedDomains.length)(null)
+      if (reducedDomains.length < ourReducedDomains.length)
+        reducedDomains = reducedDomains ++ Array.fill(ourReducedDomains.length - reducedDomains.length)(null)
       result = false
     }
     else if (ourReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {

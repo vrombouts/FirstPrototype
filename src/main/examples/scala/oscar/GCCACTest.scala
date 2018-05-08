@@ -1,6 +1,7 @@
 package oscar
 
 import checker.{NoSolutionException, _}
+import CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.GCCVarAC
@@ -14,8 +15,7 @@ object GCCACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = gccACFiltering(variables)
     }
-    implicit val parameters: TestArgs = Generators.gcc(values)
-    parameters.setSeed(100)
+    testArguments.setSeed(100)
     CPChecker.check(new ACFiltering(Checkers.gccVar(values)), myFilter)
   }
 

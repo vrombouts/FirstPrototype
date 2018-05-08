@@ -1,13 +1,15 @@
 package checker.statistics
 
-class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(nbBranchOp, filename) {
+class StrongerStatistics(filename: String) extends Statistics("stronger/" + filename) {
 
-  def this(filename: String) = this(25, filename)
+  def this() = this("")
 
   private[this] var nbCorrectTestsWithSolution: Int = 0
   private[this] var canBeMoreFiltered: Int = 0
   private[this] var canBeMoreFilteredAndHasNoSol: Int = 0
   private[this] var canBeMoreFilteredAndIsSol: Int = 0
+
+  override def setFileName(filename: String): Unit = super.setFileName("stronger/" + filename)
 
   def getNbCorrectTestsWithSolution: Int = nbCorrectTestsWithSolution
 
@@ -25,7 +27,7 @@ class UnstrictStats(nbBranchOp: Int, filename: String) extends Statistics(nbBran
 
   def globalStatsToString(isInc: Boolean): String = {
     var str = "Depending on the constraint being tested, two kinds of tests are possible : \n Tests having no solution. \n Tests having solutions. \n"
-    if (isInc) str += "Note that since we make " + nbBranchOp + " branchings per test, the total number of tests will be >= " + generatorUsed.getNbTests + "\n"
+    if (isInc) str += "Note that since we make " + " branchings per test, the total number of tests will be >= " + generatorUsed.getNbTests + "\n"
     str + "Here are some stats of the tests being executed : \n\n" +
       "------------------------------------------------------------ \n" +
       "Comparisons            |   Passed  |   Failed  |   Total   | \n" +

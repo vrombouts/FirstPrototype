@@ -1,6 +1,7 @@
 package oscar
 
 import checker.{NoSolutionException, _}
+import CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.ElementVarAC
@@ -22,17 +23,16 @@ object ElementACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
     }
-    implicit val parameters: TestArgs = new TestArgs()
     //First we set the seed:
-    parameters.setNbTests(124)
+    testArguments.setNbTests(124)
 
     //Then we set x with a size of 7
-    parameters.setNVar(7)
+    testArguments.setNVar(7)
     //add variable i in generator
-    parameters.addVar(0.5, (0, 6))
+    testArguments.addVar(0.5, (0, 6))
     //add variable v in generator
-    parameters.addVar(0.1, (-11, 11))
-    parameters.setSeed(123456)
+    testArguments.addVar(0.1, (-11, 11))
+    testArguments.setSeed(123456)
     CPChecker.check(new ACFiltering(elementChecker _), myFilter)
   }
 

@@ -1,14 +1,15 @@
 package checker.statistics
 
-class StrictStatistics(nbBranchOp : Int, filename: String) extends Statistics(nbBranchOp, filename) {
+class CheckStatistics(filename: String) extends Statistics("check/" + filename) {
 
-  def this(filename: String) = this(25, filename)
+  def this() = this("")
 
   private[this] var nbRemoveNoValueTests: Int = 0
   private[this] var nbRemovingValueTests: Int = 0
   private[this] var nbFailedRemoveNoValueTests: Int = 0
   private[this] var nbFailedRemovingValueTests: Int = 0
 
+  override def setFileName(filename: String): Unit = super.setFileName("check/" + filename)
 
   def incNbRemoveNoValueTests(): Unit = nbRemoveNoValueTests += 1
 
@@ -42,7 +43,7 @@ class StrictStatistics(nbBranchOp : Int, filename: String) extends Statistics(nb
 
   def globalStatsToString(isInc: Boolean): String = {
     var str: String = "Depending on the constraint being tested, three kinds of tests are possible : \n Tests having no solution. \n Tests reducing domains variables. \n Tests that don't reduce any domain variable \n"
-    if (isInc) str += "Note that since we make " + nbBranchOp + " branchings per test, the total number of tests will be >= " + generatorUsed.getNbTests + "\n"
+    if (isInc) str += "Note that since we make " + " branchings per test, the total number of tests will be >= " + generatorUsed.getNbTests + "\n"
     str + "Here are some stats of the tests being executed : \n\n" +
       "------------------------------------------------------------ \n" +
       "Comparisons            |   Passed  |   Failed  |   Total   | \n" +

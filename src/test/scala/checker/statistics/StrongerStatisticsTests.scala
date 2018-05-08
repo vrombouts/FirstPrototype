@@ -4,9 +4,9 @@ import org.scalatest.FlatSpec
 
 import scala.util.Random
 
-class UnstrictStatisticsTests extends FlatSpec {
+class StrongerStatisticsTests extends FlatSpec {
 
-  val stats = new UnstrictStats("check")
+  val stats = new StrongerStatistics("")
 
   "incorrectDomains" should "return false if both R1 and R2 possess empty sets" in {
     var R1: Array[Set[Int]] = Array(Set())

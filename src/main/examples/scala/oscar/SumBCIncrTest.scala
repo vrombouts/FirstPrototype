@@ -2,6 +2,7 @@ package oscar
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 import checker.{NoSolutionException, _}
+import CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints._
@@ -12,8 +13,7 @@ object SumBCIncrTest {
   private var currentVars: Array[CPIntVar] = _
 
   def main(args: Array[String]): Unit = {
-    implicit val parameters: TestArgs = new TestArgs
-    parameters.setSeed(1000)
+    testArguments.setSeed(1000)
     for (i <- -50 to 50 by 5) {
       val bugFree = new BCFilteringIncremental(Checkers.sum(i, "="))
       val tested = new FilterWithState {
@@ -73,9 +73,6 @@ object SumBCIncrTest {
     }
   }
 
-  def sumChecker(sol: Array[Int], c: Int): Boolean = {
-    if (sol.sum == c) true
-    else false
-  }
+  def sumChecker(sol: Array[Int], c: Int): Boolean = sol.sum == c
 
 }

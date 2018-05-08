@@ -5,9 +5,9 @@ import org.scalatest.FlatSpec
 
 import scala.util.Random
 
-class StrictStatisticsTests extends FlatSpec {
+class CheckStatisticsTests extends FlatSpec {
 
-  val stats = new StrictStatistics("AC")
+  val stats = new CheckStatistics("")
 
   "printNumber with a number with less than 10 digits ('-' included)" should " return a string of size 11 containing that number" in {
     var s: String = stats.printNumber(0)

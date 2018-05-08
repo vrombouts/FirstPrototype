@@ -17,6 +17,7 @@ object AllDifferentACTest {
       }
     }
     testArguments.setRangeForAll(-5, 5)
+    checkStats.setFileName("allDifferent")
     check(CPCheckerAllDifferentAC, oscarAllDifferentAC)
   }
 

@@ -1,6 +1,7 @@
 package choco;
 
 import checker.*;
+import checker.statistics.CheckStatistics;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.variables.IntVar;
@@ -35,8 +36,8 @@ public class SumCheckBCTest {
             }
         }
         TestArgs parameters = new TestArgs();
-
-        CPChecker.check(new BCFiltering(sumChecker()), new MyFilter(), parameters);
+        CheckStatistics stats = new CheckStatistics("");
+        CPChecker.check(new BCFiltering(sumChecker()), new MyFilter(), parameters, stats);
     }
 
     private static Function<Integer[], Boolean> sumChecker() {
