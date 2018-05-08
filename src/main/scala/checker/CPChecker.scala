@@ -7,7 +7,7 @@ import org.scalacheck.Prop.forAll
 
 object CPChecker {
 
-  private[this] var testArguments: TestArgs = new TestArgs
+  implicit var testArguments: TestArgs = new TestArgs
   var stats: Statistics = new StrictStatistics(20, "AC")
 
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)

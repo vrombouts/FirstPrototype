@@ -16,8 +16,7 @@ object AllDifferentACTest {
         filteringAllDifferentAC(variables)
       }
     }
-    //implicit val parameters: TestArgs = new TestArgs
-    generator.setRangeForAll(-5, 5)
+    testArguments.setRangeForAll(-5, 5)
     check(CPCheckerAllDifferentAC, oscarAllDifferentAC)
   }
 
