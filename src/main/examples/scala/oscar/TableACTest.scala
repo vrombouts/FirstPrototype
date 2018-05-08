@@ -17,13 +17,13 @@ object TableACTest {
     val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = tableACFiltering(variables)
     }
-    implicit val generator: TestArgs = Generators.table(myTable)
+    implicit val parameters: TestArgs = Generators.table(myTable)
     CPChecker.check(new ACFiltering(Checkers.table(myTable)), myFilter)
   }
 
   private def tableACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
-    val variables:Array[CPIntVar] = vars.map(x => CPIntVar(x))
+    val variables: Array[CPIntVar] = vars.map(x => CPIntVar(x))
     val ad = table(variables, myTable.toArray)
     try {
       testSolver.post(ad)

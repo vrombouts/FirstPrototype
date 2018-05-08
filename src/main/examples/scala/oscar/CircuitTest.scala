@@ -12,9 +12,9 @@ object CircuitTest {
     val myFilter: Filter = new Filter {
       def filter(variables: Array[Set[Int]]): Array[Set[Int]] = circuitFiltering(variables)
     }
-    implicit val generator: TestArgs = new TestArgs
-    generator.setRangeForAll((0, 4))
-    generator.setDensityForAll(0.8)
+    implicit val parameters: TestArgs = new TestArgs
+    parameters.setRangeForAll((0, 4))
+    parameters.setDensityForAll(0.8)
     CPChecker.stronger(new ACFiltering(circuitChecker _), myFilter)
   }
 

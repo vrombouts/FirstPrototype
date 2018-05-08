@@ -7,15 +7,15 @@ import oscar.cp.constraints.GCCVarAC
 import oscar.cp.core.CPPropagStrength
 
 object GCCACTest {
-  val values = Array(1,2,3)
+  val values = Array(1, 2, 3)
 
-  def main(args:Array[String]):Unit={
+  def main(args: Array[String]): Unit = {
 
-    val myFilter: Filter = new Filter{
+    val myFilter: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = gccACFiltering(variables)
     }
-    implicit val generator:TestArgs = Generators.gcc(values)
-    generator.setSeed(100)
+    implicit val parameters: TestArgs = Generators.gcc(values)
+    parameters.setSeed(100)
     CPChecker.check(new ACFiltering(Checkers.gccVar(values)), myFilter)
   }
 

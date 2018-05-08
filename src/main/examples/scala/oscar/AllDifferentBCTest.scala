@@ -15,8 +15,8 @@ object AllDifferentBCTest {
         allDiffBCFiltering(variables)
       }
     }
-    implicit val generator: TestArgs = new TestArgs
-    generator.setRangeForAll(-5, 5)
+    implicit val parameters: TestArgs = new TestArgs
+    parameters.setRangeForAll(-5, 5)
     CPChecker.check(bugFree, AllDiff)
   }
 
