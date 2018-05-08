@@ -51,7 +51,7 @@ class BCPruning(checker: Array[Int] => Boolean) extends Filter {
         return false
       else {
         if (interval.domain.size == 1) throw new NoSolutionException
-        interval.update(minOrMax)
+        interval.remove(minOrMax)
         return true
       }
     }
@@ -80,7 +80,7 @@ class BCPruning(checker: Array[Int] => Boolean) extends Filter {
     }
     //no solution if we remove the last element of the domain of a variable
     if (interval.domain.size == 1) throw new NoSolutionException
-    interval.update(minOrMax)
+    interval.remove(minOrMax)
     true
 
   }

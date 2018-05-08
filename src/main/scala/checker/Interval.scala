@@ -18,12 +18,12 @@ class Interval(var dom: Set[Int]) {
 
   def getRange: Range = min to max
 
-  def update_min(): Unit = {
+  def removeMin(): Unit = {
     if (domain.size == 1) throw new NoSolutionException
     dom = domain - min
   }
 
-  def update_max(): Unit = {
+  def removeMax(): Unit = {
     if (domain.size == 1) throw new NoSolutionException
     dom = domain - max
   }
@@ -33,9 +33,9 @@ class Interval(var dom: Set[Int]) {
     dom = domain - i
   }
 
-  def update(minOrMax: Boolean): Unit = {
-    if (minOrMax) update_min()
-    else update_max()
+  def remove(minOrMax: Boolean): Unit = {
+    if (minOrMax) removeMin()
+    else removeMax()
   }
 
   def giveValue(minOrMax: Boolean): Int = {
