@@ -30,7 +30,7 @@ abstract class Statistics(var filename: String) {
 
   private[this] var nbTestCases: Int = 0
 
-  def setFileName(filename: String):Unit = {
+  def setFileName(filename: String): Unit = {
     filenameStats = new File("out/statistics/" + filename + "/statistics.txt")
     filenameStats.getParentFile.mkdirs
     filenamePassed = new File("out/statistics/" + filename + "/passedTests.txt")
@@ -40,26 +40,39 @@ abstract class Statistics(var filename: String) {
     this.filename = filename
   }
 
-  def incNbExecutedTests(): Unit = nbExecutedTests += 1
+  protected[this] def incNbExecutedTests(): Unit = nbExecutedTests += 1
 
-  def incNbNoSolutionTests(): Unit = nbNoSolutionTests += 1
+  protected[this] def incNbNoSolutionTests(): Unit = nbNoSolutionTests += 1
 
-  def incNbFailedNoSolutionTests(): Unit = nbFailedNoSolutionTests += 1
+  protected[this] def incNbFailedNoSolutionTests(): Unit = nbFailedNoSolutionTests += 1
 
-  def getNbExecutedTests: Int = nbExecutedTests
+  protected[this] def getNbExecutedTests: Int = nbExecutedTests
 
-  def getNbNoSolutionTests: Int = nbNoSolutionTests
+  protected[this] def getNbNoSolutionTests: Int = nbNoSolutionTests
 
-  def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
+  protected[this] def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
 
   def getGenerator: TestArgs = generatorUsed
 
-  def nbFailedTests: Int
-
+  protected[this] def nbFailedTests: Int
 
   def setGenerator(gen: TestArgs): Unit = generatorUsed = gen
 
-  def globalStatsToString(isInc: Boolean): String
+  /*
+   * This function prints the computed statistics in a table
+   */
+  protected[this] def globalStatsToString(isInc: Boolean): String
+
+  /*
+   * This function updates the stats internal variables according to the type of stats (child inheritance)
+   */
+  protected[this] def updateStats(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
+
+  /*
+   * This function makes the comparison of the domains passed in argument.
+   */
+  protected[this] def correctDomains(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
+
 
   protected[this] var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
@@ -81,7 +94,7 @@ abstract class Statistics(var filename: String) {
     }
   }
 
-  def printNumber(nb: Int): String = {
+  protected[this] def printNumber(nb: Int): String = {
     val nbOfChars: Int = nb.toString.length
     var s: String = " " + nb
     for (_ <- 1 to 10 - nbOfChars) {
@@ -91,7 +104,7 @@ abstract class Statistics(var filename: String) {
   }
 
 
-  def branchingStatsToString(): String = {
+  private[this] def branchingStatsToString(): String = {
     var nbPushOp: Int = 0
     var nbPopOp: Int = 0
     var nbRestrictOp: Int = 0
@@ -126,7 +139,7 @@ abstract class Statistics(var filename: String) {
       prWriter.write(generatorUsed.toString)
   }
 
-  def domainToString(dom: Set[Int]): String = {
+  private[this] def domainToString(dom: Set[Int]): String = {
     var result: String = "["
     var first: Boolean = true
     for (elem <- dom) {
@@ -150,21 +163,24 @@ abstract class Statistics(var filename: String) {
   }
 
   private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): Unit = {
-    for ((init, ourDom, yourDom) <- tests) {
-      var ourTitle: String = "Filtered domains "
-      var yourTitle: String = "Your filtered domains "
+    for ((init, bugFreeDom, testedDom) <- tests) {
+      var bugFreeTitle: String = "Correct filtering "
+      var testedTitle: String = "Tested filtering "
       if (isInc) {
-        ourTitle = "Correct domains "
-        yourTitle = "Your domains "
+        bugFreeTitle = "Bugfree domains "
+        testedTitle = "Tested domains "
       }
-      var maxLength: Int = ourTitle.length
+      var maxLength: Int = bugFreeTitle.length
       init.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
-      prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString(ourTitle, maxLength))
-      prWriter.write("|" + yourTitle)
+      var tested: Array[Set[Int]] = testedDom.clone()
+      if (tested != null && testedDom.length < init.length)
+        tested = tested ++ Array.fill(init.length - tested.length)(null)
+      prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString(bugFreeTitle, maxLength))
+      prWriter.write("|" + testedTitle)
       prWriter.write("\n")
       for (i <- init.indices) {
-        prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(ourDom(i)), maxLength))
-        if (yourDom != null && yourDom(i) != null) prWriter.write("|" + domainToString(yourDom(i)))
+        prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(bugFreeDom(i)), maxLength))
+        if (tested != null && tested(i) != null) prWriter.write("|" + domainToString(tested(i)))
         else prWriter.write("|" + "null")
         prWriter.write("\n")
       }
@@ -220,45 +236,13 @@ abstract class Statistics(var filename: String) {
     }
   }
 
-  def updateStats(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
-
-  def correctDomains(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
-
-  /*
-   * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
-   */
-  def comparison(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null): Boolean = {
+  private[this] def updateGeneralStats(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], b: List[BranchOp], result: Boolean): Unit = {
+    incNbExecutedTests()
     if (b != null && b.size == 1) {
       nbTestCases += 1
       testsIncPassed = testsIncPassed :+ storedResults.clone()
       storedResults = Array()
     }
-    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
-    var reducedDomains: Array[Set[Int]] = returnValues(1)
-    val init: Array[Set[Int]] = returnValues(0)
-    var result: Boolean = true
-    if (reducedDomains == null) {
-      println("You returned a null array instead of an array of filtered domains")
-      result = false
-    }
-    else if (bugFreeReducedDomains.length != reducedDomains.length) {
-      println("Incorrect output format : you don't return the correct number of domains variables")
-      if (reducedDomains.length < bugFreeReducedDomains.length)
-        reducedDomains = reducedDomains ++ Array.fill(bugFreeReducedDomains.length - reducedDomains.length)(null)
-      result = false
-    }
-    else if (bugFreeReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) {
-      result = true
-    }
-    else if (bugFreeReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty)) {
-      result = false
-    }
-    else {
-      if (!correctDomains(bugFreeReducedDomains, reducedDomains)) {
-        result = false
-      }
-    }
-    incNbExecutedTests()
     if (bugFreeReducedDomains.exists(_.isEmpty)) {
       incNbNoSolutionTests()
       if (!result) incNbFailedNoSolutionTests()
@@ -281,8 +265,32 @@ abstract class Statistics(var filename: String) {
         storedResults = Array()
       }
     }
-
     updateBranching(b)
-    result
+  }
+
+
+  /*
+   * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
+   */
+  def comparison(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null): Boolean = {
+    var errorMsg: String = ""
+    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
+    val reducedDomains: Array[Set[Int]] = returnValues(1)
+    val init: Array[Set[Int]] = returnValues(0)
+    if (reducedDomains == null)
+      errorMsg = "You returned a null array instead of an array of filtered domains"
+    else if (bugFreeReducedDomains.length != reducedDomains.length)
+      errorMsg = "Incorrect output format : you don't return the correct number of domains variables"
+    else if (bugFreeReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty))
+      errorMsg = ""
+    else if (bugFreeReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty))
+      errorMsg = "The tested filtering removes solutions (filters too much domains)"
+    else {
+      if (!correctDomains(bugFreeReducedDomains, reducedDomains))
+        errorMsg = "Some domains are not correctly filtered. Look at out/statistics/" + filename + "failedTests.txt"
+    }
+    updateGeneralStats(bugFreeReducedDomains, reducedDomains, init, b, errorMsg.isEmpty)
+    if (errorMsg.nonEmpty) println(errorMsg)
+    errorMsg.isEmpty
   }
 }
