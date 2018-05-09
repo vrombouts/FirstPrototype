@@ -92,7 +92,7 @@ class ACFilteringTests extends FlatSpec {
   }
 
   "Calling filter" should "should filter only the complete solutions" in {
-    val C = new ACFiltering(x => x.length == 4)
+    val C = new ACFiltering((x: Array[Int]) => x.length == 4)
     val a: Array[Set[Int]] = C.filter(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))

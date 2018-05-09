@@ -3,7 +3,7 @@ package checker
 import org.scalatest.FlatSpec
 
 class RangeFilteringTests extends FlatSpec {
-  val rangeTrue = new RangeFiltering(_ => true)
+  val rangeTrue = new RangeFiltering(Checkers.trueConstraint _)
   val rangeAllDiff = new RangeFiltering(Checkers.allDifferent())
 
   "Calling filter for trueConstraint" should "return the input domains except if there is an empty domain" in {
@@ -96,7 +96,7 @@ class RangeFilteringTests extends FlatSpec {
   }
 
   "calling filter" should "use its checker only on complete solutions" in {
-    val C = new RangeFiltering(x => x.length == 4)
+    val C = new RangeFiltering((x: Array[Int]) => x.length == 4)
     val a: Array[Set[Int]] = C.filter(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))

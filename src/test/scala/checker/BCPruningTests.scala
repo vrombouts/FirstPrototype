@@ -75,7 +75,7 @@ class BCPruningTests extends FlatSpec {
   }
 
   "calling filter of BCPruning with a checker that confirm the length of the solution is equal to the number of variables" should "return false always since it prune during the search with the checker" in {
-    val lengthChecker: Array[Int] => Boolean = x => x.length==4
+    val lengthChecker: Array[Int] => Boolean = x => x.length == 4
     val falseFilter = new BCPruning(lengthChecker)
     assertThrows[NoSolutionException] {
       falseFilter.filter(Array(Set(1), Set(1), Set(1), Set(1)))

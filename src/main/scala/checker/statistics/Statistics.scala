@@ -46,11 +46,11 @@ abstract class Statistics(var filename: String) {
 
   protected[this] def incNbFailedNoSolutionTests(): Unit = nbFailedNoSolutionTests += 1
 
-  protected[this] def getNbExecutedTests: Int = nbExecutedTests
+  def getNbExecutedTests: Int = nbExecutedTests
 
-  protected[this] def getNbNoSolutionTests: Int = nbNoSolutionTests
+  def getNbNoSolutionTests: Int = nbNoSolutionTests
 
-  protected[this] def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
+  def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
 
   def getGenerator: TestArgs = generatorUsed
 

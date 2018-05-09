@@ -74,7 +74,7 @@ class BCFilteringTests extends FlatSpec {
   }
 
   "calling filter" should "use its checker only on complete solutions" in {
-      val C = new BCFiltering(x => x.length == 4)
+      val C = new BCFiltering((x: Array[Int]) => x.length == 4)
       val a: Array[Set[Int]] = C.filter(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
       val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
       assert((a zip b).forall(x => x._1.equals(x._2)))
