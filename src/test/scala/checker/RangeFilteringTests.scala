@@ -89,7 +89,7 @@ class RangeFilteringTests extends FlatSpec {
   }
 
   "calling filter for false constraint on domain [1,2,3]" should "throw a noSolutionException" in {
-    val rangeFalse = new RangeFiltering(Checkers.falseConstraint)
+    val rangeFalse = new RangeFiltering(Checkers.falseConstraint _)
     assertThrows[NoSolutionException] {
       rangeFalse.filter(Array(Set(1, 2, 3)))
     }
