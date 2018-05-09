@@ -11,7 +11,7 @@ class BCFiltering(checker: Array[Int] => Boolean) extends Filter {
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val intervals = variables.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
     changeBounds(intervals)
-    intervals.map(x => x.domain)
+    intervals.map(x => x.dom)
   }
 
   private[this] def changeBounds(intervals: Array[Interval]): Unit = {

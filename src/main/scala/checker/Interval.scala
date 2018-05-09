@@ -2,8 +2,8 @@ package checker
 
 class Interval(var dom: Set[Int]) {
 
-  def min: Int = domain.min
-  def max: Int = domain.max
+  def min: Int = dom.min
+  def max: Int = dom.max
   var pos: Int = min
 
   def position: Int = pos
@@ -14,23 +14,21 @@ class Interval(var dom: Set[Int]) {
 
   def posInInterval: Boolean = pos <= max
 
-  def domain: Set[Int] = dom
-
   def getRange: Range = min to max
 
   def removeMin(): Unit = {
-    if (domain.size == 1) throw new NoSolutionException
-    dom = domain - min
+    if (dom.size == 1) throw new NoSolutionException
+    dom = dom - min
   }
 
   def removeMax(): Unit = {
-    if (domain.size == 1) throw new NoSolutionException
-    dom = domain - max
+    if (dom.size == 1) throw new NoSolutionException
+    dom = dom - max
   }
 
   def remove(i : Int): Unit = {
-    if (domain.size == 1) throw new NoSolutionException
-    dom = domain - i
+    if (dom.size == 1) throw new NoSolutionException
+    dom = dom - i
   }
 
   def remove(minOrMax: Boolean): Unit = {
