@@ -9,7 +9,7 @@ class CheckStatisticsTests extends FlatSpec {
 
   val stats = new CheckStatistics("")
 
-  "printNumber with a number with less than 10 digits ('-' included)" should " return a string of size 11 containing that number" in {
+  /*"printNumber with a number with less than 10 digits ('-' included)" should " return a string of size 11 containing that number" in {
     var s: String = stats.printNumber(0)
     assert(s.length == 11 && s.contains("0"))
     s = stats.printNumber(10)
@@ -48,7 +48,7 @@ class CheckStatisticsTests extends FlatSpec {
     assert(s.length == 11 && s.contains("-10000000"))
     s = stats.printNumber(-100000000)
     assert(s.length == 11 && s.contains("-100000000"))
-  }
+  }*/
 
   "strictStatistics incorrectDomains" should "return false only if the two array possess the same sets in the same order" in {
     var a = Array(Set(1), Set(2, 1))
@@ -276,78 +276,5 @@ class CheckStatisticsTests extends FlatSpec {
     )
     assert(stats.comparison(v))
   }
-  val domains = Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3))
-  val branch = List(new BranchOp(domains),
-    new Pop(domains),
-    new RestrictDomain(domains, new Random(1)),
-    new Push(domains))
 
-  /*"StrictStatistics comparison with b!=null" should "increment nbLeaves if v(1) and v(2) both possess an empty set" in {
-    var v: Array[Array[Set[Int]]] = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(1), Set()),
-      Array(Set(1), Set())
-    )
-    val nbLeaves = stats.getNbLeaves
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves + 1 == stats.getNbLeaves)
-    v = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(2), Set()),
-      Array(Set(1), Set())
-    )
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves + 2 == stats.getNbLeaves)
-    v = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(2), Set()),
-      Array(Set(), Set(2))
-    )
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves + 3 == stats.getNbLeaves)
-    v = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(), Set()),
-      Array(Set(1), Set())
-    )
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves + 4 == stats.getNbLeaves)
-  }
-
-  "StrictStatistics comparison with b!=null" should "increment nbLeaves if v(1) and v(2) only possess an sets of size 1" in {
-    var v: Array[Array[Set[Int]]] = Array(
-      Array(Set(1, 2)),
-      Array(Set(1)),
-      Array(Set(1))
-    )
-    var nbLeaves = stats.getNbLeaves
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves + 1 == stats.getNbLeaves)
-    v = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(1), Set(2)),
-      Array(Set(1), Set(2))
-    )
-    nbLeaves = stats.getNbLeaves
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves + 1 == stats.getNbLeaves)
-    v = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(2), Set(2)),
-      Array(Set(1), Set(2))
-    )
-    nbLeaves = stats.getNbLeaves
-    assert(!stats.comparison(v, branch))
-    assert(nbLeaves + 1 == stats.getNbLeaves)
-    v = Array(
-      Array(Set(1, 2), Set(2)),
-      Array(Set(1, 2), Set(2)),
-      Array(Set(1, 2), Set(2))
-    )
-    nbLeaves = stats.getNbLeaves
-    assert(stats.comparison(v, branch))
-    assert(nbLeaves == stats.getNbLeaves)
-  }
-
-  "StrictStatistics comparison" should "return false if"*/
 }
