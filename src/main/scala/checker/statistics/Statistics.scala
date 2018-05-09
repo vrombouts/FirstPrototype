@@ -40,7 +40,7 @@ abstract class Statistics(var filename: String) {
     this.filename = filename
   }
 
-  protected[this] def incNbExecutedTests(): Unit = nbExecutedTests += 1
+  def incNbExecutedTests(): Unit = nbExecutedTests += 1
 
   protected[this] def incNbNoSolutionTests(): Unit = nbNoSolutionTests += 1
 

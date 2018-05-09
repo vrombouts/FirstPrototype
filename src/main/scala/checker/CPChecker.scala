@@ -15,7 +15,7 @@ object CPChecker {
            (implicit testArguments: TestArgs, stats: CheckStatistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
-      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
+      (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
@@ -26,7 +26,7 @@ object CPChecker {
               (implicit testArguments: TestArgs, stats: StrongerStatistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
-      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
+      (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, stats)
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
@@ -37,7 +37,7 @@ object CPChecker {
            (implicit testArguments: TestArgs, stats: CheckStatistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
-      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
+      (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
@@ -48,7 +48,7 @@ object CPChecker {
               (implicit testArguments: TestArgs, stats: StrongerStatistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
-      x.isEmpty || (x.length < testArguments.getNbVars) || checkEmpty(x) ||
+      (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, stats)
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
