@@ -11,16 +11,16 @@ class RangeFiltering(checker: Array[Int] => Boolean) extends Filter {
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val intervals: Array[Interval] = variables.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
     filterIntervals(intervals)
-    intervals.map(x => x.domain)
+    intervals.map(x => x.dom)
   }
 
   private[this] def filterIntervals(intervals: Array[Interval]): Unit = {
-    if (intervals.indices.foldLeft(false) { (acc, x) => if (filterIndex(x, intervals)) true else acc })
+    if (intervals.indices.foldLeft(false) { (acc, x) => if (filterInterval(x, intervals)) true else acc })
       filterIntervals(intervals)
   }
 
-  private[this] def filterIndex(index: Int, intervals: Array[Interval]): Boolean = {
-    val domain: Set[Int] = intervals(index).domain
+  private[this] def filterInterval(index: Int, intervals: Array[Interval]): Boolean = {
+    val domain: Set[Int] = intervals(index).dom
     intervals(index).dom = domain.filter(findASolution(index, intervals, _))
     if (intervals(index).dom.isEmpty) throw NoSolutionException()
     domain.size != intervals(index).dom.size
