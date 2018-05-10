@@ -84,7 +84,7 @@ class Statistics(var filename: String) {
     val algo1FiltersMore: String = "Tested algorithm filters less than the trusted : "
     val algo2FiltersMore: String = "Tested algorithm filters more than the trusted (stronger) : "
     val algo1DiffThan2: String = "Trusted algorithm and tested one filters differently \n(without one stronger than the other) : "
-    val algo1FiltersNoVal: String = "Trusted algorithm filter no solution : "
+    val algo1FiltersNoVal: String = "Trusted algorithm filters no value : "
     val ratioAlgo12ForNoSol: String = "Ratio of filtering until no solution found (tested algo/ trusted algo) : "
     val ratioAlgo12ForInstan: String = "Ratio of filtering until a single solution (tested algo/ trusted algo) : "
 
@@ -182,7 +182,8 @@ class Statistics(var filename: String) {
   }
 
   private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): Unit = {
-    for ((init, bugFreeDom, testedDom) <- tests) {
+    for (i <- tests.length - 1 to 0 by -1) {
+      val (init, bugFreeDom, testedDom) = tests(i)
       var bugFreeTitle: String = "Correct filtering "
       var testedTitle: String = "Tested filtering "
       if (isInc) {
@@ -229,7 +230,7 @@ class Statistics(var filename: String) {
       return
     }
     var lastTest: Array[Set[Int]] = null
-    for (i <- tests.indices) {
+    for (i <- tests.length-1 to 0 by -1) {
       if (!tests(i).isEmpty) {
         if (!passed) prWriter.write("TEST FAILED : \n")
         else prWriter.write("TEST PASSED : \n")
