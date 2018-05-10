@@ -10,7 +10,7 @@ import oscar.cp.core.CPPropagStrength
 object AllDifferentBCTest {
 
   def main(args: Array[String]): Unit = {
-    val bugFree: Filter = new BCFiltering(allDifferentChecker _)
+    val bugFree: Filter = new BCPruning(allDifferentChecker _)
     val AllDiff: Filter = new Filter {
       override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
         allDiffBCFiltering(variables)

@@ -4,7 +4,7 @@ import java.io._
 
 import checker.incremental.{BranchOp, Pop, Push}
 
-class Statistics(var filename: String) {
+class Statistics(var folderName: String) {
 
   // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
@@ -40,14 +40,11 @@ class Statistics(var filename: String) {
   private[this] var algo2FoundsNoSol: Int = 0
   private[this] var algo1FilterNoVal: Int = 0
 
-  private[this] var filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
-  filenameStats.getParentFile.mkdirs
+  private[this] var filenameStats: File = _
 
-  private[this] var filenamePassed: File = new File("out/statistics/" + filename + "/passedTests.txt")
-  filenamePassed.getParentFile.mkdirs
+  private[this] var filenamePassed: File = _
 
-  private[this] var filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
-  filenameFailed.getParentFile.mkdirs
+  private[this] var filenameFailed: File = _
 
   // stats about the generator
   private[this] var generatorUsed: TestArgs = _
@@ -58,14 +55,14 @@ class Statistics(var filename: String) {
 
   private[this] var nbTestCases: Int = 0
 
-  def setFileName(filename: String): Unit = {
+  def setFolderName(filename: String): Unit = {
     filenameStats = new File("out/statistics/" + filename + "/statistics.txt")
     filenameStats.getParentFile.mkdirs
     filenamePassed = new File("out/statistics/" + filename + "/passedTests.txt")
     filenamePassed.getParentFile.mkdirs
     filenameFailed = new File("out/statistics/" + filename + "/failedTests.txt")
     filenameFailed.getParentFile.mkdirs
-    this.filename = filename
+    this.folderName = filename
   }
 
   def getNbExecutedTests: Int = nbExecutedTests
@@ -136,6 +133,7 @@ class Statistics(var filename: String) {
   }
 
   def print(implicit isInc: Boolean = false): Unit = {
+    setFolderName(folderName)
     val prWriterStats = new PrintWriter(filenameStats)
     val prWriterPassed = new PrintWriter(filenamePassed)
     val prWriterFailed = new PrintWriter(filenameFailed)

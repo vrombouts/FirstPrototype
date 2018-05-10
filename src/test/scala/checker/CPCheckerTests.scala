@@ -386,8 +386,8 @@ class CPCheckerTests extends FlatSpec {
     val a: Array[Set[Int]] = Array()
     val b: Array[Set[Int]] = Array(Set())
 
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
-    assert(!CPChecker.checkConstraint(b, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
+    assert(!CPChecker.checkConstraint(b, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
   }
 
   "checkConstraint with an empty domain or empty" should "return true if init return empty or empty domains" in {
@@ -403,8 +403,8 @@ class CPCheckerTests extends FlatSpec {
     }
     val a: Array[Set[Int]] = Array()
     val b: Array[Set[Int]] = Array(Set())
-    assert(CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(b, dummyInc, inc2, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(b, dummyInc, inc2, CPChecker.comparisonCheck(_, _)))
   }
 
   "CheckConstraint with init returning an array of different size" should "be false" in {
@@ -424,22 +424,22 @@ class CPCheckerTests extends FlatSpec {
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = Array()
     }
     val a: Array[Set[Int]] = Array()
-    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc, CPChecker.comparisonCheck(_,_)))
-    assert(!CPChecker.checkConstraint(Array(Set(5), Set(5)), dummyInc, inc2, CPChecker.comparisonCheck(_,_)))
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
-    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc3, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc, CPChecker.comparisonCheck(_, _)))
+    assert(!CPChecker.checkConstraint(Array(Set(5), Set(5)), dummyInc, inc2, CPChecker.comparisonCheck(_, _)))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
+    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc3, CPChecker.comparisonCheck(_, _)))
   }
 
   "CheckConstraint with applyConstraint as init and filtering" should "always be true" in {
     val a: Array[Set[Int]] = Array()
     val b: Array[Set[Int]] = Array(Set())
     val c: Array[Set[Int]] = Array(Set(1, 4, 5), Set())
-    assert(CPChecker.checkConstraint(a, dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(b, dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(Array(Set(1)), dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3)), dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(c, dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(Array(Set(1, 4, 5, 8, 7), Set(1, 4, 5, 8, 7, 9)), dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(a, dummyInc, dummyInc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(b, dummyInc, dummyInc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(Array(Set(1)), dummyInc, dummyInc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3)), dummyInc, dummyInc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(c, dummyInc, dummyInc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(Array(Set(1, 4, 5, 8, 7), Set(1, 4, 5, 8, 7, 9)), dummyInc, dummyInc, CPChecker.comparisonCheck(_, _)))
   }
 
   "checkConstraint with applyConstraint as init and a dummy filtering" should "return false because of filtering" in {
@@ -453,7 +453,7 @@ class CPCheckerTests extends FlatSpec {
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = dummyInc.setup(variables)
     }
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
     assert(i == 1)
   }
 
@@ -465,8 +465,8 @@ class CPCheckerTests extends FlatSpec {
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = throw new Exception()
     }
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
-    assert(CPChecker.checkConstraint(b, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
+    assert(CPChecker.checkConstraint(b, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
   }
 
   "checkConstraint with filtering throwing an exception" should "consider it as a NoSolutionException" in {
@@ -476,7 +476,7 @@ class CPCheckerTests extends FlatSpec {
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = dummyInc.setup(variables)
     }
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_, _)))
   }
 
   // tests for the check and stronger functions
@@ -488,7 +488,7 @@ class CPCheckerTests extends FlatSpec {
     testArguments = new TestArgs
     testArguments.setSeed(100)
     val stats = new Statistics("")
-    check(acFalse, dummyFilter)(testArguments,stats)
+    check(acFalse, dummyFilter)(testArguments, stats)
     assert(stats.getNbFailedTests > 0)
   }
 
@@ -835,7 +835,6 @@ class CPCheckerTests extends FlatSpec {
     stronger(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
   }
-
 
 
 }
