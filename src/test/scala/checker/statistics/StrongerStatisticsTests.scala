@@ -6,7 +6,7 @@ import scala.util.Random
 
 class StrongerStatisticsTests extends FlatSpec {
 
-  val stats = new StrongerStatistics("")
+  /*val stats = new StrongerStatistics("")
 
   "incorrectDomains" should "return false if both R1 and R2 possess empty sets" in {
     var R1: Array[Set[Int]] = Array(Set())
@@ -246,105 +246,5 @@ class StrongerStatisticsTests extends FlatSpec {
   }
 
 
-  "strictStatistics comparison" should "return true if v(1) is the same as v(2)" in {
-    var v = Array(
-      Array(Set(1)),
-      Array(Set(1)),
-      Array(Set(1))
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(Set(1), Set(2)),
-      Array(Set(1)),
-      Array(Set(1))
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(Set(1)),
-      Array(Set(1), Set(2)),
-      Array(Set(1), Set(2))
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(),
-      Array(Set(1)),
-      Array(Set(1))
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(),
-      Array(),
-      Array()
-    )
-    assert(stats.comparison(v))
-  }
-  //only testing if all elements of v have the same length (pre-condition)
-  "unstrict comparison" should "return false if v(1) is included in v(2)" in {
-    var v = Array(
-      Array(Set(1, 2)),
-      Array(Set(1)),
-      Array(Set(1, 2))
-    )
-    assert(!stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2)),
-      Array(Set()),
-      Array(Set(1, 2))
-    )
-    assert(!stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2), Set(1, 2, 3)),
-      Array(Set(1), Set(1, 3)),
-      Array(Set(1, 2), Set(1, 2, 3))
-    )
-    assert(!stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2), Set(1, 2, 3), Set(1, 2)),
-      Array(Set(1, 2), Set(1, 2), Set(1, 2)),
-      Array(Set(1, 2), Set(1, 2, 3), Set(1, 2))
-    )
-    assert(!stats.comparison(v))
-  }
-
-  "unstrict comparison" should "return true if v(2) is included in v(1)" in {
-    var v = Array(
-      Array(Set(1, 2)),
-      Array(Set(1, 2)),
-      Array(Set(1))
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2)),
-      Array(Set(1, 2)),
-      Array(Set())
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2), Set(1, 2, 3)),
-      Array(Set(1, 2), Set(1, 2, 3)),
-      Array(Set(1), Set(1, 3))
-    )
-    assert(stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2), Set(1, 2, 3), Set(1, 2)),
-      Array(Set(1, 2), Set(1, 2, 3), Set(1, 2)),
-      Array(Set(1, 2), Set(1, 2), Set(1, 2))
-    )
-    assert(stats.comparison(v))
-  }
-
-  "unstrict comparison" should "return false if v(1) and v(2) included in v(0) and v(1)!=v(2)" in {
-    var v = Array(
-      Array(Set(1, 2)),
-      Array(Set(1)),
-      Array(Set(2))
-    )
-    assert(!stats.comparison(v))
-    v = Array(
-      Array(Set(1, 2, 3)),
-      Array(Set(2, 1)),
-      Array(Set(2, 3))
-    )
-    assert(!stats.comparison(v))
-  }
+  }*/
 }

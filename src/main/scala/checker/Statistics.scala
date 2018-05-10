@@ -1,32 +1,60 @@
-package checker.statistics
+package checker
 
 import java.io._
 
-import checker.TestArgs
 import checker.incremental.{BranchOp, Pop, Push}
 
-abstract class Statistics(var filename: String) {
+class Statistics(var filename: String) {
 
   // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
-  private[this] var nbNoSolutionTests: Int = 0
-  private[this] var nbFailedNoSolutionTests: Int = 0
+  private[this] var nbFailedTests: Int = 0
 
-  protected[this] var filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
+  def getNbFailedTests: Int = nbFailedTests
+
+  def getAlgo1Equals2: Int = algo1Equals2
+
+  def getAlgo1FilterMoreThan2: Int = algo1FilterMoreThan2
+
+  def getAlgo2FilterMoreThan1: Int = algo2FilterMoreThan1
+
+  def getAlgo1FilterDiffThan2: Int = algo1FilterDiffThan2
+
+  def getAlgo1FilterNoValue: Int = algo1FilterNoVal
+
+  def getAlgo1FoundsInstantiation: Int = algo1FoundsInstantiation
+
+  def getAlgo2FoundsInstantiation: Int = algo2FoundsInstantiation
+
+  def getAlgo1FoundsNoSol: Int = algo1FoundsNoSol
+
+  def getAlgo2FoundsNoSol: Int = algo2FoundsNoSol
+
+  private[this] var algo1Equals2: Int = 0
+  private[this] var algo1FilterMoreThan2: Int = 0
+  private[this] var algo2FilterMoreThan1: Int = 0
+  private[this] var algo1FilterDiffThan2: Int = 0
+  private[this] var algo1FoundsInstantiation: Int = 0
+  private[this] var algo2FoundsInstantiation: Int = 0
+  private[this] var algo1FoundsNoSol: Int = 0
+  private[this] var algo2FoundsNoSol: Int = 0
+  private[this] var algo1FilterNoVal: Int = 0
+
+  private[this] var filenameStats: File = new File("out/statistics/" + filename + "/statistics.txt")
   filenameStats.getParentFile.mkdirs
 
-  protected[this] var filenamePassed: File = new File("out/statistics/" + filename + "/passedTests.txt")
+  private[this] var filenamePassed: File = new File("out/statistics/" + filename + "/passedTests.txt")
   filenamePassed.getParentFile.mkdirs
 
-  protected[this] var filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
+  private[this] var filenameFailed: File = new File("out/statistics/" + filename + "/failedTests.txt")
   filenameFailed.getParentFile.mkdirs
 
   // stats about the generator
-  protected[this] var generatorUsed: TestArgs = _
+  private[this] var generatorUsed: TestArgs = _
 
-  protected[this] var nbPush: Int = 0
-  protected[this] var nbPop: Int = 0
-  protected[this] var nbRestriction: Int = 0
+  private[this] var nbPush: Int = 0
+  private[this] var nbPop: Int = 0
+  private[this] var nbRestriction: Int = 0
 
   private[this] var nbTestCases: Int = 0
 
@@ -42,47 +70,49 @@ abstract class Statistics(var filename: String) {
 
   def incNbExecutedTests(): Unit = nbExecutedTests += 1
 
-  protected[this] def incNbNoSolutionTests(): Unit = nbNoSolutionTests += 1
-
-  protected[this] def incNbFailedNoSolutionTests(): Unit = nbFailedNoSolutionTests += 1
-
   def getNbExecutedTests: Int = nbExecutedTests
 
-  def getNbNoSolutionTests: Int = nbNoSolutionTests
-
-  def getNbFailedNoSolutionTests: Int = nbFailedNoSolutionTests
-
   def getGenerator: TestArgs = generatorUsed
-
-  protected[this] def nbFailedTests: Int
 
   def setGenerator(gen: TestArgs): Unit = generatorUsed = gen
 
   /*
    * This function prints the computed statistics in a table
    */
-  protected[this] def globalStatsToString(isInc: Boolean): String
+  private[this] def globalStatsToString(isInc: Boolean): String = {
+    val nbTestEx: String = "Number of executed tests : "
+    val nbFailedEx: String = "Number of failed tests : "
+    val algo1EqualsAlgo2: String = "Tested and trusted algorithms filters the same : "
+    val algo1FiltersMore: String = "Tested algorithm filters less than the trusted : "
+    val algo2FiltersMore: String = "Tested algorithm filters more than the trusted (stronger) : "
+    val algo1DiffThan2: String = "Trusted algorithm and tested one filters differently \n(without one stronger than the other) : "
+    val algo1FiltersNoVal: String = "Trusted algorithm filter no solution"
+    val ratioAlgo12ForNoSol: String = "Ratio of filtering until no solution found (tested algo/ trusted algo) : "
+    val ratioAlgo12ForInstan: String = "Ratio of filtering until a single solution (tested algo/ trusted algo) : "
 
-  /*
-   * This function updates the stats internal variables according to the type of stats (child inheritance)
-   */
-  protected[this] def updateStats(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], result: Boolean): Unit
+    "Here are the statistics of the executed tests :  \n" +
+      "-------------------------------------------- \n \n" +
+      nbTestEx + nbExecutedTests + "\n" +
+      nbFailedEx + nbFailedTests + "\n\n" +
+      algo1EqualsAlgo2 + algo1Equals2 + "\n" +
+      algo1FiltersMore + algo1FilterMoreThan2 + "\n" +
+      algo2FiltersMore + algo2FilterMoreThan1 + "\n" +
+      algo1DiffThan2 + algo1FilterDiffThan2 + "\n\n" +
+      algo1FiltersNoVal + algo1FilterNoVal + "\n\n" +
+      ratioAlgo12ForNoSol + algo2FoundsNoSol + "/" + algo1FoundsNoSol + "\n" +
+      ratioAlgo12ForInstan + algo2FoundsNoSol + "/" + algo1FoundsNoSol + "\n\n"
 
-  /*
-   * This function makes the comparison of the domains passed in argument.
-   */
-  protected[this] def correctDomains(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]]): Boolean
+  }
 
+  private[this] var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  protected[this] var testsPassed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  private[this] var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  protected[this] var testsFailed: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])] = Array()
+  private[this] var storedResults: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])] = Array()
 
-  protected[this] var storedResults: Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])] = Array()
+  private[this] var testsIncPassed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
 
-  protected[this] var testsIncPassed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
-
-  protected[this] var testsIncFailed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
+  private[this] var testsIncFailed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
 
   private[this] def updateBranching(b: List[BranchOp]): Unit = {
     if (b != null && b.nonEmpty) {
@@ -92,15 +122,6 @@ abstract class Statistics(var filename: String) {
         case _ => nbRestriction += 1
       }
     }
-  }
-
-  protected[this] def printNumber(nb: Int): String = {
-    val nbOfChars: Int = nb.toString.length
-    var s: String = " " + nb
-    for (_ <- 1 to 10 - nbOfChars) {
-      s = s + " "
-    }
-    s
   }
 
 
@@ -236,19 +257,15 @@ abstract class Statistics(var filename: String) {
     }
   }
 
-  private[this] def updateGeneralStats(bugFreeReducedDomains: Array[Set[Int]], reducedDomains: Array[Set[Int]], init: Array[Set[Int]], b: List[BranchOp], result: Boolean): Unit = {
-    incNbExecutedTests()
+  private[this] def recordPassFailTests(returnValues: Array[Array[Set[Int]]], b: List[BranchOp], result: Boolean): Unit = {
+    val init: Array[Set[Int]] = returnValues(0)
+    val reducedDomains: Array[Set[Int]] = returnValues(1)
+    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
     if (b != null && b.size == 1) {
       nbTestCases += 1
       testsIncPassed = testsIncPassed :+ storedResults.clone()
       storedResults = Array()
     }
-    if (bugFreeReducedDomains.exists(_.isEmpty)) {
-      incNbNoSolutionTests()
-      if (!result) incNbFailedNoSolutionTests()
-    }
-    else
-      updateStats(bugFreeReducedDomains, reducedDomains, init, result)
     if (result) {
       if (b == null)
         testsPassed = testsPassed :+ (init, bugFreeReducedDomains, reducedDomains)
@@ -257,6 +274,7 @@ abstract class Statistics(var filename: String) {
       }
     }
     else {
+      nbFailedTests += 1
       if (b == null)
         testsFailed = testsFailed :+ (init, bugFreeReducedDomains, reducedDomains)
       else {
@@ -268,29 +286,38 @@ abstract class Statistics(var filename: String) {
     updateBranching(b)
   }
 
-
-  /*
-   * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
-   */
-  def comparison(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null): Boolean = {
-    var errorMsg: String = ""
-    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
-    val reducedDomains: Array[Set[Int]] = returnValues(1)
+  def updateStats(returnValues: Array[Array[Set[Int]]], b: List[BranchOp], result: Boolean): Unit = {
+    nbExecutedTests += 1
     val init: Array[Set[Int]] = returnValues(0)
-    if (reducedDomains == null)
-      errorMsg = "You returned a null array instead of an array of filtered domains"
-    else if (bugFreeReducedDomains.length != reducedDomains.length)
-      errorMsg = "Incorrect output format : you don't return the correct number of domains variables"
-    else if (bugFreeReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty))
-      errorMsg = ""
-    else if (bugFreeReducedDomains.forall(_.nonEmpty) && reducedDomains.exists(_.isEmpty))
-      errorMsg = "The tested filtering removes solutions (filters too much domains)"
-    else {
-      if (!correctDomains(bugFreeReducedDomains, reducedDomains))
-        errorMsg = "Some domains are not correctly filtered. Look at out/statistics/" + filename + "failedTests.txt"
+    val reducedDomains: Array[Set[Int]] = returnValues(1)
+    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
+    if ((bugFreeReducedDomains zip init).forall(x => x._1.equals(x._2)))
+      algo1FilterNoVal += 1
+    if ((bugFreeReducedDomains zip reducedDomains).forall(x => x._1.equals(x._2))) {
+      algo1Equals2 += 1
     }
-    updateGeneralStats(bugFreeReducedDomains, reducedDomains, init, b, errorMsg.isEmpty)
-    if (errorMsg.nonEmpty) println(errorMsg)
-    errorMsg.isEmpty
+    else if ((bugFreeReducedDomains zip reducedDomains).forall(x => x._2.subsetOf(x._1))) {
+      // algo1 filters more than algo2
+      algo2FilterMoreThan1 += 1
+    }
+    else if ((bugFreeReducedDomains zip reducedDomains).forall(x => x._1.subsetOf(x._2))) {
+      // algo2 filters more than algo1
+      algo1FilterMoreThan2 += 1
+    }
+    else { // no relation founds. algo1 and algo2 filter differently without order relation
+      algo1FilterDiffThan2 += 1
+    }
+    if (bugFreeReducedDomains.forall(_.size == 1)) {
+      algo1FoundsInstantiation += 1
+      if (reducedDomains.forall(_.size == 1))
+        algo2FoundsInstantiation += 1
+    }
+    else if (bugFreeReducedDomains.exists(_.isEmpty)) {
+      algo1FoundsNoSol += 1
+      if (reducedDomains.exists(_.isEmpty))
+        algo2FoundsNoSol += 1
+    }
+    recordPassFailTests(returnValues, b, result)
   }
+
 }

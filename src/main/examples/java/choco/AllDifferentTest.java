@@ -1,7 +1,7 @@
 package choco;
 
 import checker.*;
-import checker.statistics.CheckStatistics;
+import checker.Statistics;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffAC;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffBC;
@@ -23,7 +23,7 @@ public class AllDifferentTest {
         TestArgs parameters = new TestArgs();
         parameters.setRangeForAll(-5, 5);
         parameters.setSeed(150);
-        CheckStatistics stats = new CheckStatistics("");
+        Statistics stats = new Statistics("");
         CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), parameters, stats);
     }
 
@@ -36,7 +36,7 @@ public class AllDifferentTest {
         TestArgs generator = new TestArgs();
         generator.setRangeForAll(-5, 5);
         generator.setSeed(150);
-        CheckStatistics stats = new CheckStatistics("");
+        Statistics stats = new Statistics("");
         CPChecker.check(new ACPruning(checkerAllDifferent()), new MyFilter(), generator, stats);
     }
 

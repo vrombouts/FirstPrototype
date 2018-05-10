@@ -1,7 +1,7 @@
 package choco;
 
 import checker.*;
-import checker.statistics.StrongerStatistics;
+import checker.Statistics;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.constraints.ConstraintsName;
@@ -27,7 +27,7 @@ public class CircuitTest {
         parameters.setDensityForAll(0.8);
         Filter bugfree = new ACFiltering(circuitChecker());
         Filter tested = new MyFilter();
-        StrongerStatistics stats = new StrongerStatistics("");
+        Statistics stats = new Statistics("");
         CPChecker.stronger(bugfree, tested, parameters, stats);
     }
 

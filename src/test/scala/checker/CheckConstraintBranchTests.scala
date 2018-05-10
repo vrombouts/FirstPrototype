@@ -3,7 +3,6 @@ package checker
 import java.util
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
-import checker.statistics.{Statistics, CheckStatistics}
 import org.scalatest.FlatSpec
 
 class CheckConstraintBranchTests extends FlatSpec {
@@ -33,8 +32,7 @@ class CheckConstraintBranchTests extends FlatSpec {
   generator.setSeed(100)
   generator.setNbTests(1)
   //set seed of CPChecker
-  val stats: Statistics = new CheckStatistics("")
-  "checkConstraint with an empty domain or empty" should "return false if init return non-empty domains" in {
+ "checkConstraint with an empty domain or empty" should "return false if init return non-empty domains" in {
     val inc: FilterWithState = new FilterWithState {
       override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = Array()
 
@@ -43,8 +41,8 @@ class CheckConstraintBranchTests extends FlatSpec {
     val a: Array[Set[Int]] = Array()
     val b: Array[Set[Int]] = Array(Set())
 
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, stats))
-    assert(!CPChecker.checkConstraint(b, dummyInc, inc, stats))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(b, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
   }
 
   "checkConstraint with an empty domain or empty" should "return true if init return empty or empty domains" in {
@@ -60,8 +58,8 @@ class CheckConstraintBranchTests extends FlatSpec {
     }
     val a: Array[Set[Int]] = Array()
     val b: Array[Set[Int]] = Array(Set())
-    assert(CPChecker.checkConstraint(a, dummyInc, inc, stats))
-    assert(CPChecker.checkConstraint(b, dummyInc, inc2, stats))
+    assert(CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(b, dummyInc, inc2, CPChecker.comparisonCheck(_,_)))
   }
 
   "CheckConstraint with init returning an array of different size" should "be false" in {
@@ -81,22 +79,22 @@ class CheckConstraintBranchTests extends FlatSpec {
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = Array()
     }
     val a: Array[Set[Int]] = Array()
-    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc, stats))
-    assert(!CPChecker.checkConstraint(Array(Set(5), Set(5)), dummyInc, inc2, stats))
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, stats))
-    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc3, stats))
+    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(Array(Set(5), Set(5)), dummyInc, inc2, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(!CPChecker.checkConstraint(Array(Set(5)), dummyInc, inc3, CPChecker.comparisonCheck(_,_)))
   }
 
   "CheckConstraint with applyConstraint as init and filtering" should "always be true" in {
     val a: Array[Set[Int]] = Array()
     val b: Array[Set[Int]] = Array(Set())
     val c: Array[Set[Int]] = Array(Set(1, 4, 5), Set())
-    assert(CPChecker.checkConstraint(a, dummyInc, dummyInc, stats))
-    assert(CPChecker.checkConstraint(b, dummyInc, dummyInc, stats))
-    assert(CPChecker.checkConstraint(Array(Set(1)), dummyInc, dummyInc, stats))
-    assert(CPChecker.checkConstraint(Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3)), dummyInc, dummyInc, stats))
-    assert(CPChecker.checkConstraint(c, dummyInc, dummyInc, stats))
-    assert(CPChecker.checkConstraint(Array(Set(1, 4, 5, 8, 7), Set(1, 4, 5, 8, 7, 9)), dummyInc, dummyInc, stats))
+    assert(CPChecker.checkConstraint(a, dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(b, dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(Array(Set(1)), dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(Array(Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3), Set(1, 2, 3)), dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(c, dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(Array(Set(1, 4, 5, 8, 7), Set(1, 4, 5, 8, 7, 9)), dummyInc, dummyInc, CPChecker.comparisonCheck(_,_)))
   }
 
   "checkConstraint with applyConstraint as init and a dummy filtering" should "return false because of filtering" in {
@@ -110,7 +108,7 @@ class CheckConstraintBranchTests extends FlatSpec {
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = dummyInc.setup(variables)
     }
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, stats))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
     assert(i == 1)
   }
 
@@ -122,8 +120,8 @@ class CheckConstraintBranchTests extends FlatSpec {
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = throw new Exception()
     }
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, stats))
-    assert(CPChecker.checkConstraint(b, dummyInc, inc, stats))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
+    assert(CPChecker.checkConstraint(b, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
   }
 
   "checkConstraint with filtering throwing an exception" should "consider it as a NoSolutionException" in {
@@ -133,6 +131,6 @@ class CheckConstraintBranchTests extends FlatSpec {
 
       override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = dummyInc.setup(variables)
     }
-    assert(!CPChecker.checkConstraint(a, dummyInc, inc, stats))
+    assert(!CPChecker.checkConstraint(a, dummyInc, inc, CPChecker.comparisonCheck(_,_)))
   }
 }

@@ -4,7 +4,6 @@ import java.util
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 import checker.CPChecker._
-import checker.statistics.{CheckStatistics, StrongerStatistics}
 import org.scalatest.FlatSpec
 
 /*
@@ -22,41 +21,41 @@ class CheckTests extends FlatSpec {
   "Calling check with ACFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acFalse, dummyFilter)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acTrue, throwExceptionFilter)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acTrue, noSolFilter)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check with ACFiltering for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acTrue, dummyFilter)
-    assert(checkStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
 
   "Calling check with ACFiltering with all tests correct " should "perform 100 tests" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acTrue, dummyFilter)
-    assert(checkStats.getNbExecutedTests == 100)
+    assert(stats.getNbExecutedTests == 100)
   }
 
   "Calling check with ACFiltering after having set a testArguments " should " consider the good testArguments " in {
@@ -68,10 +67,10 @@ class CheckTests extends FlatSpec {
     testArguments.setRange(1, (-2, 2))
     testArguments.setDensity(4, 0.3)
     testArguments.setSeed(125)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acTrue, dummyFilter)
-    assert(checkStats.getGenerator == testArguments)
-    assert(checkStats.getNbExecutedTests == 150)
+    assert(stats.getGenerator == testArguments)
+    assert(stats.getNbExecutedTests == 150)
   }
 
   "Calling check Incremental with ACFiltering on a constraint that returns always true with an init removing some values " should " detect at least a failed test" in {
@@ -101,9 +100,9 @@ class CheckTests extends FlatSpec {
       }
     }
     val acIncTrue: FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acIncTrue, dummyInc)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check Incremental with ACFiltering on a constraint that returns always true with an init removing no value " should " detect no failed test" in {
@@ -131,9 +130,9 @@ class CheckTests extends FlatSpec {
       }
     }
     val acIncTrue: FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(acIncTrue, dummyInc)
-    assert(checkStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
 
 
@@ -143,41 +142,41 @@ class CheckTests extends FlatSpec {
   "Calling check with BCFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcFalse, dummyFilter)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check with BCFiltering for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcTrue, throwExceptionFilter)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check with BCFiltering for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcTrue, noSolFilter)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check with BCFiltering for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcTrue, dummyFilter)
-    assert(checkStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
 
   "Calling check with BCFiltering with all tests correct " should "perform 100 tests" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcTrue, dummyFilter)
-    assert(checkStats.getNbExecutedTests == 100)
+    assert(stats.getNbExecutedTests == 100)
   }
 
   "Calling check with BCFiltering after having set a testArguments " should " consider the good testArguments " in {
@@ -187,10 +186,10 @@ class CheckTests extends FlatSpec {
     testArguments.setRange(1, (-2, 2))
     testArguments.setDensity(4, 0.3)
     testArguments.setSeed(125)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcTrue, dummyFilter)
-    assert(checkStats.getGenerator == testArguments)
-    assert(checkStats.getNbExecutedTests == 150)
+    assert(stats.getGenerator == testArguments)
+    assert(stats.getNbExecutedTests == 150)
   }
 
   "Calling check Incremental with BCFiltering on a constraint that returns always true with an init removing some values " should " detect at least an error " in {
@@ -219,9 +218,9 @@ class CheckTests extends FlatSpec {
       }
     }
     val bcIncTrue = new BCFilteringIncremental(Checkers.trueConstraint _)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcIncTrue, dummyInc)
-    assert(checkStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling check Incremental with BCFiltering on a constraint that returns always true with an init removing no value " should " detect no error " in {
@@ -249,50 +248,50 @@ class CheckTests extends FlatSpec {
       }
     }
     val bcIncTrue = new BCFilteringIncremental(Checkers.trueConstraint _)
-    checkStats = new CheckStatistics("")
+    stats = new Statistics("")
     check(bcIncTrue, dummyInc)
-    assert(checkStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
 
 
   "Calling stronger with ACFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect no error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acFalse, dummyFilter)
-    assert(strongerStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
 
   "Calling stronger with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always throws an error" should "detect at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acTrue, throwExceptionFilter)
-    assert(strongerStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling stronger with ACFiltering for checking a constraint returning always true with a checker returning true and a filtering that always returns empty domains" should "have at least one error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acTrue, noSolFilter)
-    assert(strongerStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling stronger with ACFiltering for checking an constraint that does nothing with a correct checker (returning always true) and a filtering that always returns empty domains" should "detect no error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acTrue, dummyFilter)
-    assert(strongerStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
 
   "Calling stronger with ACFiltering with all tests correct " should "perform 100 tests" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acTrue, dummyFilter)
-    assert(strongerStats.getNbExecutedTests == 100)
+    assert(stats.getNbExecutedTests == 100)
   }
 
   "Calling stronger with ACFiltering after having set a testArguments " should " consider the good testArguments " in {
@@ -304,10 +303,10 @@ class CheckTests extends FlatSpec {
     testArguments.setRange(1, (-2, 2))
     testArguments.setDensity(4, 0.3)
     testArguments.setSeed(125)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acTrue, dummyFilter)
-    assert(strongerStats.getGenerator == testArguments)
-    assert(strongerStats.getNbExecutedTests == 150)
+    assert(stats.getGenerator == testArguments)
+    assert(stats.getNbExecutedTests == 150)
   }
 
   "Calling stronger Incremental with ACFiltering on a constraint that returns always true with an init removing some values " should " detect at least an error " in {
@@ -336,15 +335,15 @@ class CheckTests extends FlatSpec {
       }
     }
     val acIncTrue = new ACFilteringIncremental(Checkers.trueConstraint _)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     stronger(acIncTrue, dummyInc)
-    assert(strongerStats.nbFailedTests > 0)
+    assert(stats.getNbFailedTests > 0)
   }
 
   "Calling stronger Incremental with ACFiltering on a constraint that returns always true with an init removing no value " should " detect no error" in {
     testArguments = new TestArgs
     testArguments.setSeed(100)
-    strongerStats = new StrongerStatistics("")
+    stats = new Statistics("")
     val dummyInc: FilterWithState = new FilterWithState {
       var currentVars: Array[Set[Int]] = Array()
       val stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
@@ -368,8 +367,9 @@ class CheckTests extends FlatSpec {
     }
     val acIncTrue = new ACFilteringIncremental(Checkers.trueConstraint _)
     stronger(acIncTrue, dummyInc)
-    assert(strongerStats.nbFailedTests == 0)
+    assert(stats.getNbFailedTests == 0)
   }
+
 
 }
 

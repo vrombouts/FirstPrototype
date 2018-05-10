@@ -1,55 +1,53 @@
 package checker
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
-import checker.statistics.{Statistics, CheckStatistics, StrongerStatistics}
 import org.scalacheck.Prop.forAll
 
 
 object CPChecker {
 
   implicit var testArguments: TestArgs = new TestArgs
-  implicit var checkStats: CheckStatistics = new CheckStatistics("")
-  implicit var strongerStats: StrongerStatistics = new StrongerStatistics("")
+  implicit var stats: Statistics = new Statistics("")
 
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
-           (implicit testArguments: TestArgs, stats: CheckStatistics): Unit = {
+           (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
+        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, comparisonCheck(_))
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
     stats.print
   }
 
   def stronger(strongerFiltering: Filter, filtering: Filter)
-              (implicit testArguments: TestArgs, stats: StrongerStatistics): Unit = {
+              (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, strongerFiltering, filtering, stats)
+        checkConstraint(x.toArray, strongerFiltering, filtering, comparisonStronger(_))
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
     stats.print
   }
 
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
-           (implicit testArguments: TestArgs, stats: CheckStatistics): Unit = {
+           (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, stats)
+        checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, comparisonCheck(_, _))
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
     stats.print
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
-              (implicit testArguments: TestArgs, stats: StrongerStatistics): Unit = {
+              (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
-        checkConstraint(x.toArray, strongerFiltering, filtering, stats)
+        checkConstraint(x.toArray, strongerFiltering, filtering, comparisonStronger(_, _))
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
     stats.print
@@ -68,19 +66,63 @@ object CPChecker {
     }
   }
 
+  /*
+  * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
+  */
+  private[this] def correctFormat(reducedDomains: Array[Set[Int]], bugFreeReducedDomains: Array[Set[Int]]): Boolean = {
+    var errorMsg: String = ""
+    if (reducedDomains == null)
+      errorMsg = "You returned a null array instead of an array of filtered domains"
+    else if (bugFreeReducedDomains.length != reducedDomains.length)
+      errorMsg = "Incorrect output format : you don't return the correct number of domains variables"
+    if (errorMsg.nonEmpty) println(errorMsg)
+    errorMsg.isEmpty
+  }
+
+  def comparisonCheck(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null): Boolean = {
+    val reducedDomains: Array[Set[Int]] = returnValues(1)
+    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
+    var result: Boolean = false // incorrect format
+    if (correctFormat(reducedDomains, bugFreeReducedDomains)) {
+      if (bugFreeReducedDomains.exists(_.isEmpty) && reducedDomains.exists(_.isEmpty)) result = true
+      else if (bugFreeReducedDomains.exists(_.isEmpty) && reducedDomains.forall(_.nonEmpty)) result = false
+      else result = !(bugFreeReducedDomains zip reducedDomains).exists(x => !x._1.equals(x._2))
+      stats.updateStats(returnValues, b, result)
+    }
+    result
+  }
+
+  def comparisonStronger(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null): Boolean = {
+    val reducedDomains: Array[Set[Int]] = returnValues(1)
+    val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
+    var result: Boolean = false // incorrect format
+    if (correctFormat(reducedDomains, bugFreeReducedDomains)) {
+      if (bugFreeReducedDomains.exists(_.isEmpty)) {
+        // check that if no solution can be found, either you still have unfixed variables
+        // or if all variables are instantiated, you should find there is no solution
+        result = !reducedDomains.forall(_.size == 1)
+      }
+      else {
+        result = !(bugFreeReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
+      }
+    }
+    stats.updateStats(returnValues, b, result)
+    result
+  }
+
   ////STATIC LOGIC /////////
 
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: Filter,
                       testedFiltering: Filter,
-                      stats: Statistics)
+                      comparison: Array[Array[Set[Int]]] => Boolean)
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,
       apply(variables.length, variables.clone(), testedFiltering.filter),
       apply(variables.length, variables.clone(), bugFreeFiltering.filter))
     //Then, we compare the two. If they are not equals, the constraint is not correct.
-    stats.comparison(returnValues)
+    comparison(returnValues)
   }
 
 
@@ -95,13 +137,13 @@ object CPChecker {
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: FilterWithState,
                       testedFiltering: FilterWithState,
-                      stats: Statistics)
+                      comparison: ((Array[Array[Set[Int]]], List[BranchOp]) => Boolean))
   : Boolean = {
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,
       apply(variables.length, variables.clone(), testedFiltering.setup),
       apply(variables.length, variables.clone(), bugFreeFiltering.setup))
-    if (!stats.comparison(returnValues))
+    if (!comparison(returnValues, null))
       return false
     if (checkEmpty(returnValues(1).toList)) return true
     var vars: Array[Set[Int]] = returnValues(2).clone()
@@ -129,7 +171,7 @@ object CPChecker {
       returnValues(2) = apply(variables.length, b, bugFreeFiltering.branchAndFilter)
       // compare our domains filtered with the ones of the user
       // and if no difference, update the domains for the next branching operation
-      if (stats.comparison(returnValues, branches))
+      if (comparison(returnValues, branches))
         vars = returnValues(2).clone()
       else
         return false

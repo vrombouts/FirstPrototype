@@ -6,7 +6,7 @@ import checker.incremental.BranchOp;
 import checker.incremental.Pop;
 import checker.incremental.Push;
 import checker.incremental.RestrictDomain;
-import checker.statistics.CheckStatistics;
+import checker.Statistics;
 import org.chocosolver.memory.IEnvironment;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
@@ -95,7 +95,7 @@ public class SumIncrementalTest {
             }
         }
         TestArgs parameters = new TestArgs();
-        CheckStatistics stats = new CheckStatistics("");
+        Statistics stats = new Statistics("");
         CPChecker.check(new BCFilteringIncremental(sumChecker()), new MyFilter(), parameters, stats);
     }
 

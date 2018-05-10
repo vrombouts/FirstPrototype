@@ -1,7 +1,7 @@
 package choco;
 
 import checker.*;
-import checker.statistics.CheckStatistics;
+import checker.Statistics;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.variables.IntVar;
@@ -53,7 +53,7 @@ public class ElementACTest {
         parameters.addVar(1.5 / 7.0, 0, 10);
         parameters.addVar(0.1, -10, 10);
         ACFiltering elementary = new ACFiltering(Checkers.element());
-        CheckStatistics stats = new CheckStatistics("");
+        Statistics stats = new Statistics("");
         CPChecker.check(elementary, new MyFilter(), parameters, stats);
     }
 
