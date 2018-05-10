@@ -182,10 +182,10 @@ class Statistics(var folderName: String) {
   private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): Unit = {
     for (i <- tests.length - 1 to 0 by -1) {
       val (init, bugFreeDom, testedDom) = tests(i)
-      var bugFreeTitle: String = "Correct filtering "
+      var bugFreeTitle: String = "Trusted filtering "
       var testedTitle: String = "Tested filtering "
       if (isInc) {
-        bugFreeTitle = "Bugfree domains "
+        bugFreeTitle = "Trusted domains "
         testedTitle = "Tested domains "
       }
       var maxLength: Int = bugFreeTitle.length
