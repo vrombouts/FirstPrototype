@@ -10,9 +10,9 @@ abstract class FilterWithState {
 }
 
 abstract class JFilterWithState extends FilterWithState {
-  override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = setupJava(variables)
+  override final def setup(variables: Array[Set[Int]]): Array[Set[Int]] = setupJava(variables)
 
-  override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = branchAndFilterJava(branching)
+  override final def branchAndFilter(branching: BranchOp): Array[Set[Int]] = branchAndFilterJava(branching)
 
   def setupJava(variables: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
 

@@ -12,6 +12,7 @@ object CPChecker {
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
            (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
+    this.stats = stats
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, comparisonCheck(_))
@@ -23,6 +24,7 @@ object CPChecker {
   def stronger(strongerFiltering: Filter, filtering: Filter)
               (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
+    this.stats = stats
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, comparisonStronger(_))
@@ -34,23 +36,25 @@ object CPChecker {
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
            (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
+    this.stats = stats
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, comparisonCheck(_, _))
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
-    stats.print
+    stats.print(true)
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
               (implicit testArguments: TestArgs, stats: Statistics): Unit = {
     this.testArguments = testArguments
+    this.stats = stats
     forAll(testArguments.gen) { x =>
       (x.length < testArguments.getNbVars) || checkEmpty(x) ||
         checkConstraint(x.toArray, strongerFiltering, filtering, comparisonStronger(_, _))
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
-    stats.print
+    stats.print(true)
   }
 
 

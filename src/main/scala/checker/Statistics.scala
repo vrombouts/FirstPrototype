@@ -68,8 +68,6 @@ class Statistics(var filename: String) {
     this.filename = filename
   }
 
-  def incNbExecutedTests(): Unit = nbExecutedTests += 1
-
   def getNbExecutedTests: Int = nbExecutedTests
 
   def getGenerator: TestArgs = generatorUsed
@@ -86,7 +84,7 @@ class Statistics(var filename: String) {
     val algo1FiltersMore: String = "Tested algorithm filters less than the trusted : "
     val algo2FiltersMore: String = "Tested algorithm filters more than the trusted (stronger) : "
     val algo1DiffThan2: String = "Trusted algorithm and tested one filters differently \n(without one stronger than the other) : "
-    val algo1FiltersNoVal: String = "Trusted algorithm filter no solution"
+    val algo1FiltersNoVal: String = "Trusted algorithm filter no solution : "
     val ratioAlgo12ForNoSol: String = "Ratio of filtering until no solution found (tested algo/ trusted algo) : "
     val ratioAlgo12ForInstan: String = "Ratio of filtering until a single solution (tested algo/ trusted algo) : "
 
