@@ -2,7 +2,7 @@ package checker
 
 import java.io._
 
-import checker.incremental.{BranchOp, Pop, Push}
+import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 
 class Statistics(var folderName: String) {
 
@@ -49,9 +49,9 @@ class Statistics(var folderName: String) {
   // stats about the generator
   private[this] var generatorUsed: TestArgs = _
 
-  private[this] var nbPush: Int = 0
-  private[this] var nbPop: Int = 0
-  private[this] var nbRestriction: Int = 0
+  private[this] var depth: Int = 0
+  private[this] var lastPop: Boolean = false
+  private[this] var depths: List[Int] = List()
 
   private[this] var nbTestCases: Int = 0
 
@@ -95,7 +95,7 @@ class Statistics(var folderName: String) {
       algo1DiffThan2 + algo1FilterDiffThan2 + "\n\n" +
       algo1FiltersNoVal + algo1FilterNoVal + "\n\n" +
       ratioAlgo12ForNoSol + algo2FoundsNoSol + "/" + algo1FoundsNoSol + "\n" +
-      ratioAlgo12ForInstan + algo2FoundsNoSol + "/" + algo1FoundsNoSol + "\n\n"
+      ratioAlgo12ForInstan + algo2FoundsInstantiation + "/" + algo1FoundsInstantiation + "\n\n"
 
   }
 
@@ -112,24 +112,35 @@ class Statistics(var folderName: String) {
   private[this] def updateBranching(b: List[BranchOp]): Unit = {
     if (b != null && b.nonEmpty) {
       b.head match {
-        case _: Push => nbPush += 1
-        case _: Pop => nbPop += 1
-        case _ => nbRestriction += 1
+        case _: Push => lastPop = false
+        case _: Pop =>
+          if (lastPop) depth -= 1
+          else {
+            lastPop = true
+            depths = depth :: depths
+            depth -= 1
+          }
+        case _: RestrictDomain => depth += 1
       }
+    }
+    else {
+      depth = 0
+      lastPop = false
     }
   }
 
 
   private[this] def branchingStatsToString(): String = {
-    var nbPushOp: Int = 0
-    var nbPopOp: Int = 0
-    var nbRestrictOp: Int = 0
-    if (nbPush != 0) nbPushOp = nbPush / nbTestCases
-    if (nbPop != 0) nbPopOp = nbPop / nbTestCases
-    if (nbRestriction != 0) nbRestrictOp = nbRestriction / nbTestCases
-    "The average number of Push operation per test is " + nbPushOp + "\n" +
-      "The average number of Pop operation per test is " + nbPopOp + "\n" +
-      "The average number of Restrict Domain operation per test is " + nbRestrictOp + "\n"
+    var maxDepth: Int = 0
+    var avgDepth: Int = 0
+    if (depths.nonEmpty) {
+      avgDepth = depths.sum / depths.length
+      maxDepth = depths.max
+    }
+    depths = List()
+    depth = 0
+    "The average depth reached by the dives is " + avgDepth + "\n" +
+      "The maximum depth reached is " + maxDepth + "\n\n"
   }
 
   def print(implicit isInc: Boolean = false): Unit = {
@@ -228,7 +239,7 @@ class Statistics(var folderName: String) {
       return
     }
     var lastTest: Array[Set[Int]] = null
-    for (i <- tests.length-1 to 0 by -1) {
+    for (i <- tests.length - 1 to 0 by -1) {
       if (!tests(i).isEmpty) {
         if (!passed) prWriter.write("TEST FAILED : \n")
         else prWriter.write("TEST PASSED : \n")
