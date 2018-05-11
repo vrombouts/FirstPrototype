@@ -565,7 +565,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue: FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
+    val acIncTrue: FilterWithState = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -595,7 +595,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue: FilterWithState = new ACFilteringIncremental(Checkers.trueConstraint _)
+    val acIncTrue: FilterWithState = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
@@ -683,7 +683,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new BCFilteringIncremental(Checkers.trueConstraint _)
+    val bcIncTrue = new IncrementalFiltering( new BCFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -713,7 +713,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new BCFilteringIncremental(Checkers.trueConstraint _)
+    val bcIncTrue = new IncrementalFiltering( new BCFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
@@ -800,7 +800,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue = new ACFilteringIncremental(Checkers.trueConstraint _)
+    val acIncTrue = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     stronger(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -831,7 +831,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue = new ACFilteringIncremental(Checkers.trueConstraint _)
+    val acIncTrue = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
     stronger(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
   }

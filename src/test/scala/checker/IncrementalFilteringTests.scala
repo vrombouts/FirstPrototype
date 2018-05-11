@@ -5,13 +5,13 @@ import org.scalatest.FlatSpec
 
 import scala.util.Random
 
-class ACFilteringIncrementalTests extends FlatSpec {
+class IncrementalFilteringTests extends FlatSpec {
 
   def dummyChecker: Array[Int] => Boolean = _ => true
 
-  val dummyFiltering = new ACFilteringIncremental(dummyChecker)
+  val dummyFiltering = new IncrementalFiltering(new ACFiltering(dummyChecker))
 
-  val allDifferentFiltering = new ACFilteringIncremental(Checkers.allDifferent())
+  val allDifferentFiltering = new IncrementalFiltering(new ACFiltering(Checkers.allDifferent()))
 
   "setup function" should "correctly perform AC filtering" in{
     val dummy:Filter = new ACFiltering(dummyChecker)
@@ -93,6 +93,31 @@ class ACFilteringIncrementalTests extends FlatSpec {
   "branchAndFilter with another operation than a RestrictDomain,Push or Pop" should "just return the domains of the BranchOp" in {
     val branchOp = new BranchOp(Array())
     assert(allDifferentFiltering.branchAndFilter(branchOp).isEmpty)
+  }
+
+
+  val bcDummyFiltering = new IncrementalFiltering(new BCFiltering(dummyChecker))
+
+  val bcAllDifferentFiltering = new IncrementalFiltering(new BCFiltering(Checkers.allDifferent()))
+
+  "setup function" should "correctly perform BC filtering" in {
+    val dummy: Filter = new BCFiltering(dummyChecker)
+    val variables: Array[Set[Int]] = Array(Set(1, 2, 3), Set(2), Set(2, 4, 5))
+    assert(dummy.filter(variables).sameElements(bcDummyFiltering.setup(variables)))
+    val allDif: Filter = new BCFiltering(Checkers.allDifferent())
+    assert(allDif.filter(variables).sameElements(bcAllDifferentFiltering.setup(variables)))
+  }
+
+  val rcDummyFiltering = new IncrementalFiltering(new RangeFiltering(dummyChecker))
+
+  val rcAllDifferentFiltering = new IncrementalFiltering(new RangeFiltering(Checkers.allDifferent()))
+
+  "setup function" should "correctly perform range filtering" in{
+    val dummy:Filter = new ACFiltering(dummyChecker)
+    val variables:Array[Set[Int]] = Array(Set(1,2,3), Set(2))
+    assert(dummy.filter(variables).sameElements(rcDummyFiltering.setup(variables)))
+    val allDif:Filter= new RangeFiltering(Checkers.allDifferent())
+    assert(allDif.filter(variables).sameElements(rcAllDifferentFiltering.setup(variables)))
   }
 
 }

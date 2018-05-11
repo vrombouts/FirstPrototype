@@ -1,20 +1,17 @@
 package checker
 
-import java.util.function.Function
-import Conversions.checkerToScalaFunction
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
+
 import scala.collection.mutable
 
-class RangeFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWithState {
-  def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
-
+//to do new IncrementalFiltering(myStaticFilter) to have a filterWithState from a static filter.
+class IncrementalFiltering(filter: Filter) extends FilterWithState {
+  //use list instead of stack.
   private[this] var domainsStorage: mutable.Stack[Array[Set[Int]]] = _
-
-  private[this] val rangeFilter = new RangeFiltering(checker)
 
   override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
     domainsStorage = mutable.Stack()
-    rangeFilter.filter(variables)
+    filter.filter(variables)
   }
 
   override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = {
@@ -24,7 +21,7 @@ class RangeFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWi
       case _: Pop => pop(branching.domains)
       case restriction: RestrictDomain =>
         restrictDomain = restriction.applyRestriction
-        rangeFilter.filter(restrictDomain)
+        filter.filter(restrictDomain)
       case _ => branching.domains
     }
   }
@@ -40,5 +37,4 @@ class RangeFilteringIncremental(checker: Array[Int] => Boolean) extends FilterWi
     else
       currentDomain
   }
-
 }

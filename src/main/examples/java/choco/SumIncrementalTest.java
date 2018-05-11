@@ -96,7 +96,8 @@ public class SumIncrementalTest {
         }
         TestArgs parameters = new TestArgs();
         Statistics stats = new Statistics("");
-        CPChecker.check(new BCFilteringIncremental(sumChecker()), new MyFilter(), parameters, stats);
+        IncrementalFiltering iF = new IncrementalFiltering(new BCFiltering(sumChecker()));
+        CPChecker.check(iF, new MyFilter(), parameters, stats);
     }
 
     private static Function<Integer[], Boolean> sumChecker() {
