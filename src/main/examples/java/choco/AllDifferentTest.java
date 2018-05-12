@@ -17,7 +17,7 @@ public class AllDifferentTest {
     private static void testAllDifferentBC() {
         class MyFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] domains) {
-                return filteringBC().apply(domains);
+                return filteringBC(domains);
             }
         }
         TestArgs parameters = new TestArgs();
@@ -30,50 +30,46 @@ public class AllDifferentTest {
     private static void testAllDifferentAC() {
         class MyFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] domains) {
-                return filteringAC().apply(domains);
+                return filteringAC(domains);
             }
         }
         TestArgs generator = new TestArgs();
         generator.setRangeForAll(-5, 5);
         generator.setSeed(150);
         Statistics stats = new Statistics("");
-        CPChecker.check(new ACPruning(checkerAllDifferent()), new MyFilter(), generator, stats);
+        CPChecker.check(new ACPruning(Checkers.allDifferent()), new MyFilter(), generator, stats);
     }
 
-    private static Function<Set<Integer>[], Set<Integer>[]> filteringAC() {
-        return variables -> {
-            Model model = new Model("testing choco's filtering for allDifferent");
-            IntVar[] x = new IntVar[variables.length];
-            for (int i = 0; i < variables.length; i++) {
-                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                x[i] = model.intVar("" + i, b);
-            }
-            PropAllDiffAC cstr = new PropAllDiffAC(x);
-            try {
-                cstr.propagate(0);
-            } catch (Exception e) {
-                throw new NoSolutionException("No solution");
-            }
-            return transform(x);
-        };
+    private static Set<Integer>[] filteringAC(Set<Integer>[] variables) {
+        Model model = new Model("testing choco's filtering for allDifferent");
+        IntVar[] x = new IntVar[variables.length];
+        for (int i = 0; i < variables.length; i++) {
+            int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+            x[i] = model.intVar("" + i, b);
+        }
+        PropAllDiffAC cstr = new PropAllDiffAC(x);
+        try {
+            cstr.propagate(0);
+        } catch (Exception e) {
+            throw new NoSolutionException("No solution");
+        }
+        return transform(x);
     }
 
-    private static Function<Set<Integer>[], Set<Integer>[]> filteringBC() {
-        return variables -> {
-            Model model = new Model("allDifferent problem");
-            IntVar[] x = new IntVar[variables.length];
-            for (int i = 0; i < variables.length; i++) {
-                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                x[i] = model.intVar("" + i, b);
-            }
-            PropAllDiffBC cstr = new PropAllDiffBC(x);
-            try {
-                cstr.propagate(0);
-            } catch (Exception e) {
-                throw new NoSolutionException("No solution");
-            }
-            return transform(x);
-        };
+    private static Set<Integer>[] filteringBC(Set<Integer>[] variables) {
+        Model model = new Model("allDifferent problem");
+        IntVar[] x = new IntVar[variables.length];
+        for (int i = 0; i < variables.length; i++) {
+            int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+            x[i] = model.intVar("" + i, b);
+        }
+        PropAllDiffBC cstr = new PropAllDiffBC(x);
+        try {
+            cstr.propagate(0);
+        } catch (Exception e) {
+            throw new NoSolutionException("No solution");
+        }
+        return transform(x);
     }
 
     private static Function<Integer[], Boolean> checkerAllDifferent() {
