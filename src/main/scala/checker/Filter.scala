@@ -7,9 +7,7 @@ abstract class Filter {
 }
 
 abstract class JFilter extends Filter {
-  override final def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    filterJava(variables)
-  }
+  override final def filter(variables: Array[Set[Int]]): Array[Set[Int]] = filterJava(variables)
 
   def filterJava(variables: Array[java.util.Set[Integer]]): Array[java.util.Set[Integer]]
 
