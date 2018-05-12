@@ -19,7 +19,7 @@ public class CircuitTest {
     public static void main(String[] args) {
         class MyFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] variables) {
-                return circuitFiltering().apply(variables);
+                return circuitFiltering(variables);
             }
         }
         TestArgs parameters = new TestArgs();
@@ -31,23 +31,21 @@ public class CircuitTest {
         CPChecker.stronger(bugfree, tested, parameters, stats);
     }
 
-    private static Function<Set<Integer>[], Set<Integer>[]> circuitFiltering() {
-        return variables -> {
-            Model model = new Model("Testing choco's circuitSCC filtering");
-            currentVars = new IntVar[variables.length];
-            for (int i = 0; i < variables.length; i++) {
-                int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
-                currentVars[i] = model.intVar("" + i, b);
-            }
-            Constraint ctr = new Constraint(ConstraintsName.CIRCUIT, new PropCircuitSCC(currentVars, 0, CircuitConf.ALL));
-            model.post(ctr);
-            try {
-                model.getSolver().propagate();
-            } catch (Exception e) {
-                throw new NoSolutionException("No solution");
-            }
-            return transform(currentVars);
-        };
+    private static Set<Integer>[] circuitFiltering(Set<Integer>[] variables) {
+        Model model = new Model("Testing choco's circuitSCC filtering");
+        currentVars = new IntVar[variables.length];
+        for (int i = 0; i < variables.length; i++) {
+            int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
+            currentVars[i] = model.intVar("" + i, b);
+        }
+        Constraint ctr = new Constraint(ConstraintsName.CIRCUIT, new PropCircuitSCC(currentVars, 0, CircuitConf.ALL));
+        model.post(ctr);
+        try {
+            model.getSolver().propagate();
+        } catch (Exception e) {
+            throw new NoSolutionException("No solution");
+        }
+        return transform(currentVars);
     }
 
     private static boolean circChecker(Integer[] variables, int index, int acc, boolean[] isVisited) {

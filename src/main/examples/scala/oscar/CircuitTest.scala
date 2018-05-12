@@ -34,21 +34,14 @@ object CircuitTest {
     val visited: Array[Boolean] = Array.fill(sol.length)(false)
 
     def internal(index: Int, acc: Int): Boolean = {
-      if (sol(index) < 0 || sol(index) >= sol.length)
+      if (!sol.indices.contains(index) || visited(sol(index)))
         return false
-      if (visited(sol(index)))
-        return false
+      if (acc == sol.length)
+        return sol(index) == 0
       visited(sol(index)) = true
-      if (acc == sol.length) {
-        if (sol(index) == 0)
-          return true
-        else
-          return false
-      }
       internal(sol(index), acc + 1)
     }
-
-    internal(0, 1)
+    internal(sol(0), 2)
   }
 
 }
