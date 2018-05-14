@@ -143,44 +143,49 @@ object CPChecker {
                       testedFiltering: FilterWithState,
                       comparison: ((Array[Array[Set[Int]]], List[BranchOp]) => Boolean))
   : Boolean = {
+    def comp(b: List[BranchOp]): Array[Set[Int]] = {
+      val tested = apply(variables.length, b.head, testedFiltering.branchAndFilter)
+      val trusted = apply(variables.length, b.head, bugFreeFiltering.branchAndFilter)
+      val result = comparison(Array(variables, tested, trusted), b)
+      if (!result) return null
+      trusted
+    }
+
     //We first compute the domains generated after the application of the constraint.
     val returnValues: Array[Array[Set[Int]]] = Array(variables,
       apply(variables.length, variables.clone(), testedFiltering.setup),
       apply(variables.length, variables.clone(), bugFreeFiltering.setup))
     if (!comparison(returnValues, null))
       return false
-    if (checkEmpty(returnValues(1).toList)) return true
+    if (checkEmpty(returnValues(1).toList) || isLeaf(returnValues(2))) return true
     var vars: Array[Set[Int]] = returnValues(2).clone()
     var nPush: Int = 0
     var branches: List[BranchOp] = List()
     var dives = 0
-    var lastPop = false
     while (dives < testArguments.nbDive) {
-      val b: BranchOp = getBranch(nPush, vars)
-      branches ::= b
-      b match {
-        case _: Push =>
-          lastPop = false
-          nPush += 1
-        case _: Pop =>
-          if (!lastPop) dives += 1
-          lastPop = true
-          nPush -= 1
-        case _: RestrictDomain => lastPop = false
-        case _: BranchOp => //no more BranchOp possible (should happen only if all variables are fixed before any Branch)
-          return true
+      while (!isLeaf(vars)) {
+        branches ::= new Push(vars)
+        nPush += 1
+        vars = comp(branches)
+        if (vars == null) return false
+        branches ::= new RestrictDomain(vars.clone(), testArguments.random)
+        vars = comp(branches)
+        if (vars == null) return false
       }
-      // apply our constraint and the constraint of the user for the branchOp b and the domains vars
-      returnValues(1) = apply(variables.length, b, testedFiltering.branchAndFilter)
-      returnValues(2) = apply(variables.length, b, bugFreeFiltering.branchAndFilter)
-      // compare our domains filtered with the ones of the user
-      // and if no difference, update the domains for the next branching operation
-      if (comparison(returnValues, branches))
-        vars = returnValues(2).clone()
-      else
-        return false
+      dives += 1
+      val rd: Int = if (nPush <= 1) 1 else 1 + testArguments.random.nextInt(nPush - 1)
+      for (i <- 0 until rd) {
+        nPush -= 1
+        branches ::= new Pop(vars)
+        vars = comp(branches)
+        if (vars == null) return false
+      }
     }
     true
+  }
+
+  private[this] def isLeaf(variables: Array[Set[Int]]): Boolean = {
+    variables.exists(x => x.isEmpty) || variables.forall(x => x.size == 1)
   }
 
 
