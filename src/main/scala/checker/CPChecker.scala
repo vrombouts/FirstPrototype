@@ -187,32 +187,4 @@ object CPChecker {
   private[this] def isLeaf(variables: Array[Set[Int]]): Boolean = {
     variables.exists(x => x.isEmpty) || variables.forall(x => x.size == 1)
   }
-
-
-  // part to get BranchOp's in an interesting random way (for exemple, avoid doing (push->pop->push->pop->...)
-  private[this] var lastPush = false
-  private[this] var doNPop = 0
-
-  private[this] def getBranch(nPush: Int, vars: Array[Set[Int]]): BranchOp = {
-    if (vars.forall(_.size == 1) && nPush == 0)
-      new BranchOp(vars) //no dives possible from the start
-    else if (nPush == 0) {
-      doNPop = 0
-      lastPush = true
-      new Push(vars)
-    } else if (doNPop > 0) {
-      lastPush = false
-      new Pop(vars)
-    } else if (vars.exists(_.isEmpty) || vars.forall(_.size == 1)) {
-      doNPop = testArguments.random.nextInt(nPush)
-      lastPush = false
-      new Pop(vars)
-    } else if (!lastPush) {
-      lastPush = true
-      new Push(vars)
-    } else {
-      lastPush = false
-      new RestrictDomain(vars, testArguments.random)
-    }
-  }
 }
