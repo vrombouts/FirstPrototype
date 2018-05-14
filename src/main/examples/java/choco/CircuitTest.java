@@ -14,26 +14,25 @@ import java.util.Set;
 import java.util.function.Function;
 
 public class CircuitTest {
-    private static IntVar[] currentVars;
 
     public static void main(String[] args) {
         class MyFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] variables) {
-                return circuitFiltering(variables);
+                return filteringCircuit(variables);
             }
         }
         TestArgs parameters = new TestArgs();
         parameters.setRangeForAll(0, 4);
         parameters.setDensityForAll(0.8);
-        Filter bugfree = new ACFiltering(circuitChecker());
+        Filter bugfree = new ACFiltering(checkerCircuit());
         Filter tested = new MyFilter();
         Statistics stats = new Statistics("");
         CPChecker.stronger(bugfree, tested, parameters, stats);
     }
 
-    private static Set<Integer>[] circuitFiltering(Set<Integer>[] variables) {
+    private static Set<Integer>[] filteringCircuit(Set<Integer>[] variables) {
         Model model = new Model("Testing choco's circuitSCC filtering");
-        currentVars = new IntVar[variables.length];
+        IntVar[] currentVars = new IntVar[variables.length];
         for (int i = 0; i < variables.length; i++) {
             int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
             currentVars[i] = model.intVar("" + i, b);
@@ -48,20 +47,18 @@ public class CircuitTest {
         return transform(currentVars);
     }
 
-    private static boolean circChecker(Integer[] variables, int index, int acc, boolean[] isVisited) {
-        if (variables[index] < 0 || variables[index] >= variables.length) return false;
-        if (isVisited[variables[index]]) return false;
-        isVisited[variables[index]] = true;
-        if (acc == variables.length - 1) {
-            return (variables[index] == 0);
-        }
-        return circChecker(variables, variables[index], acc + 1, isVisited);
+    private static boolean visit(Integer[] variables, int index, int acc, boolean[] isVisited) {
+        if (index < 0 || index >= variables.length) return false;
+        if (isVisited[index]) return false;
+        if (acc == variables.length) return index == 0;
+        isVisited[index] = true;
+        return visit(variables, variables[index], acc + 1, isVisited);
     }
 
-    private static Function<Integer[], Boolean> circuitChecker() {
+    private static Function<Integer[], Boolean> checkerCircuit() {
         return variables -> {
             boolean[] isVisited = new boolean[variables.length];
-            return circChecker(variables, 0, 0, isVisited);
+            return visit(variables, variables[0], 1, isVisited);
         };
     }
 

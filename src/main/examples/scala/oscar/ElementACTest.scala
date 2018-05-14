@@ -17,7 +17,6 @@ import oscar.cp.core.CPPropagStrength
  *  Then the constraint is x[i]=v
  */
 object ElementACTest {
-  var size = 0
 
   def main(args: Array[String]): Unit = {
     val myFilter: Filter = new Filter {
@@ -33,7 +32,7 @@ object ElementACTest {
     //add variable v in generator
     testArguments.addVar(0.1, (-11, 11))
     testArguments.setSeed(123456)
-    CPChecker.check(new ACFiltering(elementChecker _), myFilter)
+    check(new ACFiltering(elementChecker _), myFilter)
   }
 
   /*
@@ -43,7 +42,6 @@ object ElementACTest {
    */
   private def elementACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
-    size = vars.length
     val variables = vars.dropRight(2).map(x => CPIntVar(x))
     val i = CPIntVar(vars(vars.length - 2))
     val v = CPIntVar(vars(vars.length - 1))
@@ -62,12 +60,9 @@ object ElementACTest {
    * the variables i and v (solution = [x1,x2,..xn, i,v]
    */
   private def elementChecker(solution: Array[Int]): Boolean = {
-    if (size == solution.length) {
-      val i = solution(size - 2)
-      val v = solution(size - 1)
-      return v == solution(i)
-    }
-    true
+    val i = solution(solution.length - 2)
+    val v = solution(solution.length - 1)
+    v == solution(i)
   }
 
 
