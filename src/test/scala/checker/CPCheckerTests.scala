@@ -346,10 +346,6 @@ class CPCheckerTests extends FlatSpec {
     assert(CPChecker.checkConstraint(Array(Set(1, 0), Set(0, 1), Set(1, 2)), acAllDiff, dummyFilter, CPChecker.comparisonStronger(_)))
   }
 
-  "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1] considering unstrict format" should "return false" in {
-    assert(!CPChecker.checkConstraint(Array(Set(1), Set(1)), acAllDiff, dummyFilter, CPChecker.comparisonStronger(_)))
-  }
-
   // tests checkConstraint incremental
 
   val dummyInc: FilterWithState = new FilterWithState {
