@@ -14,6 +14,8 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.6"
 libraryDependencies += "org.choco-solver" % "choco-solver" % "4.0.5"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+// https://mvnrepository.com/artifact/org.jacop/jacop
+libraryDependencies += "org.jacop" % "jacop" % "4.4.0"
 
 
 unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "main" / "examples" / "java"
