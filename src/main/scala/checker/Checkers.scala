@@ -53,7 +53,7 @@ object Checkers {
     if (solution.length < values.length) return false
     var valuesCount: Map[Int, Int] = Map()
     val variables = solution.dropRight(values.length)
-    val occurences = solution.drop(solution.length - values.length)
+    val occurrences = solution.drop(solution.length - values.length)
     values.foreach { v => valuesCount = valuesCount + (v -> 0) }
     variables.foreach { x =>
       if (valuesCount.contains(x)) {
@@ -61,7 +61,7 @@ object Checkers {
       }
     }
     for (i <- values.indices) {
-      if (!(occurences(i) == valuesCount(values(i)))) return false
+      if (!(occurrences(i) == valuesCount(values(i)))) return false
     }
     true
   }
@@ -84,5 +84,5 @@ object Checkers {
     true
   }
 
-  def gcc(occurences: Array[Int], values: Array[Int]): Array[Int] => Boolean = x => gcc(x, occurences, values)
+  def gcc(occurrences: Array[Int], values: Array[Int]): Array[Int] => Boolean = x => gcc(x, occurrences, values)
 }
