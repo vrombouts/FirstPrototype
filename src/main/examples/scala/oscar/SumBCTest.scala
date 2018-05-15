@@ -6,14 +6,13 @@ import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.core.CPPropagStrength
 
-object SumBCTest {
+object SumBCTest extends App {
 
-  def main(args: Array[String]): Unit = {
-    val myFilter: Filter = new Filter {
-      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = sumGTFiltering(variables)
-    }
-    CPChecker.check(new BCFiltering(sumChecker _), myFilter)
+  val myFilter: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = sumGTFiltering(variables)
   }
+  CPChecker.check(new BCFiltering(sumChecker _), myFilter)
+
 
   private def sumGTFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)

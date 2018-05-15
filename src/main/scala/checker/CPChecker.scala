@@ -101,14 +101,7 @@ object CPChecker {
     val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
     var result: Boolean = false // incorrect format
     if (correctFormat(reducedDomains, bugFreeReducedDomains)) {
-      if (bugFreeReducedDomains.exists(_.isEmpty)) {
-        // check that if no solution can be found, either you still have unfixed variables
-        // or if all variables are instantiated, you should find there is no solution
-        result = !reducedDomains.forall(_.size == 1)
-      }
-      else {
-        result = !(bugFreeReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
-      }
+      result = !(bugFreeReducedDomains zip reducedDomains).exists(x => !x._1.subsetOf(x._2))
     }
     stats.updateStats(returnValues, b, result)
     result

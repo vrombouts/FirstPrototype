@@ -16,24 +16,22 @@ import oscar.cp.core.CPPropagStrength
  *  - a variable v
  *  Then the constraint is x[i]=v
  */
-object ElementACTest {
+object ElementACTest extends App {
 
-  def main(args: Array[String]): Unit = {
-    val myFilter: Filter = new Filter {
-      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
-    }
-    //First we set the seed:
-    testArguments.setNbTests(124)
-
-    //Then we set x with a size of 7
-    testArguments.setNVar(7)
-    //add variable i in generator
-    testArguments.addVar(0.5, (0, 6))
-    //add variable v in generator
-    testArguments.addVar(0.1, (-11, 11))
-    testArguments.setSeed(123456)
-    check(new ACFiltering(elementChecker _), myFilter)
+  val myFilter: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
   }
+  //First we set the seed:
+  testArguments.setNbTests(124)
+
+  //Then we set x with a size of 7
+  testArguments.setNVar(7)
+  //add variable i in generator
+  testArguments.addVar(0.5, (0, 6))
+  //add variable v in generator
+  testArguments.addVar(0.1, (-11, 11))
+  testArguments.setSeed(123456)
+  check(new ACFiltering(elementChecker _), myFilter)
 
   /*
    * This function apply the ElementVarAC constraint of OscaR on the variables

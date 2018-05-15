@@ -7,18 +7,17 @@ import oscar.cp._
 import oscar.cp.constraints.AllDiffBC
 import oscar.cp.core.CPPropagStrength
 
-object AllDifferentBCTest {
+object AllDifferentBCTest extends App {
 
-  def main(args: Array[String]): Unit = {
-    val bugFree: Filter = new BCPruning(allDifferentChecker _)
-    val AllDiff: Filter = new Filter {
-      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
-        allDiffBCFiltering(variables)
-      }
+  val bugFree: Filter = new BCPruning(allDifferentChecker _)
+  val AllDiff: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
+      allDiffBCFiltering(variables)
     }
-    testArguments.setRangeForAll(-5, 5)
-    CPChecker.check(bugFree, AllDiff)
   }
+  testArguments.setRangeForAll(-5, 5)
+  CPChecker.check(bugFree, AllDiff)
+
 
   private def allDiffBCFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)

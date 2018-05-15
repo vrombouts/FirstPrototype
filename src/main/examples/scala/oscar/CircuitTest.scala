@@ -7,16 +7,15 @@ import oscar.cp.{CPIntVar, CPSolver}
 import oscar.cp.circuit
 
 
-object CircuitTest {
+object CircuitTest extends App {
 
-  def main(args: Array[String]): Unit = {
-    val myFilter: Filter = new Filter {
-      def filter(variables: Array[Set[Int]]): Array[Set[Int]] = circuitFiltering(variables)
-    }
-    testArguments.setRangeForAll((0, 4))
-    testArguments.setDensityForAll(0.8)
-    CPChecker.stronger(new ACFiltering(circuitChecker _), myFilter)
+  val myFilter: Filter = new Filter {
+    def filter(variables: Array[Set[Int]]): Array[Set[Int]] = circuitFiltering(variables)
   }
+  testArguments.setRangeForAll((0, 4))
+  testArguments.setDensityForAll(0.8)
+  CPChecker.stronger(new ACFiltering(circuitChecker _), myFilter)
+
 
   private def circuitFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val solver: CPSolver = CPSolver()
