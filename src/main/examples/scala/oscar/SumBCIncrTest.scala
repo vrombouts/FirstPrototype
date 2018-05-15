@@ -7,22 +7,20 @@ import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints._
 
-object SumBCIncrTest {
+object SumBCIncrTest extends App {
 
   implicit private var solver: CPSolver = new CPSolver
   private var currentVars: Array[CPIntVar] = _
 
-  def main(args: Array[String]): Unit = {
-    testArguments.setSeed(1000)
-    for (i <- -50 to 50 by 5) {
-      val bugFree = new IncrementalFiltering(new BCFiltering(Checkers.sum(i, "=")))
-      val tested = new FilterWithState {
-        override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = sumFiltering(branching)
+  testArguments.setSeed(1000)
+  for (i <- -50 to 50 by 5) {
+    val bugFree = new IncrementalFiltering(new BCFiltering(Checkers.sum(i, "=")))
+    val tested = new FilterWithState {
+      override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = sumFiltering(branching)
 
-        override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = sumSetup(variables, i)
-      }
-      CPChecker.check(bugFree, tested)
+      override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = sumSetup(variables, i)
     }
+    CPChecker.check(bugFree, tested)
   }
 
 

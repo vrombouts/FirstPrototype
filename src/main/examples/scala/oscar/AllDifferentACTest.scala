@@ -7,19 +7,18 @@ import oscar.cp._
 import oscar.cp.constraints.AllDiffAC
 import oscar.cp.core.CPPropagStrength
 
-object AllDifferentACTest {
+object AllDifferentACTest extends App {
 
-  def main(args: Array[String]): Unit = {
-    val CPCheckerAllDifferentAC: Filter = new ACFiltering(Checkers.allDifferent())
-    val oscarAllDifferentAC: Filter = new Filter {
-      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
-        filteringAllDifferentAC(variables)
-      }
+  val CPCheckerAllDifferentAC: Filter = new ACFiltering(Checkers.allDifferent())
+  val oscarAllDifferentAC: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
+      filteringAllDifferentAC(variables)
     }
-    testArguments.setRangeForAll(-5, 5)
-    stats.setFolderName("allDifferentAC")
-    check(CPCheckerAllDifferentAC, oscarAllDifferentAC)
   }
+  testArguments.setRangeForAll(-5, 5)
+  stats.setFolderName("allDifferentAC")
+  check(CPCheckerAllDifferentAC, oscarAllDifferentAC)
+
 
   def filteringAllDifferentAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)

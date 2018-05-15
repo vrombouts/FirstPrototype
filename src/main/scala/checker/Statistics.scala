@@ -152,6 +152,11 @@ class Statistics(var folderName: String) {
     prWriterStats.close()
     printTests(prWriterPassed, testsPassed)
     printTests(prWriterFailed, testsFailed, passed = false)
+    // store the last test
+    if (storedResults.nonEmpty) {
+      testsIncPassed = testsIncPassed :+ storedResults.clone()
+      storedResults = Array()
+    }
     printIncStats(prWriterPassed, testsIncPassed)
     printIncStats(prWriterFailed, testsIncFailed, passed = false)
     prWriterFailed.close()
@@ -258,10 +263,6 @@ class Statistics(var folderName: String) {
         }
         prWriter.write("------------------------------\n")
       }
-    }
-    if (storedResults.nonEmpty) {
-      testsIncPassed = testsIncPassed :+ storedResults.clone()
-      storedResults = Array()
     }
   }
 

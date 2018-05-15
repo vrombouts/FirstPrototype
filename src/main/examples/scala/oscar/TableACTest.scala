@@ -6,7 +6,7 @@ import oscar.algo.Inconsistency
 import oscar.cp.{table, _}
 import oscar.cp.core.CPPropagStrength
 
-object TableACTest {
+object TableACTest extends App {
   val myTable: Set[Array[Int]] = Set(
     Array(1, 2, 3),
     Array(2, 2, 3),
@@ -14,13 +14,12 @@ object TableACTest {
     Array(1, 2, 4)
   )
 
-  def main(args: Array[String]): Unit = {
-    val myFilter: Filter = new Filter {
-      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = tableACFiltering(variables)
-    }
-    testArguments = Generators.table(myTable)
-    CPChecker.check(new ACFiltering(Checkers.table(myTable)), myFilter)
+  val myFilter: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = tableACFiltering(variables)
   }
+  testArguments = Generators.table(myTable)
+  CPChecker.check(new ACFiltering(Checkers.table(myTable)), myFilter)
+
 
   private def tableACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)

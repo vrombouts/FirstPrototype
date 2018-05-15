@@ -7,18 +7,16 @@ import oscar.cp._
 import oscar.cp.constraints.GCCVarAC
 import oscar.cp.core.CPPropagStrength
 
-object GCCACTest {
+object GCCACTest extends App {
   val values = Array(1, 2, 3)
 
-  def main(args: Array[String]): Unit = {
-
-    val myFilter: Filter = new Filter {
-      override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = gccACFiltering(variables)
-    }
-    testArguments = Generators.gcc(values)
-    testArguments.setSeed(100)
-    CPChecker.check(new ACFiltering(Checkers.gccVar(values)), myFilter)
+  val myFilter: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = gccACFiltering(variables)
   }
+  testArguments = Generators.gcc(values)
+  testArguments.setSeed(100)
+  CPChecker.check(new ACFiltering(Checkers.gccVar(values)), myFilter)
+
 
   private def gccACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
