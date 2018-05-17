@@ -108,15 +108,15 @@ class IncrementalFilteringTests extends FlatSpec {
     assert(allDif.filter(variables).sameElements(bcAllDifferentFiltering.setup(variables)))
   }
 
-  val rcDummyFiltering = new IncrementalFiltering(new RangeFiltering(dummyChecker))
+  val rcDummyFiltering = new IncrementalFiltering(new RCFiltering(dummyChecker))
 
-  val rcAllDifferentFiltering = new IncrementalFiltering(new RangeFiltering(Checkers.allDifferent()))
+  val rcAllDifferentFiltering = new IncrementalFiltering(new RCFiltering(Checkers.allDifferent()))
 
   "setup function" should "correctly perform range filtering" in{
     val dummy:Filter = new ACFiltering(dummyChecker)
     val variables:Array[Set[Int]] = Array(Set(1,2,3), Set(2))
     assert(dummy.filter(variables).sameElements(rcDummyFiltering.setup(variables)))
-    val allDif:Filter= new RangeFiltering(Checkers.allDifferent())
+    val allDif:Filter= new RCFiltering(Checkers.allDifferent())
     assert(allDif.filter(variables).sameElements(rcAllDifferentFiltering.setup(variables)))
   }
 
