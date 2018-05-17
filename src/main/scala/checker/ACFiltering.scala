@@ -13,7 +13,7 @@ class ACFiltering(checker: Array[Int] => Boolean) extends Filter {
   }
 
 
-  @throws[NoSolutionException]
+  /*@throws[NoSolutionException]
   def filterAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
     if (variables.isEmpty) throw NoSolutionException()
     val sols: Array[Array[Int]] = solutions(variables).filter(x => checker(x))
@@ -50,7 +50,7 @@ class ACFiltering(checker: Array[Int] => Boolean) extends Filter {
       }
     }
     variables
-  }
+  }*/
 
   protected[this] def toDomains(solutions: Set[Array[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions.head.length)(Set.empty)
@@ -66,14 +66,16 @@ class ACFiltering(checker: Array[Int] => Boolean) extends Filter {
   // inconvenient : generate all solutions and then filter. So, uses
   // a lot more memory
   //and slower :(
-  /*def filterAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
+  @throws[NoSolutionException]
+  def filterAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
+    if(variables.isEmpty) throw new NoSolutionException
     val solutions: Set[Array[Int]] = variables.foldLeft(Set[Array[Int]](Array()))((acc, x) => {
       var set: Set[Array[Int]] = Set[Array[Int]]()
       x.foreach(elem => acc.foreach(y => set += y :+ elem))
       set
     }).filter(x => checker(x))
-    if (solutions.isEmpty) return Array.fill(variables.length)(Set[Int]())
+    if (solutions.isEmpty) throw new NoSolutionException
     toDomains(solutions)
-  }*/
+  }
 
 }

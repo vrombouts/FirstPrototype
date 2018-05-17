@@ -12,7 +12,7 @@ class ACPruning(checker: Array[Int] => Boolean) extends Filter {
     applyACPruning(variables)
   }
 
-  @throws[NoSolutionException]
+  /*@throws[NoSolutionException]
   def applyACPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val sol = cartesianProduct(variables)
     if (sol.isEmpty)
@@ -66,8 +66,18 @@ class ACPruning(checker: Array[Int] => Boolean) extends Filter {
   }
 
   //Retrieval of the domains filtered
-  /*protected[this] def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
+  protected[this] def toDomainsAC(solutions: Array[Array[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions(0).length)(Set.empty)
+    solutions.foreach { sol =>
+      for (i <- variables.indices) {
+        variables(i) += sol(i)
+      }
+    }
+    variables
+  }*/
+
+  protected[this] def toDomains(solutions: Set[Array[Int]]): Array[Set[Int]] = {
+    val variables: Array[Set[Int]] = Array.fill(solutions.head.length)(Set.empty)
     solutions.foreach { sol =>
       for (i <- variables.indices) {
         variables(i) += sol(i)
@@ -79,14 +89,16 @@ class ACPruning(checker: Array[Int] => Boolean) extends Filter {
   // applyAC that seems to work in 8 lines! :)
   // inconvenient : generate all solutions and then filter. So, not slower but uses
   // a lot more memory
+  @throws[NoSolutionException]
   def applyACPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    val solutions: Array[Array[Int]] = variables.foldLeft(Array[Array[Int]](Array()))((acc: Array[Array[Int]], x: Set[Int]) => {
-      var sol: Array[Array[Int]] = Array[Array[Int]]()
-      x.foreach(elem => acc.foreach(y => sol = sol :+ (y :+ elem)))
+    if(variables.isEmpty) throw new NoSolutionException
+    val solutions: Set[Array[Int]] = variables.foldLeft(Set[Array[Int]](Array()))((acc: Set[Array[Int]], x: Set[Int]) => {
+      var sol: Set[Array[Int]] = Set[Array[Int]]()
+      x.foreach(elem => acc.foreach(y => sol += y :+ elem))
       sol.filter(x => checker(x))
     })
-    if (solutions.isEmpty) return Array.fill(variables.length)(Set[Int]())
-    toDomainsAC(solutions)
-  }*/
+    if (solutions.isEmpty) throw new NoSolutionException
+    toDomains(solutions)
+  }
 
 }
