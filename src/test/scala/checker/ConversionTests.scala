@@ -67,22 +67,24 @@ class ConversionTests extends FlatSpec {
   "calling checkerToScalaFunction" should "correctly convert a java allDifferent checker" in {
     def checker: Function[Array[Integer], java.lang.Boolean] = {
       domains => {
+        var result: Boolean = true
         for (i <- domains.indices) {
           for (j <- 0 until i) {
-            if (domains(j).equals(domains(i)))
-              false
+            if (domains(j).equals(domains(i))) {
+              result = false
+            }
           }
         }
-        true
+        result
       }
     }
 
     val result: (Array[Int]) => Boolean = checkerToScalaFunction(checker)
-    val scalaChecker: Array[Int] => Boolean = _ => true
+    val scalaChecker: Array[Int] => Boolean = x => x.toSet.size == x.length
     assert(result(Array(1, 2)), scalaChecker(Array(1, 2)))
     assert(result(Array()), scalaChecker(Array()))
-    assert(result(Array(1, 2, 3, 4, 2)), scalaChecker(Array(1, 2, 3, 4, 2)))
-    assert(result(Array(2, 2)), scalaChecker(Array(2, 2)))
+    assert(result(Array(1, 2, 3, 4, 2)).equals(scalaChecker(Array(1, 2, 3, 4, 2))))
+    assert(result(Array(2, 2)).equals(scalaChecker(Array(2, 2))))
   }
 
   "calling tableToScalaFunction" should "correctly convert a java table [[1,2,3][4,5,6][5,4,7]] into a scala one " in {
@@ -90,12 +92,8 @@ class ConversionTests extends FlatSpec {
     javaTable.add(Array(new Integer(1), new Integer(2), new Integer(3)))
     javaTable.add(Array(new Integer(4), new Integer(5), new Integer(6)))
     javaTable.add(Array(new Integer(5), new Integer(4), new Integer(7)))
-    println(javaTable.size())
     val result: Set[Array[Int]] = tableToScala(javaTable)
-    println(result.size)
-    result.foreach(x => println(x.toList))
     val scalaTable: Set[Array[Int]] = Set(Array(1, 2, 3), Array(4, 5, 6), Array(5, 4, 7))
-    scalaTable.foreach(x => println(x.toList))
     assert(result.size == scalaTable.size)
     assert(result.forall(x => scalaTable.exists(y => x.sameElements(y))))
   }
@@ -105,24 +103,16 @@ class ConversionTests extends FlatSpec {
     javaTable.add(Array(new Integer(1), new Integer(2), new Integer(3)))
     javaTable.add(Array(new Integer(4), new Integer(5)))
     javaTable.add(Array(new Integer(5), new Integer(4), new Integer(7)))
-    println(javaTable.size())
     val result: Set[Array[Int]] = tableToScala(javaTable)
-    println(result.size)
-    result.foreach(x => println(x.toList))
     val scalaTable: Set[Array[Int]] = Set(Array(1, 2, 3), Array(4, 5), Array(5, 4, 7))
-    scalaTable.foreach(x => println(x.toList))
     assert(result.size == scalaTable.size)
     assert(result.forall(x => scalaTable.exists(y => x.sameElements(y))))
   }
 
   "calling tableToScalaFunction" should "correctly convert a java table [] into a scala one " in {
     val javaTable: java.util.Set[Array[Integer]] = new util.HashSet[Array[Integer]]()
-    println(javaTable.size())
     val result: Set[Array[Int]] = tableToScala(javaTable)
-    println(result.size)
-    result.foreach(x => println(x.toList))
     val scalaTable: Set[Array[Int]] = Set()
-    scalaTable.foreach(x => println(x.toList))
     assert(result.size == scalaTable.size)
     assert(result.forall(x => scalaTable.exists(y => x.sameElements(y))))
   }

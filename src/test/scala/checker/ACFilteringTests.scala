@@ -1,11 +1,29 @@
 package checker
 
+import java.util.function.Function
+
 import org.scalatest.FlatSpec
 
 class ACFilteringTests extends FlatSpec {
 
   val ACTrue = new ACFiltering(Checkers.trueConstraint _)
   val ACAllDiff = new ACFiltering(Checkers.allDifferent())
+
+  val allDifJavaChecker: Function[Array[Integer], java.lang.Boolean] = {
+    domains => {
+      var result:Boolean = true
+      for (i <- domains.indices) {
+        for (j <- 0 until i) {
+          if (domains(j).equals(domains(i))) {
+            result = false
+          }
+        }
+      }
+      result
+    }
+  }
+
+  val ACAllDiffJava: ACFiltering = new ACFiltering(allDifJavaChecker)
 
   "Calling filter for trueConstraint" should "return the input domains except if there is an empty domain" in {
     var a: Array[Set[Int]] = ACTrue.filter(Array(Set(0), Set(1)))
@@ -26,11 +44,16 @@ class ACFilteringTests extends FlatSpec {
     assertThrows[NoSolutionException] {
       ACAllDiff.filter(Array(Set(1), Set(1)))
     }
+    assertThrows[NoSolutionException] {
+      ACAllDiffJava.filter(Array(Set(1), Set(1)))
+    }
   }
 
   "Calling filter for AllDifferent on domains [0,1] [0,1]" should "return domains [0,1] [0,1]" in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1), Set(0, 1)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1), Set(0, 1)))
     val b: Array[Set[Int]] = Array(Set(0, 1), Set(0, 1))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(0, 1), Set(0, 1)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
@@ -38,35 +61,48 @@ class ACFilteringTests extends FlatSpec {
     assertThrows[NoSolutionException] {
       ACAllDiff.filter(Array(Set(0, 1), Set(0, 1), Set(0, 1)))
     }
+    assertThrows[NoSolutionException] {
+      ACAllDiffJava.filter(Array(Set(0, 1), Set(0, 1), Set(0, 1)))
+    }
   }
 
   "Calling filter for AllDifferent on domains [0,1] [1]" should "return domains [0] [1]" in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1), Set(1)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1), Set(1)))
     val b: Array[Set[Int]] = Array(Set(0), Set(1))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(0, 1), Set(1)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
   "Calling filter for AllDifferent on domains [0,1,2] [2,3] [1]" should "return domains [0,2] [2,3] [1]" in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1, 2), Set(2, 3), Set(1)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1, 2), Set(2, 3), Set(1)))
     val b: Array[Set[Int]] = Array(Set(0, 2), Set(2, 3), Set(1))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(0, 1, 2), Set(2, 3), Set(1)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
   "Calling filter for AllDifferent on domains [0,1,2] [1,2] [2,3] [0]" should "return domains [1,2] [1,2] [3] [0]" in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1, 2), Set(1, 2), Set(2, 3), Set(0)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 1, 2), Set(1, 2), Set(2, 3), Set(0)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(3), Set(0))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(0, 1, 2), Set(1, 2), Set(2, 3), Set(0)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
   "Calling filter for AllDifferent on domains [1,2,3] [0,5] [1,5,6] [1,2] [2,3] [0]" should "return domains [1,2,3] [5] [6] [1,2] [2,3] [0]" in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(1, 2, 3), Set(0, 5), Set(1, 5, 6), Set(1, 2), Set(2, 3), Set(0)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(1, 2, 3), Set(0, 5), Set(1, 5, 6), Set(1, 2), Set(2, 3), Set(0)))
     val b: Array[Set[Int]] = Array(Set(1, 2, 3), Set(5), Set(6), Set(1, 2), Set(2, 3), Set(0))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(1, 2, 3), Set(0, 5), Set(1, 5, 6), Set(1, 2), Set(2, 3), Set(0)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
   "Calling filter for AllDifferent on domains [0,3,4] [1,3] [4] [1]" should "return domains [0] [3] [4] [1] " in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 3, 4), Set(1, 3), Set(4), Set(1)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(0, 3, 4), Set(1, 3), Set(4), Set(1)))
     val b: Array[Set[Int]] = Array(Set(0), Set(3), Set(4), Set(1))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(0, 3, 4), Set(1, 3), Set(4), Set(1)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
@@ -77,8 +113,10 @@ class ACFilteringTests extends FlatSpec {
   }
 
   "Calling filter for AllDifferent on domain [1,2]" should "return [1,2]" in {
-    val a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(1, 2)))
+    var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = ACAllDiffJava.filter(Array(Set(1,2)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
@@ -87,11 +125,14 @@ class ACFilteringTests extends FlatSpec {
       ACAllDiff.filter(Array())
     }
     assertThrows[NoSolutionException] {
+      ACAllDiffJava.filter(Array())
+    }
+    assertThrows[NoSolutionException] {
       ACTrue.filter(Array())
     }
   }
 
-  "Calling filter" should "should filter only the complete solutions" in {
+  "Calling filter" should "filter only the complete solutions" in {
     val C = new ACFiltering((x: Array[Int]) => x.length == 4)
     val a: Array[Set[Int]] = C.filter(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
