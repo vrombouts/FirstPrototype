@@ -96,7 +96,35 @@ class TestArgsTest extends FlatSpec {
         assert(list.size == 11 && list.drop(6).forall { x => x.size == 2 || x.size == 1 })
       case None => assert(false)
     }
+
+
+    gen = new TestArgs
+    gen.random.setSeed(10000)
+    gen.setSeed(1)
+    gen.addVar(0.5, 1, 4)
+    val ggg: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
+      override val rng: Random = new Random(1000)
+      override val size: Int = 100
+    })
+    ggg match {
+      case Some(list) =>
+        assert(list.size == 6 && list.last.size == 2)
+      case None => assert(false)
+    }
+    gen.addNVar(5, 0.6, 0, 3)
+    val gggg: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
+      override val rng: Random = new Random(1000)
+      override val size: Int = 100
+    })
+    gggg match {
+      case Some(list) =>
+        assert(list.size == 11 && list.drop(6).forall { x => x.size == 2 || x.size == 1 })
+      case None => assert(false)
+    }
   }
+
+
+
 
   "setNVar" should "reset the number of variables to n (if n<1 => 1 variable)" in {
     gen = new TestArgs
@@ -206,6 +234,19 @@ class TestArgsTest extends FlatSpec {
         assert(list.head.forall(x => x <= 120 && x >= 100))
       case None => assert(false)
     }
+    gen.reset()
+    gen.random.setSeed(10000)
+    gen.setSeed(1)
+    gen.setRange(0, 100, 120)
+    val gg: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
+      override val rng: Random = new Random(1000)
+      override val size: Int = 100
+    })
+    gg match {
+      case Some(list) =>
+        assert(list.head.forall(x => x <= 120 && x >= 100))
+      case None => assert(false)
+    }
   }
 
   "setRangeForAll" should "set the range of all the variables" in {
@@ -219,6 +260,21 @@ class TestArgsTest extends FlatSpec {
       override val size: Int = 100
     })
     g match {
+      case Some(list) =>
+        assert(list.forall(vari => vari.forall(x => x <= 120 && x >= 100)))
+      case None => assert(false)
+    }
+
+    gen.reset()
+    gen.random.setSeed(10000)
+    gen.setSeed(1)
+    gen.setRangeForAll(100, 120)
+    assert(gen.baseRange == (100, 120))
+    val gg: Option[List[Set[Int]]] = gen.gen.apply(new Gen.Parameters {
+      override val rng: Random = new Random(1000)
+      override val size: Int = 100
+    })
+    gg match {
       case Some(list) =>
         assert(list.forall(vari => vari.forall(x => x <= 120 && x >= 100)))
       case None => assert(false)
@@ -265,7 +321,9 @@ class TestArgsTest extends FlatSpec {
     forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)
     forAll(gen2.gen) { x => y = y :+ x; true }.check(gen2.getTestParameters)
     assert((x zip y).forall(z => (z._1 zip z._2).forall(w => w._1.equals(w._2))))
+    assert(gen.getNbTests==100)
     gen.setNbTests(10)
+    assert(gen.getNbTests==10)
     var z = 0
     forAll(gen.gen) { y => z += 1; true }.check(gen.getTestParameters)
     assert(z == 10)
@@ -276,6 +334,7 @@ class TestArgsTest extends FlatSpec {
     forAll(gen.gen) { x => y = y :+ x; true }.check(gen.getTestParameters)
     assert(x.size == 100 && y.size == 100 && !x.equals(y))
     gen.setNbTests(20)
+    assert(gen.getNbTests==20)
     x = List()
     y = List()
     forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)
