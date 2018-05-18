@@ -24,7 +24,7 @@ class ACPruning(checker: Array[Int] => Boolean) extends Filter {
 
   @throws[NoSolutionException]
   def applyACPruning(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    if(variables.isEmpty) throw new NoSolutionException
+    if (variables.isEmpty) throw new NoSolutionException
     val solutions: Set[Array[Int]] = variables.foldLeft(Set[Array[Int]](Array()))((acc: Set[Array[Int]], x: Set[Int]) => {
       var sol: Set[Array[Int]] = Set[Array[Int]]()
       x.foreach(elem => acc.foreach(y => sol += y :+ elem))

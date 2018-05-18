@@ -38,17 +38,17 @@ class CheckersTests extends FlatSpec {
   }
 
   "element(i,v)" should "return an element checker only considering the x as variable and having its i and v fixed" in {
-    var elem = Checkers.element(0,0)
+    var elem = Checkers.element(0, 0)
     assert(elem(Array(0)))
-    assert(elem(Array(0,1)))
-    assert(elem(Array(0,52448)))
-    assert(elem(Array(0,-987,145,4833,159)))
+    assert(elem(Array(0, 1)))
+    assert(elem(Array(0, 52448)))
+    assert(elem(Array(0, -987, 145, 4833, 159)))
     assert(!elem(Array(-1)))
     assert(!elem(Array(1)))
-    assert(!elem(Array(1561456,0)))
-    elem = Checkers.element(1,0)
+    assert(!elem(Array(1561456, 0)))
+    elem = Checkers.element(1, 0)
     assert(elem(Array(1561456, 0)))
-    assert(elem(Array(1,0,2)))
+    assert(elem(Array(1, 0, 2)))
     assert(!elem(Array(0)))
   }
   /////////testing sum//////////////////
@@ -57,123 +57,123 @@ class CheckersTests extends FlatSpec {
   "sum(_)" should "be a checker respecting the constraint sum(x)=0" in {
     val sum: Array[Int] => Boolean = Checkers.sum(_)
     assert(sum(Array(0)))
-    assert(sum(Array(-1,1)))
-    assert(!sum(Array(-1,0)))
-    assert(!sum(Array(0,1)))
-    assert(sum(Array(1,2,-3)))
-    assert(!sum(Array(-1,2,3)))
-    assert(sum(Array(-2,1,1)))
-    assert(sum(Array(0,0)))
+    assert(sum(Array(-1, 1)))
+    assert(!sum(Array(-1, 0)))
+    assert(!sum(Array(0, 1)))
+    assert(sum(Array(1, 2, -3)))
+    assert(!sum(Array(-1, 2, 3)))
+    assert(sum(Array(-2, 1, 1)))
+    assert(sum(Array(0, 0)))
   }
 
   "sum(0,\"=\")" should "represents a checker respecting the constraint sum(x)=0" in {
-    val sum = Checkers.sum(0,"=")
+    val sum = Checkers.sum(0, "=")
     assert(sum(Array(0)))
-    assert(sum(Array(-1,1)))
-    assert(!sum(Array(-1,0)))
-    assert(!sum(Array(0,1)))
-    assert(sum(Array(1,2,-3)))
-    assert(!sum(Array(-1,2,3)))
-    assert(sum(Array(-2,1,1)))
-    assert(sum(Array(0,0)))
+    assert(sum(Array(-1, 1)))
+    assert(!sum(Array(-1, 0)))
+    assert(!sum(Array(0, 1)))
+    assert(sum(Array(1, 2, -3)))
+    assert(!sum(Array(-1, 2, 3)))
+    assert(sum(Array(-2, 1, 1)))
+    assert(sum(Array(0, 0)))
   }
 
   "sum(0,\"<\")" should "represents a checker respecting the constraint sum(x)<0" in {
-    val sum = Checkers.sum(0,"<")
+    val sum = Checkers.sum(0, "<")
     assert(!sum(Array(0)))
-    assert(!sum(Array(-1,1)))
-    assert(sum(Array(-1,0)))
-    assert(!sum(Array(0,1)))
-    assert(!sum(Array(1,2,-3)))
-    assert(!sum(Array(-1,2,3)))
-    assert(!sum(Array(-2,1,1)))
-    assert(!sum(Array(0,0)))
+    assert(!sum(Array(-1, 1)))
+    assert(sum(Array(-1, 0)))
+    assert(!sum(Array(0, 1)))
+    assert(!sum(Array(1, 2, -3)))
+    assert(!sum(Array(-1, 2, 3)))
+    assert(!sum(Array(-2, 1, 1)))
+    assert(!sum(Array(0, 0)))
   }
 
   "sum(0,\"<=\")" should "represents a checker respecting the constraint sum(x)<=0" in {
-    val sum = Checkers.sum(0,"<=")
+    val sum = Checkers.sum(0, "<=")
     assert(sum(Array(0)))
-    assert(sum(Array(-1,1)))
-    assert(sum(Array(-1,0)))
-    assert(!sum(Array(0,1)))
-    assert(sum(Array(1,2,-3)))
-    assert(!sum(Array(-1,2,3)))
-    assert(sum(Array(-2,1,1)))
-    assert(sum(Array(0,0)))
+    assert(sum(Array(-1, 1)))
+    assert(sum(Array(-1, 0)))
+    assert(!sum(Array(0, 1)))
+    assert(sum(Array(1, 2, -3)))
+    assert(!sum(Array(-1, 2, 3)))
+    assert(sum(Array(-2, 1, 1)))
+    assert(sum(Array(0, 0)))
   }
 
   "sum(0,\">\")" should "represents a checker respecting the constraint sum(x)>0" in {
-    val sum = Checkers.sum(0,">")
+    val sum = Checkers.sum(0, ">")
     assert(!sum(Array(0)))
-    assert(!sum(Array(-1,1)))
-    assert(!sum(Array(-1,0)))
-    assert(sum(Array(0,1)))
-    assert(!sum(Array(1,2,-3)))
-    assert(sum(Array(-1,2,3)))
-    assert(!sum(Array(-2,1,1)))
-    assert(!sum(Array(0,0)))
+    assert(!sum(Array(-1, 1)))
+    assert(!sum(Array(-1, 0)))
+    assert(sum(Array(0, 1)))
+    assert(!sum(Array(1, 2, -3)))
+    assert(sum(Array(-1, 2, 3)))
+    assert(!sum(Array(-2, 1, 1)))
+    assert(!sum(Array(0, 0)))
   }
 
   "sum(0,\">=\")" should "represents a checker respecting the constraint sum(x)>=0" in {
-    val sum = Checkers.sum(0,">=")
+    val sum = Checkers.sum(0, ">=")
     assert(sum(Array(0)))
-    assert(sum(Array(-1,1)))
-    assert(!sum(Array(-1,0)))
-    assert(sum(Array(0,1)))
-    assert(sum(Array(1,2,-3)))
-    assert(sum(Array(-1,2,3)))
-    assert(sum(Array(-2,1,1)))
-    assert(sum(Array(0,0)))
+    assert(sum(Array(-1, 1)))
+    assert(!sum(Array(-1, 0)))
+    assert(sum(Array(0, 1)))
+    assert(sum(Array(1, 2, -3)))
+    assert(sum(Array(-1, 2, 3)))
+    assert(sum(Array(-2, 1, 1)))
+    assert(sum(Array(0, 0)))
   }
 
   "sum(0,\"!=\")" should "represents a checker respecting the constraint sum(x)!=0" in {
-    val sum = Checkers.sum(0,"!=")
+    val sum = Checkers.sum(0, "!=")
     assert(!sum(Array(0)))
-    assert(!sum(Array(-1,1)))
-    assert(sum(Array(-1,0)))
-    assert(sum(Array(0,1)))
-    assert(!sum(Array(1,2,-3)))
-    assert(sum(Array(-1,2,3)))
-    assert(!sum(Array(-2,1,1)))
-    assert(!sum(Array(0,0)))
+    assert(!sum(Array(-1, 1)))
+    assert(sum(Array(-1, 0)))
+    assert(sum(Array(0, 1)))
+    assert(!sum(Array(1, 2, -3)))
+    assert(sum(Array(-1, 2, 3)))
+    assert(!sum(Array(-2, 1, 1)))
+    assert(!sum(Array(0, 0)))
   }
 
   "sum(0,\"??\")" should "not be an existing sum constraint and therefore always return false" in {
-    val sum = Checkers.sum(0,"??")
+    val sum = Checkers.sum(0, "??")
     assert(!sum(Array(0)))
-    assert(!sum(Array(-1,1)))
-    assert(!sum(Array(-1,0)))
-    assert(!sum(Array(0,1)))
-    assert(!sum(Array(1,2,-3)))
-    assert(!sum(Array(-1,2,3)))
-    assert(!sum(Array(-2,1,1)))
-    assert(!sum(Array(0,0)))
+    assert(!sum(Array(-1, 1)))
+    assert(!sum(Array(-1, 0)))
+    assert(!sum(Array(0, 1)))
+    assert(!sum(Array(1, 2, -3)))
+    assert(!sum(Array(-1, 2, 3)))
+    assert(!sum(Array(-2, 1, 1)))
+    assert(!sum(Array(0, 0)))
   }
 
   /////////testing table////////////////
 
   val table: Set[Array[Int]] = Set(
-    Array(1,2,3),
-    Array(1,1,1),
-    Array(2,2,2),
-    Array(4,4,3),
-    Array(1,2,5),
-    Array(5,1,2))
+    Array(1, 2, 3),
+    Array(1, 1, 1),
+    Array(2, 2, 2),
+    Array(4, 4, 3),
+    Array(1, 2, 5),
+    Array(5, 1, 2))
 
   "table(table)" should "perform the table constraint for the solution in table" in {
     val t = Checkers.table(table)
-    assert(t(Array(1,1,1)))
-    assert(t(Array(1,2,3)))
-    assert(t(Array(2,2,2)))
-    assert(t(Array(4,4,3)))
-    assert(t(Array(1,2,5)))
-    assert(t(Array(5,1,2)))
-    assert(!t(Array(1,1,2)))
-    assert(!t(Array(1,2,4)))
-    assert(!t(Array(5,2,2)))
-    assert(!t(Array(4,4,4)))
-    assert(!t(Array(0,-56,985)))
-    assert(!t(Array(2,3,4)))
+    assert(t(Array(1, 1, 1)))
+    assert(t(Array(1, 2, 3)))
+    assert(t(Array(2, 2, 2)))
+    assert(t(Array(4, 4, 3)))
+    assert(t(Array(1, 2, 5)))
+    assert(t(Array(5, 1, 2)))
+    assert(!t(Array(1, 1, 2)))
+    assert(!t(Array(1, 2, 4)))
+    assert(!t(Array(5, 2, 2)))
+    assert(!t(Array(4, 4, 4)))
+    assert(!t(Array(0, -56, 985)))
+    assert(!t(Array(2, 3, 4)))
   }
 
   "table" should "permit the scala format of a table to create the constraint" in {
@@ -185,60 +185,60 @@ class CheckersTests extends FlatSpec {
     javaTable.add(Array(new Integer(1), new Integer(2), new Integer(5)))
     javaTable.add(Array(new Integer(5), new Integer(1), new Integer(2)))
     val t = Checkers.table(javaTable)
-    assert(t(Array(1,1,1)))
-    assert(t(Array(1,2,3)))
-    assert(t(Array(2,2,2)))
-    assert(t(Array(4,4,3)))
-    assert(t(Array(1,2,5)))
-    assert(t(Array(5,1,2)))
-    assert(!t(Array(1,1,2)))
-    assert(!t(Array(1,2,4)))
-    assert(!t(Array(5,2,2)))
-    assert(!t(Array(4,4,4)))
-    assert(!t(Array(0,-56,985)))
-    assert(!t(Array(2,3,4)))
+    assert(t(Array(1, 1, 1)))
+    assert(t(Array(1, 2, 3)))
+    assert(t(Array(2, 2, 2)))
+    assert(t(Array(4, 4, 3)))
+    assert(t(Array(1, 2, 5)))
+    assert(t(Array(5, 1, 2)))
+    assert(!t(Array(1, 1, 2)))
+    assert(!t(Array(1, 2, 4)))
+    assert(!t(Array(5, 2, 2)))
+    assert(!t(Array(4, 4, 4)))
+    assert(!t(Array(0, -56, 985)))
+    assert(!t(Array(2, 3, 4)))
   }
 
   /////////testing gcc//////////////////
 
   "gccVar" should "consider the occurrences as variables" in {
-    val values = Array(1,2,3)
+    val values = Array(1, 2, 3)
     val gcc = Checkers.gccVar(values)
-    assert(gcc(Array(1,2,3,
-      1,1,1)))
-    assert(gcc(Array(1,1,1,2,2,2,3,3,3,
-      3,3,3)))
-    assert(gcc(Array(1,4,1,2,6,2,3,3,3,
-      2,2,3)))
-    assert(gcc(Array(1,1,2,2,3,3,3,
-      2,2,3)))
-    assert(gcc(Array(1,2,3,1,2,3,1,2,3,
-      3,3,3)))
-    assert(!gcc(Array(1,1,2,2,2,3,3,3,
-      3,3,3)))
-    assert(!gcc(Array(1,1,1,2,2,2,3,3,3,
-      2,3,3)))
-    assert(!gcc(Array(1,1,1,2,2,2,3,3,3,
-      4,3,3)))
-    assert(!gcc(Array(1,2,3,1,2,3,1,2,3,
-      1,1,1)))
+    assert(gcc(Array(1, 2, 3,
+      1, 1, 1)))
+    assert(gcc(Array(1, 1, 1, 2, 2, 2, 3, 3, 3,
+      3, 3, 3)))
+    assert(gcc(Array(1, 4, 1, 2, 6, 2, 3, 3, 3,
+      2, 2, 3)))
+    assert(gcc(Array(1, 1, 2, 2, 3, 3, 3,
+      2, 2, 3)))
+    assert(gcc(Array(1, 2, 3, 1, 2, 3, 1, 2, 3,
+      3, 3, 3)))
+    assert(!gcc(Array(1, 1, 2, 2, 2, 3, 3, 3,
+      3, 3, 3)))
+    assert(!gcc(Array(1, 1, 1, 2, 2, 2, 3, 3, 3,
+      2, 3, 3)))
+    assert(!gcc(Array(1, 1, 1, 2, 2, 2, 3, 3, 3,
+      4, 3, 3)))
+    assert(!gcc(Array(1, 2, 3, 1, 2, 3, 1, 2, 3,
+      1, 1, 1)))
   }
 
   "gcc" should "consider occurrences as fixed values" in {
-    val values = Array(1,2,3)
-    val occurrences = Array(2,2,2)
+    val values = Array(1, 2, 3)
+    val occurrences = Array(2, 2, 2)
     val gcc = Checkers.gcc(occurrences, values)
-    assert(gcc(Array(1,1,2,2,3,3)))
-    assert(gcc(Array(1,2,3,1,2,3)))
-    assert(gcc(Array(1,2,3,3,2,1)))
-    assert(gcc(Array(3,2,1,1,2,3)))
-    assert(gcc(Array(1,1,2,2,3,3,4,4)))
-    assert(!gcc(Array(1,2,2,3,3)))
-    assert(!gcc(Array(1,1,2,3,3)))
-    assert(!gcc(Array(1,1,2,2,3)))
-    assert(!gcc(Array(1,1,2,2,3,3,3)))
-    assert(!gcc(Array(1,1,2,2,2,3,3)))
-    assert(!gcc(Array(1,1,1,2,2,3,3)))
-    assert(!gcc(Array(1,1,2,2,3,4)))
+    assert(gcc(Array(1, 1, 2, 2, 3, 3)))
+    assert(gcc(Array(1, 2, 3, 1, 2, 3)))
+    assert(gcc(Array(1, 2, 3, 3, 2, 1)))
+    assert(gcc(Array(3, 2, 1, 1, 2, 3)))
+    assert(gcc(Array(1, 1, 2, 2, 3, 3, 4, 4)))
+    assert(!gcc(Array(1, 2, 2, 3, 3)))
+    assert(!gcc(Array(1, 1, 2, 3, 3)))
+    assert(!gcc(Array(1, 1, 2, 2, 3)))
+    assert(!gcc(Array(1, 1, 2, 2, 3, 3, 3)))
+    assert(!gcc(Array(1, 1, 2, 2, 2, 3, 3)))
+    assert(!gcc(Array(1, 1, 1, 2, 2, 3, 3)))
+    assert(!gcc(Array(1, 1, 2, 2, 3, 4)))
   }
 }

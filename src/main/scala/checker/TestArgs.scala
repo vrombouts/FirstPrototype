@@ -25,21 +25,21 @@ class TestArgs {
 
 
   private[checker] class testParams(seed: Long, nbTests: Int) extends Test.Parameters {
-        def this(seed: Long) = this(seed, 100)
+    def this(seed: Long) = this(seed, 100)
 
-         def this(nbTests: Int) = this(random.nextLong, nbTests)
+    def this(nbTests: Int) = this(random.nextLong, nbTests)
 
-          def this() = this(random.nextLong, 100)
+    def this() = this(random.nextLong, 100)
 
-          override val minSuccessfulTests: Int = nbTests
-        val minSize: Int = 0
-        val maxSize: Int = Gen.Parameters.default.size
-        override val rng: scala.util.Random = new Random(seed)
-        val workers: Int = 1
-        val testCallback: TestCallback = new TestCallback {}
-        val maxDiscardRatio: Float = 5
-        val customClassLoader: Option[ClassLoader] = None
-      }
+    override val minSuccessfulTests: Int = nbTests
+    val minSize: Int = 0
+    val maxSize: Int = Gen.Parameters.default.size
+    override val rng: scala.util.Random = new Random(seed)
+    val workers: Int = 1
+    val testCallback: TestCallback = new TestCallback {}
+    val maxDiscardRatio: Float = 5
+    val customClassLoader: Option[ClassLoader] = None
+  }
 
   def setSeed(sd: Long): Unit = {
     seed = Some(sd)

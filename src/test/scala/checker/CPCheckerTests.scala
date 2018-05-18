@@ -711,7 +711,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new IncrementalFiltering( new BCFiltering(Checkers.trueConstraint _))
+    val bcIncTrue = new IncrementalFiltering(new BCFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -741,7 +741,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new IncrementalFiltering( new BCFiltering(Checkers.trueConstraint _))
+    val bcIncTrue = new IncrementalFiltering(new BCFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -772,7 +772,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new IncrementalFiltering( new BCFiltering(Checkers.trueConstraint _))
+    val bcIncTrue = new IncrementalFiltering(new BCFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)

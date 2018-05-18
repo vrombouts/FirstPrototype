@@ -117,7 +117,8 @@ class OpTests extends FlatSpec {
 
   "condition for an unknown op" should "not throw an exception" in {
     assert({
-      Op.condition("_", 0, 0, 0); true
+      Op.condition("_", 0, 0, 0);
+      true
     })
   }
 }

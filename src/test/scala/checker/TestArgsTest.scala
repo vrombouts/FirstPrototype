@@ -124,8 +124,6 @@ class TestArgsTest extends FlatSpec {
   }
 
 
-
-
   "setNVar" should "reset the number of variables to n (if n<1 => 1 variable)" in {
     gen = new TestArgs
     gen.random.setSeed(10000)
@@ -321,9 +319,9 @@ class TestArgsTest extends FlatSpec {
     forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)
     forAll(gen2.gen) { x => y = y :+ x; true }.check(gen2.getTestParameters)
     assert((x zip y).forall(z => (z._1 zip z._2).forall(w => w._1.equals(w._2))))
-    assert(gen.getNbTests==100)
+    assert(gen.getNbTests == 100)
     gen.setNbTests(10)
-    assert(gen.getNbTests==10)
+    assert(gen.getNbTests == 10)
     var z = 0
     forAll(gen.gen) { y => z += 1; true }.check(gen.getTestParameters)
     assert(z == 10)
@@ -334,7 +332,7 @@ class TestArgsTest extends FlatSpec {
     forAll(gen.gen) { x => y = y :+ x; true }.check(gen.getTestParameters)
     assert(x.size == 100 && y.size == 100 && !x.equals(y))
     gen.setNbTests(20)
-    assert(gen.getNbTests==20)
+    assert(gen.getNbTests == 20)
     x = List()
     y = List()
     forAll(gen.gen) { y => x = x :+ y; true }.check(gen.getTestParameters)

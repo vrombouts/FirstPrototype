@@ -5,7 +5,7 @@ import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 //to do new IncrementalFiltering(myStaticFilter) and have a filterWithState from a static filter.
 class IncrementalFiltering(filter: Filter) extends FilterWithState {
   //use list instead of stack.
-  private[this] var trailStack : List[Array[Set[Int]]] = _
+  private[this] var trailStack: List[Array[Set[Int]]] = _
 
   override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
     trailStack = List()
@@ -30,11 +30,11 @@ class IncrementalFiltering(filter: Filter) extends FilterWithState {
   }
 
   def pop(currentDomain: Array[Set[Int]]): Array[Set[Int]] = {
-    if(trailStack.nonEmpty){
+    if (trailStack.nonEmpty) {
       val vars = trailStack.head
       trailStack = trailStack.tail
       vars
-    }else
+    } else
       currentDomain
   }
 }

@@ -31,7 +31,8 @@ object ElementACTest extends App {
   //add variable v in generator
   testArguments.addVar(0.1, (-11, 11))
   testArguments.setSeed(123456)
-  check(new ACFiltering(elementChecker _), myFilter)
+  testArguments = Generators.element
+  check(new ACFiltering(Checkers.element), myFilter)
 
   /*
    * This function apply the ElementVarAC constraint of OscaR on the variables

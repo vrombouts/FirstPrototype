@@ -30,7 +30,7 @@ class RestrictDomain(val doms: Array[Set[Int]], val random: Random) extends Bran
     for (i <- domains(index)) {
       if (!Op.respectOp(op, i, constant)) domainToReduce = domainToReduce - i
     }
-    domains(index)= domainToReduce
+    domains(index) = domainToReduce
     domains
   }
 
@@ -42,5 +42,5 @@ class RestrictDomain(val doms: Array[Set[Int]], val random: Random) extends Bran
     rd
   }
 
-  override def toString: String = "Restriction of domains (x_" + index + op + constant+")"
+  override def toString: String = "Restriction of domains (x_" + index + op + constant + ")"
 }

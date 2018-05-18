@@ -3,10 +3,10 @@ package checker.incremental
 import org.scalatest.FlatSpec
 
 class BranchOpTests extends FlatSpec {
-  val set1= Set(1)
+  val set1 = Set(1)
   val set2 = Set(2)
-  val set3=Set(3)
-  val domains = Array(set1,set2,set3)
+  val set3 = Set(3)
+  val domains = Array(set1, set2, set3)
 
   "constructor" should "not modify the given domains" in {
     val bop = new BranchOp(domains)

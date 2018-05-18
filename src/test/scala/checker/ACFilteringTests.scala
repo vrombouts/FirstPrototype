@@ -11,7 +11,7 @@ class ACFilteringTests extends FlatSpec {
 
   val allDifJavaChecker: Function[Array[Integer], java.lang.Boolean] = {
     domains => {
-      var result:Boolean = true
+      var result: Boolean = true
       for (i <- domains.indices) {
         for (j <- 0 until i) {
           if (domains(j).equals(domains(i))) {

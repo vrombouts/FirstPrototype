@@ -28,7 +28,7 @@ class ACFiltering(checker: Array[Int] => Boolean) extends Filter {
   // and slower :(
   @throws[NoSolutionException]
   def filterAC(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    if(variables.isEmpty) throw new NoSolutionException
+    if (variables.isEmpty) throw new NoSolutionException
     val solutions: Set[Array[Int]] = variables.foldLeft(Set[Array[Int]](Array()))((acc, x) => {
       var set: Set[Array[Int]] = Set[Array[Int]]()
       x.foreach(elem => acc.foreach(y => set += y :+ elem))

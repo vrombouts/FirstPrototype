@@ -13,11 +13,11 @@ class IncrementalFilteringTests extends FlatSpec {
 
   val allDifferentFiltering = new IncrementalFiltering(new ACFiltering(Checkers.allDifferent()))
 
-  "setup function" should "correctly perform AC filtering" in{
-    val dummy:Filter = new ACFiltering(dummyChecker)
-    val variables:Array[Set[Int]] = Array(Set(1,2,3), Set(2))
+  "setup function" should "correctly perform AC filtering" in {
+    val dummy: Filter = new ACFiltering(dummyChecker)
+    val variables: Array[Set[Int]] = Array(Set(1, 2, 3), Set(2))
     assert(dummy.filter(variables).sameElements(dummyFiltering.setup(variables)))
-    val allDif:Filter= new ACFiltering(Checkers.allDifferent())
+    val allDif: Filter = new ACFiltering(Checkers.allDifferent())
     assert(allDif.filter(variables).sameElements(allDifferentFiltering.setup(variables)))
   }
 
@@ -112,11 +112,11 @@ class IncrementalFilteringTests extends FlatSpec {
 
   val rcAllDifferentFiltering = new IncrementalFiltering(new RCFiltering(Checkers.allDifferent()))
 
-  "setup function" should "correctly perform range filtering" in{
-    val dummy:Filter = new ACFiltering(dummyChecker)
-    val variables:Array[Set[Int]] = Array(Set(1,2,3), Set(2))
+  "setup function" should "correctly perform range filtering" in {
+    val dummy: Filter = new ACFiltering(dummyChecker)
+    val variables: Array[Set[Int]] = Array(Set(1, 2, 3), Set(2))
     assert(dummy.filter(variables).sameElements(rcDummyFiltering.setup(variables)))
-    val allDif:Filter= new RCFiltering(Checkers.allDifferent())
+    val allDif: Filter = new RCFiltering(Checkers.allDifferent())
     assert(allDif.filter(variables).sameElements(rcAllDifferentFiltering.setup(variables)))
   }
 

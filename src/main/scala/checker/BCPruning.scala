@@ -37,8 +37,8 @@ class BCPruning(checker: Array[Int] => Boolean) extends Filter {
       if (currentIndex == intervals.length) return checker(currentSol)
       for (i <- intervals(currentIndex).getRange) {
         currentSol(currentIndex) = i
-        if(checker(currentSol.take(currentIndex+1)))
-          if(setIthVariable(currentIndex + 1))
+        if (checker(currentSol.take(currentIndex + 1)))
+          if (setIthVariable(currentIndex + 1))
             return true
       }
       false
