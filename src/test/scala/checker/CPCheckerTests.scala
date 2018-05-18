@@ -567,6 +567,38 @@ class CPCheckerTests extends FlatSpec {
     assert(stats.getNbFailedTests > 0)
   }
 
+
+  "Calling check Incremental with ACFiltering on a constraint that returns always true with a branchAndFilter that does not push " should " detect at least a failed test" in {
+    testArguments = new TestArgs
+    testArguments.setSeed(100)
+    check(acFalse, dummyFilter)
+    val dummyInc: FilterWithState = new FilterWithState {
+      var currentVars: Array[Set[Int]] = Array()
+      val stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
+
+      override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = {
+        branching match {
+          case _: Push => currentVars
+          case _: Pop =>
+            currentVars = stack.pop()
+            currentVars
+          case r: RestrictDomain =>
+            currentVars = r.applyRestriction
+            currentVars
+        }
+      }
+
+      override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
+        currentVars = variables
+        currentVars
+      }
+    }
+    val acIncTrue: FilterWithState = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
+    stats = new Statistics("")
+    check(acIncTrue, dummyInc)
+    assert(stats.getNbFailedTests > 0)
+  }
+
   "Calling check Incremental with ACFiltering on a constraint that returns always true with an init removing no value " should " detect no failed test" in {
     testArguments = new TestArgs
     testArguments.setSeed(102)
@@ -684,6 +716,37 @@ class CPCheckerTests extends FlatSpec {
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
   }
+
+
+  "Calling check Incremental with BCFiltering on a constraint that returns always true with a branchAndFilter that does not pop  " should " detect at least an error " in {
+    testArguments = new TestArgs
+    testArguments.setSeed(100)
+    val dummyInc: FilterWithState = new FilterWithState {
+      var currentVars: Array[Set[Int]] = Array()
+      val stack: util.Stack[Array[Set[Int]]] = new util.Stack[Array[Set[Int]]]()
+
+      override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = {
+        branching match {
+          case _: Push => stack.push(currentVars)
+          case _: Pop =>
+            currentVars
+          case r: RestrictDomain =>
+            currentVars = r.applyRestriction
+            currentVars
+        }
+      }
+
+      override def setup(variables: Array[Set[Int]]): Array[Set[Int]] = {
+        currentVars = variables
+        currentVars
+      }
+    }
+    val bcIncTrue = new IncrementalFiltering( new BCFiltering(Checkers.trueConstraint _))
+    stats = new Statistics("")
+    check(bcIncTrue, dummyInc)
+    assert(stats.getNbFailedTests > 0)
+  }
+
 
   "Calling check Incremental with BCFiltering on a constraint that returns always true with an init removing no value " should " detect no error " in {
     testArguments = new TestArgs

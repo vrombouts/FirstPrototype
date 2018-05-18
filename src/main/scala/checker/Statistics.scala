@@ -150,8 +150,8 @@ class Statistics(var folderName: String) {
     val prWriterFailed = new PrintWriter(filenameFailed)
     printStats(isInc, prWriterStats)
     prWriterStats.close()
-    printTests(prWriterPassed, testsPassed)
-    printTests(prWriterFailed, testsFailed, passed = false)
+    printTests(prWriterPassed, testsPassed, isInc = isInc)
+    printTests(prWriterFailed, testsFailed, passed = false, isInc = isInc)
     // store the last test
     if (storedResults.nonEmpty) {
       testsIncPassed = testsIncPassed :+ storedResults.clone()
@@ -239,7 +239,6 @@ class Statistics(var folderName: String) {
   }
 
   private[this] def printIncStats(prWriter: PrintWriter, tests: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]], passed: Boolean = true): Unit = {
-    //val prWriter = new PrintWriter(f)
     if (tests.isEmpty) {
       return
     }

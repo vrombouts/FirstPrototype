@@ -1,12 +1,10 @@
-import java.util.function.{BiFunction, Function}
-
-import checker.incremental.BranchOp
+import java.util.function.Function
 
 import scala.collection.JavaConverters._
 
 
 package object Conversions {
-  implicit def conversionDomainsToScala(sca: Array[Set[Int]]): Array[java.util.Set[Integer]] = {
+  implicit def conversionDomainsToJava(sca: Array[Set[Int]]): Array[java.util.Set[Integer]] = {
     val jav: Array[java.util.Set[Integer]] = Array.fill(sca.length)(new java.util.HashSet())
     for (i <- sca.indices) {
       jav(i) = sca(i).map(x => new Integer(x)).asJava
@@ -14,24 +12,12 @@ package object Conversions {
     jav
   }
 
-  implicit def conversionDomainsToJava(jav: Array[java.util.Set[Integer]]): Array[Set[Int]] = {
+  implicit def conversionDomainsToScala(jav: Array[java.util.Set[Integer]]): Array[Set[Int]] = {
     val sca: Array[Set[Int]] = Array.fill(jav.length)(Set.empty)
     for (i <- jav.indices) {
       sca(i) = jav(i).asScala.map(x => x.asInstanceOf[Int]).toSet
     }
     sca
-  }
-
-  implicit def branchToScalaFunction(fun: Function[BranchOp, Array[java.util.Set[Integer]]]): BranchOp => Array[Set[Int]] = {
-    branchOp: BranchOp => {
-      fun.apply(branchOp)
-    }
-  }
-
-  implicit def filterToScalaFunction(fun: Function[Array[java.util.Set[Integer]], Array[java.util.Set[Integer]]]): Array[Set[Int]] => Array[Set[Int]] = {
-    myArray => {
-      fun.apply(myArray)
-    }
   }
 
   implicit def checkerToScalaFunction(fun: Function[Array[Integer], java.lang.Boolean]): Array[Int] => Boolean = {
