@@ -2,111 +2,72 @@
 
 ### Goal of this tool
 
-The goal of the tool is to make an help for developers while creating new filtering algorithms for any constraint. The tool can be used to test that the filtering of any constraint is correctly performed over multiple randomly generated domains variables. It can test that the filtering do not remove any solution but also that the domains reduction satisfies arc consistency or bound consistency. For any other propagation types different from arc or bound consistency, the tool is able to check that the filtering removes no solution but not that it satisfies the propagation type.
+The goal of the tool is to help developers to test new filtering algorithms for any constraint. The tool can be used to test that the filtering of any constraint is correctly performed over multiple randomly generated domains variables. It can test that the filtering do not remove any solution but also that the domains reduction satisfies some consistencies such as the arc consistency, bound consistency or range consistency. The tool also allows the comparison of two filtering algorithm to see which one is stronger.
 
 ### How to check your constraint filtering
 
-In order to check your constraint filtering, the tool will generate random domains and apply your filtering function over them. Then, it will check that your filtering domains filters well the domains according to the constraint being tested and the possibly the given propagation type (arc consistency or bound consistency). To do this, three functions. You can call any of them according to your needs.
+The check of a filtering algorithm is based on a comparison with another filtering algorithm. This one should be supposed as bug-free. We call it the trusted filtering algorithm. In order to check your constraint filtering, the tool will generate random domains and apply the filtering functions over them. Then, it will check that your filtering algorithm filters the domains according to the trusted filtering algorithm. The comparison of the trusted and tested filtering algorithms is done by the function `check` or `stronger` of the `CPChecker` object.
 
-The first function that you can use to test your filtering implementation is the `checkAC` function that will check that you do not remove any solution, but also, it will check that your domain filtering is arc consistent.
-Here is the signature of this function : 
+The `check` function striclty compare the two filterings. The tested filtering algorithm should not remove more or less values than the trusted filtering algorithm.
+The `stronger` function compare the two filterings while supposing that the trusted filtering algorithm removes more values. Therefore, the tested algorithm should remove less or the same number of values as the trusted filtering algorithm. The first argument of those functions should always be the trusted filtering algorithm. Let's show the signature of the `check` function. The `stronger` function's signature will not be shown since it is the same as the `check` function.
 ```scala
-checkAC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit
+def check(trustedFiltering: Filter, testedFiltering: Filter)
+         (implicit testArguments: TestArgs, stats: Statistics): Unit = {
 ```
-
-The first argument of the function is the `filteringTested` which is a function that takes the variable domains in argument and returns the filtered domains. Note that the domains are represented by the type `Array[Set[Int]]`, which is an array of domains of type `Set[Int]`. So, you have to create a function that takes in argument the domains as `Array[Set[Int]]` and will return the domains after the application of your filtering, as `Array[Set[Int]]` too. In the case of inconsistency of the domains according to the tested constraint, this function should either throw a `NoSolutionException` or return an array of empty sets.
-
-The first step to create such a function is to transform the domains of type `Array[Set[Int]]` to the domain type you are using. For example, for testing the allDifferent constraint of the OscaR solver, you will do something like : 
+As you can see, the filtering algorithm are represented as `Filter` object. This class is an abstract class with a single function: `filter` with this signature: 
 ```scala
-def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
-  // transform the vars in argument into CPIntVar which is the domain type used by OscaR
-  val variables = vars.map(x => CPIntVar(x))
-  ...
-}
+def filter(variables: Array[Set[Int]]): Array[Set[Int]]
 ```
-Then, you have to apply your propagation function. Considering the same example as before, you will do : 
+The `filter` function represents the filtering algorithm. It takes an array of domains (represented as set of integers) and must return the filtered domains. Note that the order of the domains in the array must be respected when returning the filtered domains.
+
+It is important to notice that the `check` function takes implicit parameters. The test arguments contains tell the function how many tests it must perform and the form of the domains generated. This parameter object is explained in the section 'How to modify the domains to your needs'. After the parameters, a second implicit object represents the statistics. It creates files indicating the useful informations about the tests realized such as the number of tests where all value are filtered, the number of tests when one filtering algorithm has remove more values than another, etc.
+
+Before, it was said that this tool allows to check if the tested filtering algorithm reaches some consistencies. This can be done by using special classes of this tool implementing a filtering algorithm (extending the `Filter` class) which respects a certain consistency. Those classes takes in argument for they constructor a checker function. This checker function takes an instantiation of the variables as argument and return true if the relation defined by the constraint is respected. For example, the AllDifferent constraint can have this function as checker: 
 ```scala
-   def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
-    // Creation of the OscaR solver 
-    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong) 
-    // Creation of the OscaR variables
-    val variables = vars.map(x => CPIntVar(x))
-    // Creation of the constraint of OscaR
-    val ad = new AllDiffAC(variables)
-    try {
-      //propagation to fix-point
-      testSolver.post(ad)
-    } catch {
-      case _: Inconsistency => throw new NoSolutionException
-    }
-    ...
-  }
+  def allDifferent(instantiation: Array[Int]): Boolean = instantiation.toSet.size == instantiation.length
 ```
-In this part, you can see that we create a new constraint allDifferentAC (`ad`) which will be added to the `testSolver` in order to be considered by the solver for the filtering. The `try{...} catch{...}` statement is here to throw the `NoSOlutionException` error in the case of failure.
+With those checkers it is easy to create the filtering algorithm respecting a particular consistency. For now, There are three consistency filtering algorithm which already exists: the arc consistent (`ACFiltering`), the bound consistent (`BCFiltering`) and the range consistent (`RCFiltering`). Using those classes as the trusted filtering algorithm permits to check a specified consistency.
 
-Now, the domains have been filtered. The only thing that remains is to convert it in the return type (`Array[Set[Int]]`) for the return statement. Here is the complete code containing this last transformation too : 
+Let's now see an example. In this example, the AllDifferent constraint is tested. For the OscaR solver has its arc consistent filtering of the AllDifferent constraint tested to see if the algorithm is truly arc consistent.
 
- ```scala
-  def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
-    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
-    val variables = vars.map(x => CPIntVar(x))
-    val ad = new AllDiffAC(variables)
-    try {
-      testSolver.post(ad)
-    } catch {
-      case _: Inconsistency => throw new NoSolutionException
-    }
-    // conversion of the OscaR domain type into Array[Set[Int]]
-    variables.map(x => x.toArray.toSet)
-  }
- ```
- 
-Now, let's consider the second variable of the `checkAC` function. It is the `checker` function which represents the constraint to be tested. This function takes in input an instantiation of the variables and returns true if this instantiation satisfies the constraint, false otherwise. An example of a checker function representing the allDifferent constraint could be :
 ```scala
-def allDiffChecker(x:Array[Int]):Boolean = x.toSet.size == x.length
-```
-
-This function is quite simple. By making `x.toSet`, you only have elements that are different that remains. So, taking the size of it would be equal to `x.size` if and only if all values given as input were different. So, this function returns true if all values of `x` are different and false otherwise, which is exactly what we needed.
-
-With all these things, you can test the OscaR implementation of the allDifferent constraint with the following code : 
-```scala
-import checker.constraints.Constraint
-import checker.NoSolutionException
+import checker.{NoSolutionException, _}
+import checker.CPChecker._
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.AllDiffAC
 import oscar.cp.core.CPPropagStrength
 
 object AllDifferentACTest extends App {
-  private def filteringAllDifAC(vars: Array[Set[Int]]): Array[Set[Int]] = {
-    implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
-    val variables = vars.map(x => CPIntVar(x))
-    val ad = new AllDiffAC(variables)
-    try {
-      testSolver.post(ad)
-    } catch {
-      case _: Inconsistency => throw new NoSolutionException
+
+  val oscarAllDifferentAC: Filter = new Filter {
+    override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
+      implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
+      val variables = vars.map(x => CPIntVar(x))
+      val ad = new AllDiffAC(variables)
+      try {
+        testSolver.post(ad)
+      } catch {
+        case _: Inconsistency => throw new NoSolutionException
+      }
+      variables.map(x => x.toArray.toSet)
     }
-    variables.map(x => x.toArray.toSet)
   }
-
-  def allDiffChecker(x:Array[Int]):Boolean = x.toSet.size == x.length
-  Constraint.gen.setRangeForAll(-5,5) // change the generator parameters
-
-  Constraint.checkAC(allDifAC,allDiff)
+  val CPCheckerAllDifferentAC: Filter = new ACFiltering(Checkers.allDifferent())
+  testArguments.setRangeForAll(-5, 5)
+  stats.setFolderName("allDifferentAC")
+  check(CPCheckerAllDifferentAC, oscarAllDifferentAC)
 }
 ```
-And that's it! 
+In this example, the first step was to create the `Filter` object representing the filtering algorithm of the OscaR solver. Therefore, its `filter` function has been implemented. In it, the variables received in argument are transformed into OscaR variables. Then the AllDifferent constraint is created over those variables. After that, the OscaR variables are filtered. Once they are filtered, they are returned in the asked format.
 
-We did a similar function `checkBC` that has approximately the same signature and do the same apart from the fact that we check that the filtering respects the bound consistency condition and not the arc consistency. Here is the signatire of this method : 
-```scala
-checkBC(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit
-```
+Once the tested filtering algorithm has been created, the trusted one can be created in one line. Since we test the arc consistency, we can directly use the `ACFiltering` class. For the checker function it needs, it has been retrieved from the `Checkers` object of this tool. This object already provides simple checker for well-known constraint.
 
-Finally, for any other kind of propagation, you can user the `check` function that simply checks that when applying your constraint implementation, you do not remove any solution. Here is the signature of the function :
-```scala
-check(filteringTested: Array[Set[Int]] => Array[Set[Int]], checker: Array[Int] => Boolean): Unit
-```
+Once the filtering algorithms have been created, the implicit arguments are set to suit the need of the constraint. The range of the values of the domains is set to -5 to 5. Then the folder which will contain the statistics is set.
+
+Once all those variables are created, the `check` function can be called. This function will then do all the work. Therefore, the example is finished after its call. And that's it!!
+
+
 
 ### How to incremetally check your constraint's filtering 
 
