@@ -14,13 +14,12 @@ class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) ex
 
 
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    val vars  = variables
-
+    val vars = variables
     //The ac variables can directly be obtained thanks to ACFiltering.
     val ac = new ACFiltering(checker)
     val acVars = ac.filter(variables)
-    for(i <- vars.indices){
-      if(filterings(i)==1) vars(i) = acVars(i)
+    for (i <- vars.indices) {
+      if (filterings(i) == 1) vars(i) = acVars(i)
     }
     // the BC and RC variable must recursively be reduced.
     val intervals = vars.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
@@ -40,7 +39,7 @@ class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) ex
 
   private[this] def filterBC(index: Int, intervals: Array[Interval]): Boolean = {
     Array(intervals(index).min, intervals(index).max).foldLeft(false) { (acc, i) =>
-      if (findASolution(intervals, index, i)) {
+      if (!findASolution(intervals, index, i)) {
         intervals(index).remove(i)
         true
       } else
@@ -50,7 +49,7 @@ class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) ex
 
   private[this] def filterRC(index: Int, intervals: Array[Interval]): Boolean = {
     intervals(index).dom.foldLeft(false) { (acc, i) =>
-      if (findASolution(intervals, index, i)) {
+      if (!findASolution(intervals, index, i)) {
         intervals(index).remove(i)
         true
       } else
