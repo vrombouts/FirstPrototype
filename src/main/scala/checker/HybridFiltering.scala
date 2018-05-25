@@ -1,5 +1,10 @@
 package checker
 
+import java.util.function.Function
+import scala.collection.JavaConverters._
+
+import Conversions.checkerToScalaFunction
+
 /**
   * hybrid filtering but which can apply every type of consistencies implemented by CPChecker.
   *
@@ -13,6 +18,9 @@ package checker
 
 class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) extends Filter {
 
+  def this(filterings: Array[Integer], checker: Function[Array[Integer], java.lang.Boolean]) = this(filterings.map(x => x.asInstanceOf[Int]), checkerToScalaFunction(checker))
+
+
   val arc = new ArcFiltering(checker)
   val boundZ = new BoundZFiltering(checker)
   val boundD = new BoundDFiltering(checker)
@@ -21,9 +29,11 @@ class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) ex
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val vars = variables
     //The ac variables can directly be obtained thanks to ACFiltering.
-    val acVars = arc.filter(variables)
-    for (i <- vars.indices) {
-      if (filterings(i) == 1) vars(i) = acVars(i)
+    if(filterings.contains(1)) {
+      val acVars = arc.filter(variables)
+      for (i <- vars.indices) {
+        if (filterings(i) == 1) vars(i) = acVars(i)
+      }
     }
     // the BC and RC variable must recursively be reduced.
     val intervals = vars.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
