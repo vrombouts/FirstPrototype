@@ -74,7 +74,7 @@ class BoundZPruningTests extends FlatSpec {
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
-  "Calling the filter of BCPruning for AllDifferent on domains [1,2,3] [0,5] [1,5,6] [1,2] [2,3] [0]" should "return domains [1,2,3] [0,5] [5,6] [1,2] [2,3] [0]" in {
+  "Calling the filter of BCPruning for AllDifferent on domains [1,2,3] [0,5] [1,5,6] [1,2] [2,3] [0]" should "return domains [1,2,3] [5] [5,6] [1,2] [2,3] [0]" in {
     var a: Array[Set[Int]] = allDifferentFilter.filter(Array(Set(1, 2, 3), Set(0, 5), Set(1, 5, 6), Set(1, 2), Set(2, 3), Set(0)))
     val b: Array[Set[Int]] = Array(Set(1, 2, 3), Set(5), Set(6), Set(1, 2), Set(2, 3), Set(0))
     assert((a zip b).forall(x => x._1.equals(x._2)))
@@ -90,11 +90,27 @@ class BoundZPruningTests extends FlatSpec {
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
-  "Calling the filter of BCPruning for AllDifferent on domains [0,3,6,8,10] [0,1] [10] [1] [6]" should "return domains [3,6,8] [0,1] [10] [1] [6] " in {
+  "Calling the filter of BCPruning for AllDifferent on domains [0,3,6,8,10] [0] [10] [1] [6]" should "return domains [3,6,8] [0,1] [10] [1] [6] " in {
     var a: Array[Set[Int]] = allDifferentFilter.filter(Array(Set(0, 3, 6, 8, 10), Set(0, 1), Set(10), Set(1), Set(6)))
     val b: Array[Set[Int]] = Array(Set(3, 6, 8), Set(0), Set(10), Set(1), Set(6))
     a = allDiffJava.filter(Array(Set(0, 3, 6, 8, 10), Set(0, 1), Set(10), Set(1), Set(6)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+  }
+
+  "Calling filter for AllDifferent on domains [3,5] [1,3] [3,5]" should "return domains [3,5] [1,3] [3,5] " in {
+    var a: Array[Set[Int]] = allDifferentFilter.filter(Array(Set(3, 5), Set(1, 3), Set(3, 5)))
+    val b: Array[Set[Int]] = Array(Set(3, 5), Set(1, 3), Set(3, 5))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = allDiffJava.filter(Array(Set(3, 5), Set(1, 3), Set(3, 5)))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+  }
+
+  "Calling filter for AllDifferent on domains [3,5,7] [5,7] [3,5] [7,9,10]" should "return domains [3,5,7] [5,7] [3,5] [7,9,10] " in {
+    var a: Array[Set[Int]] = allDifferentFilter.filter(Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(7, 9, 10)))
+    val b: Array[Set[Int]] = Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(7, 9, 10))
+    assert((a zip b).forall(x => x._1.equals(x._2)))
+    a = allDiffJava.filter(Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(7, 9, 10)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 

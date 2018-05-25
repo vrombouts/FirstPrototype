@@ -4,9 +4,9 @@ import java.util.function.Function
 
 import org.scalatest.FlatSpec
 
-class BoundZFilteringTests extends FlatSpec {
+class BoundDPruningTests extends FlatSpec {
 
-  val BCAllDiff = new BoundZFiltering(Checkers.allDifferent())
+  val BCAllDiff = new BoundDPruning(Checkers.allDifferent())
 
   val allDifJavaChecker: Function[Array[Integer], java.lang.Boolean] = {
     domains => {
@@ -22,7 +22,7 @@ class BoundZFilteringTests extends FlatSpec {
     }
   }
 
-  val allDiffJava: BoundZFiltering = new BoundZFiltering(allDifJavaChecker)
+  val allDiffJava: BoundDPruning = new BoundDPruning(allDifJavaChecker)
 
 
   "Calling filter for AllDifferent on domains [1] [1]" should "return an exception" in {
@@ -98,17 +98,17 @@ class BoundZFilteringTests extends FlatSpec {
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
-  "Calling filter for AllDifferent on domains [3,5] [1,3] [3,5]" should "return domains [3,5] [1,3] [3,5] " in {
+  "Calling filter for AllDifferent on domains [3,5] [1,3] [3,5]" should "return domains [3,5] [1] [3,5] " in {
     var a: Array[Set[Int]] = BCAllDiff.filter(Array(Set(3, 5), Set(1, 3), Set(3, 5)))
-    val b: Array[Set[Int]] = Array(Set(3, 5), Set(1, 3), Set(3, 5))
+    val b: Array[Set[Int]] = Array(Set(3, 5), Set(1), Set(3, 5))
     assert((a zip b).forall(x => x._1.equals(x._2)))
     a = allDiffJava.filter(Array(Set(3, 5), Set(1, 3), Set(3, 5)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 
-  "Calling filter for AllDifferent on domains [3,5,7] [5,7] [3,5] [7,9,10]" should "return domains [3,5,7] [5,7] [3,5] [7,9,10] " in {
+  "Calling filter for AllDifferent on domains [3,5,7] [5,7] [3,5] [7,9,10]" should "return domains [3,5,7] [5,7] [3,5] [9,10] " in {
     var a: Array[Set[Int]] = BCAllDiff.filter(Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(7, 9, 10)))
-    val b: Array[Set[Int]] = Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(7, 9, 10))
+    val b: Array[Set[Int]] = Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(9, 10))
     assert((a zip b).forall(x => x._1.equals(x._2)))
     a = allDiffJava.filter(Array(Set(3, 5, 7), Set(5, 7), Set(3, 5), Set(7, 9, 10)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
@@ -135,4 +135,5 @@ class BoundZFilteringTests extends FlatSpec {
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
+
 }
