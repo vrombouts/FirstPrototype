@@ -15,7 +15,7 @@ object GCCACTest extends App {
   }
   testArguments = Generators.gcc(values)
   testArguments.setSeed(100)
-  CPChecker.check(new ACFiltering(Checkers.gccVar(values)), myFilter)
+  CPChecker.check(new ArcFiltering(Checkers.gccVar(values)), myFilter)
 
 
   private def gccACFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {

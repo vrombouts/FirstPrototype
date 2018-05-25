@@ -24,7 +24,7 @@ public class CircuitTest {
         TestArgs parameters = new TestArgs();
         parameters.setRangeForAll(0, 4);
         parameters.setDensityForAll(0.8);
-        Filter bugfree = new ACFiltering(checkerCircuit());
+        Filter bugfree = new ArcFiltering(checkerCircuit());
         Filter tested = new MyFilter();
         Statistics stats = new Statistics("");
         CPChecker.stronger(bugfree, tested, parameters, stats);

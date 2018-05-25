@@ -16,7 +16,7 @@ public class AllDifferentBCTest {
                 return filteringAllDifferentBC(variables);
             }
         }
-        Filter trusted = new BCFiltering(Checkers.allDifferent());
+        Filter trusted = new BoundZFiltering(Checkers.allDifferent());
         Filter tested  = new MyFilter();
         CPChecker.testArguments().setRangeForAll(-5,5);
         CPChecker.testArguments().setNbTests(1000);

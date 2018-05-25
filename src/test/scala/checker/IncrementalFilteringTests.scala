@@ -9,15 +9,15 @@ class IncrementalFilteringTests extends FlatSpec {
 
   def dummyChecker: Array[Int] => Boolean = _ => true
 
-  val dummyFiltering = new IncrementalFiltering(new ACFiltering(dummyChecker))
+  val dummyFiltering = new IncrementalFiltering(new ArcFiltering(dummyChecker))
 
-  val allDifferentFiltering = new IncrementalFiltering(new ACFiltering(Checkers.allDifferent()))
+  val allDifferentFiltering = new IncrementalFiltering(new ArcFiltering(Checkers.allDifferent()))
 
   "setup function" should "correctly perform AC filtering" in {
-    val dummy: Filter = new ACFiltering(dummyChecker)
+    val dummy: Filter = new ArcFiltering(dummyChecker)
     val variables: Array[Set[Int]] = Array(Set(1, 2, 3), Set(2))
     assert(dummy.filter(variables).sameElements(dummyFiltering.setup(variables)))
-    val allDif: Filter = new ACFiltering(Checkers.allDifferent())
+    val allDif: Filter = new ArcFiltering(Checkers.allDifferent())
     assert(allDif.filter(variables).sameElements(allDifferentFiltering.setup(variables)))
   }
 
@@ -96,27 +96,27 @@ class IncrementalFilteringTests extends FlatSpec {
   }
 
 
-  val bcDummyFiltering = new IncrementalFiltering(new BCFiltering(dummyChecker))
+  val bcDummyFiltering = new IncrementalFiltering(new BoundZFiltering(dummyChecker))
 
-  val bcAllDifferentFiltering = new IncrementalFiltering(new BCFiltering(Checkers.allDifferent()))
+  val bcAllDifferentFiltering = new IncrementalFiltering(new BoundZFiltering(Checkers.allDifferent()))
 
   "setup function" should "correctly perform BC filtering" in {
-    val dummy: Filter = new BCFiltering(dummyChecker)
+    val dummy: Filter = new BoundZFiltering(dummyChecker)
     val variables: Array[Set[Int]] = Array(Set(1, 2, 3), Set(2), Set(2, 4, 5))
     assert(dummy.filter(variables).sameElements(bcDummyFiltering.setup(variables)))
-    val allDif: Filter = new BCFiltering(Checkers.allDifferent())
+    val allDif: Filter = new BoundZFiltering(Checkers.allDifferent())
     assert(allDif.filter(variables).sameElements(bcAllDifferentFiltering.setup(variables)))
   }
 
-  val rcDummyFiltering = new IncrementalFiltering(new RCFiltering(dummyChecker))
+  val rcDummyFiltering = new IncrementalFiltering(new RangeFiltering(dummyChecker))
 
-  val rcAllDifferentFiltering = new IncrementalFiltering(new RCFiltering(Checkers.allDifferent()))
+  val rcAllDifferentFiltering = new IncrementalFiltering(new RangeFiltering(Checkers.allDifferent()))
 
   "setup function" should "correctly perform range filtering" in {
-    val dummy: Filter = new ACFiltering(dummyChecker)
+    val dummy: Filter = new ArcFiltering(dummyChecker)
     val variables: Array[Set[Int]] = Array(Set(1, 2, 3), Set(2))
     assert(dummy.filter(variables).sameElements(rcDummyFiltering.setup(variables)))
-    val allDif: Filter = new RCFiltering(Checkers.allDifferent())
+    val allDif: Filter = new RangeFiltering(Checkers.allDifferent())
     assert(allDif.filter(variables).sameElements(rcAllDifferentFiltering.setup(variables)))
   }
 

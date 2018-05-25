@@ -4,75 +4,50 @@ package checker
   * hybrid filtering but which can apply every type of consistencies implemented by CPChecker.
   *
   * @param filterings : array corresponding to each variable telling the consistency apply to it.
-  *                   1 for AC,
-  *                   2 for BC,
-  *                   3 for RC.
+  *                   1 for Arc consistency,
+  *                   2 for Bound(Z) consistency,
+  *                   3 for Bound(D) consistency,
+  *                   4 for Range consistency.
   * @param checker    : the checker function representing the constraint.
   */
 
 class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) extends Filter {
 
+  val arc = new ArcFiltering(checker)
+  val boundZ = new BoundZFiltering(checker)
+  val boundD = new BoundDFiltering(checker)
+  val range = new RangeFiltering(checker)
 
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val vars = variables
     //The ac variables can directly be obtained thanks to ACFiltering.
-    val ac = new ACFiltering(checker)
-    val acVars = ac.filter(variables)
+    val acVars = arc.filter(variables)
     for (i <- vars.indices) {
       if (filterings(i) == 1) vars(i) = acVars(i)
     }
     // the BC and RC variable must recursively be reduced.
     val intervals = vars.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
-    filterIntervals(intervals)
+    filterIntervals(vars, intervals)
     intervals.map(x => x.dom)
   }
 
 
-  private[this] def filterIntervals(intervals: Array[Interval]): Unit = {
+  private[this] def filterIntervals(vars: Array[Set[Int]], intervals: Array[Interval]): Unit = {
     if (intervals.indices.foldLeft(false) { (acc, i) =>
-      if (filterings(i) == 2) if (filterBC(i, intervals)) true else acc
-      else if (filterings(i) == 3) if (filterRC(i, intervals)) true else acc
+      if (filterings(i) == 2) if (boundZ.changeBounds(i, intervals)) true else acc
+      else if (filterings(i) == 3) if (boundDChangeBounds(i, intervals)) true else acc
+      else if (filterings(i) == 4) if (range.filterInterval(i, intervals)) true else acc
       else acc
     })
-      filterIntervals(intervals)
+      filterIntervals(vars, intervals)
   }
 
-  private[this] def filterBC(index: Int, intervals: Array[Interval]): Boolean = {
-    Array(intervals(index).min, intervals(index).max).foldLeft(false) { (acc, i) =>
-      if (!findASolution(intervals, index, i)) {
-        intervals(index).remove(i)
-        true
-      } else
-        acc
-    }
+  def boundDChangeBounds(i: Int, intervals: Array[Interval]): Boolean = {
+    val vars = intervals.map(x => x.dom)
+    val result = boundD.changeBounds(i, vars)
+    intervals(i).dom = vars(i)
+    result
   }
 
-  private[this] def filterRC(index: Int, intervals: Array[Interval]): Boolean = {
-    intervals(index).dom.foldLeft(false) { (acc, i) =>
-      if (!findASolution(intervals, index, i)) {
-        intervals(index).remove(i)
-        true
-      } else
-        acc
-    }
-  }
-
-  private[this] def findASolution(intervals: Array[Interval], index: Int, value: Int): Boolean = {
-    val currentSol: Array[Int] = Array.fill(intervals.length)(0)
-    currentSol(index) = value
-
-    def setIthVariable(currentIndex: Int): Boolean = {
-      if (currentIndex == index) return setIthVariable(currentIndex + 1)
-      if (currentIndex == intervals.length) return checker(currentSol)
-      for (i <- intervals(currentIndex).getRange) {
-        currentSol(currentIndex) = i
-        if (setIthVariable(currentIndex + 1))
-          return true
-      }
-      false
-    }
-
-    setIthVariable(0)
-  }
 
 }

@@ -54,7 +54,7 @@ public class TableTest {
         }
         TestArgs parameters = Generators.table(table);
         Statistics stats = new Statistics("");
-        CPChecker.check(new ACFiltering(Checkers.table(table)), new MyFilter(), parameters, stats);
+        CPChecker.check(new ArcFiltering(Checkers.table(table)), new MyFilter(), parameters, stats);
     }
 
     private static Set<Integer>[] transform(IntVar[] input) {

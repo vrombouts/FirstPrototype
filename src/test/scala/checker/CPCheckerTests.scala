@@ -284,7 +284,7 @@ class CPCheckerTests extends FlatSpec {
     override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = variables
   }
 
-  val acAllDiff = new ACFiltering(Checkers.allDifferent())
+  val acAllDiff = new ArcFiltering(Checkers.allDifferent())
 
   "Comparing the allDifferent constraint with the constraint that does nothing for domain variables [1] [1]" should "return false" in {
     assert(!CPChecker.checkConstraint(Array(Set(1), Set(1)), acAllDiff, dummyFilter, CPChecker.comparisonCheck(_)))
@@ -477,8 +477,8 @@ class CPCheckerTests extends FlatSpec {
 
   // tests for the check and stronger functions
 
-  val acTrue = new ACFiltering(Checkers.trueConstraint _)
-  val acFalse = new ACFiltering(Checkers.falseConstraint _)
+  val acTrue = new ArcFiltering(Checkers.trueConstraint _)
+  val acFalse = new ArcFiltering(Checkers.falseConstraint _)
 
   "Calling check with ACFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     testArguments = new TestArgs
@@ -561,7 +561,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue: FilterWithState = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
+    val acIncTrue: FilterWithState = new IncrementalFiltering(new ArcFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -593,7 +593,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue: FilterWithState = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
+    val acIncTrue: FilterWithState = new IncrementalFiltering(new ArcFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -623,15 +623,15 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue: FilterWithState = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
+    val acIncTrue: FilterWithState = new IncrementalFiltering(new ArcFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
   }
 
 
-  val bcTrue: Filter = new BCFiltering(Checkers.trueConstraint _)
-  val bcFalse: Filter = new BCFiltering(Checkers.falseConstraint _)
+  val bcTrue: Filter = new BoundZFiltering(Checkers.trueConstraint _)
+  val bcFalse: Filter = new BoundZFiltering(Checkers.falseConstraint _)
 
   "Calling check with BCFiltering for checking a constraint returning always false with a checker returning false and a filtering process that does nothing" should "detect at least one error" in {
     testArguments = new TestArgs
@@ -711,7 +711,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new IncrementalFiltering(new BCFiltering(Checkers.trueConstraint _))
+    val bcIncTrue = new IncrementalFiltering(new BoundZFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -741,7 +741,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new IncrementalFiltering(new BCFiltering(Checkers.trueConstraint _))
+    val bcIncTrue = new IncrementalFiltering(new BoundZFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -772,7 +772,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val bcIncTrue = new IncrementalFiltering(new BCFiltering(Checkers.trueConstraint _))
+    val bcIncTrue = new IncrementalFiltering(new BoundZFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     check(bcIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
@@ -859,7 +859,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
+    val acIncTrue = new IncrementalFiltering(new ArcFiltering(Checkers.trueConstraint _))
     stats = new Statistics("")
     stronger(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests > 0)
@@ -890,7 +890,7 @@ class CPCheckerTests extends FlatSpec {
         currentVars
       }
     }
-    val acIncTrue = new IncrementalFiltering(new ACFiltering(Checkers.trueConstraint _))
+    val acIncTrue = new IncrementalFiltering(new ArcFiltering(Checkers.trueConstraint _))
     stronger(acIncTrue, dummyInc)
     assert(stats.getNbFailedTests == 0)
   }

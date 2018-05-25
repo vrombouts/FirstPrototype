@@ -52,7 +52,7 @@ public class ElementACTest {
         parameters.setNVar(7);
         parameters.addVar(1.5 / 7.0, 0, 10);
         parameters.addVar(0.1, -10, 10);
-        ACFiltering elementary = new ACFiltering(Checkers.element());
+        ArcFiltering elementary = new ArcFiltering(Checkers.element());
         Statistics stats = new Statistics("");
         CPChecker.check(elementary, new MyFilter(), parameters, stats);
     }

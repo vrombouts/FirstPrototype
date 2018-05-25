@@ -4,9 +4,9 @@ import java.util.function.Function
 
 import org.scalatest.FlatSpec
 
-class BCFilteringTests extends FlatSpec {
+class BoundZFilteringTests extends FlatSpec {
 
-  val BCAllDiff = new BCFiltering(Checkers.allDifferent())
+  val BCAllDiff = new BoundZFiltering(Checkers.allDifferent())
 
   val allDifJavaChecker: Function[Array[Integer], java.lang.Boolean] = {
     domains => {
@@ -22,7 +22,7 @@ class BCFilteringTests extends FlatSpec {
     }
   }
 
-  val allDiffJava: BCFiltering = new BCFiltering(allDifJavaChecker)
+  val allDiffJava: BoundZFiltering = new BoundZFiltering(allDifJavaChecker)
 
 
   "Calling filter for AllDifferent on domains [1] [1]" should "return an exception" in {
@@ -107,14 +107,14 @@ class BCFilteringTests extends FlatSpec {
   }
 
   "calling filter for false constraint on domain [1,2,3]" should "throw a noSolutionException" in {
-    val BCFalse = new BCFiltering(Checkers.falseConstraint _)
+    val BCFalse = new BoundZFiltering(Checkers.falseConstraint _)
     assertThrows[NoSolutionException] {
       BCFalse.filter(Array(Set(1, 2, 3)))
     }
   }
 
   "calling filter" should "use its checker only on complete solutions" in {
-    val C = new BCFiltering((x: Array[Int]) => x.length == 4)
+    val C = new BoundZFiltering((x: Array[Int]) => x.length == 4)
     val a: Array[Set[Int]] = C.filter(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))

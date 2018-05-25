@@ -14,7 +14,7 @@ object ElementTest extends App {
   //First we set the seed:
   testArguments.setNbTests(124)
 
-  val x: Array[Int] = Array(1, 2, 3, 4, 5)
+  val x: Array[Int] = Array(1, 5,4,2,3)
 
   //Then we set x with a size of 7
   testArguments.setNVar(2)
@@ -38,6 +38,9 @@ object ElementTest extends App {
     val v = CPIntVar(vars(1))
     val ad = new ElementCst(x, i, v)
     try {
+      ad.setup(CPPropagStrength.Strong)
+      //for(i <- 1 to 10)
+        //ad.propagate()
       testSolver.post(ad)
     } catch {
       case _: Inconsistency => throw new NoSolutionException

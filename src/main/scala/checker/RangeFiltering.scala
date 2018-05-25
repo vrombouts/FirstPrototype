@@ -4,30 +4,28 @@ import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
 
-class BCFiltering(checker: Array[Int] => Boolean) extends Filter {
+class RangeFiltering(checker: Array[Int] => Boolean) extends Filter {
 
   def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
 
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
-    val intervals = variables.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
-    changeBounds(intervals)
+    val intervals: Array[Interval] = variables.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
+    filterIntervals(intervals)
     intervals.map(x => x.dom)
   }
 
-  private[this] def changeBounds(intervals: Array[Interval]): Unit = {
-    var changed: Boolean = false
-    for (i <- intervals.indices) {
-      Array(intervals(i).min, intervals(i).max).foreach { value =>
-        if (!findASolution(intervals, i, value)) {
-          intervals(i).remove(value)
-          changed = true
-        }
-      }
-    }
-    if (changed) changeBounds(intervals)
+  private[this] def filterIntervals(intervals: Array[Interval]): Unit = {
+    if (intervals.indices.foldLeft(false) { (acc, x) => if (filterInterval(x, intervals)) true else acc })
+      filterIntervals(intervals)
   }
 
-  //Generation of all the solutions to find a solution accepted by `checker´
+  def filterInterval(index: Int, intervals: Array[Interval]): Boolean = {
+    val domain: Set[Int] = intervals(index).dom
+    intervals(index).dom = domain.filter(findASolution(intervals, index, _))
+    if (intervals(index).dom.isEmpty) throw NoSolutionException()
+    domain.size != intervals(index).dom.size
+  }
+
   private[this] def findASolution(intervals: Array[Interval], index: Int, value: Int): Boolean = {
     val currentSol: Array[Int] = Array.fill(intervals.length)(0)
     currentSol(index) = value
@@ -45,6 +43,4 @@ class BCFiltering(checker: Array[Int] => Boolean) extends Filter {
 
     setIthVariable(0)
   }
-
-
 }

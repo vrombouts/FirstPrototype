@@ -55,7 +55,7 @@ public class SumIncrementalTest {
                 return transform(x);
             }
         }
-        IncrementalFiltering trusted = new IncrementalFiltering(new BCFiltering(Checkers.sum(15, "=")));
+        IncrementalFiltering trusted = new IncrementalFiltering(new BoundZFiltering(Checkers.sum(15, "=")));
         CPChecker.check(trusted, new MyFilter(),
                 CPChecker.testArguments(), CPChecker.stats());
     }

@@ -14,7 +14,7 @@ object CircuitTest extends App {
   }
   testArguments.setRangeForAll((0, 4))
   testArguments.setDensityForAll(0.8)
-  CPChecker.stronger(new ACFiltering(circuitChecker _), myFilter)
+  CPChecker.stronger(new ArcFiltering(circuitChecker _), myFilter)
 
 
   private def circuitFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {

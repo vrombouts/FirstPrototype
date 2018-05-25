@@ -4,10 +4,10 @@ import java.util.function.Function
 
 import org.scalatest.FlatSpec
 
-class ACFilteringTests extends FlatSpec {
+class ArcFilteringTests extends FlatSpec {
 
-  val ACTrue = new ACFiltering(Checkers.trueConstraint _)
-  val ACAllDiff = new ACFiltering(Checkers.allDifferent())
+  val ACTrue = new ArcFiltering(Checkers.trueConstraint _)
+  val ACAllDiff = new ArcFiltering(Checkers.allDifferent())
 
   val allDifJavaChecker: Function[Array[Integer], java.lang.Boolean] = {
     domains => {
@@ -23,7 +23,7 @@ class ACFilteringTests extends FlatSpec {
     }
   }
 
-  val ACAllDiffJava: ACFiltering = new ACFiltering(allDifJavaChecker)
+  val ACAllDiffJava: ArcFiltering = new ArcFiltering(allDifJavaChecker)
 
   "Calling filter for trueConstraint" should "return the input domains except if there is an empty domain" in {
     var a: Array[Set[Int]] = ACTrue.filter(Array(Set(0), Set(1)))
@@ -133,7 +133,7 @@ class ACFilteringTests extends FlatSpec {
   }
 
   "Calling filter" should "filter only the complete solutions" in {
-    val C = new ACFiltering((x: Array[Int]) => x.length == 4)
+    val C = new ArcFiltering((x: Array[Int]) => x.length == 4)
     val a: Array[Set[Int]] = C.filter(Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))

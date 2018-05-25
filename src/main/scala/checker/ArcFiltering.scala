@@ -4,7 +4,7 @@ import scala.collection.mutable
 import java.util.function.Function
 import Conversions.checkerToScalaFunction
 
-class ACFiltering(checker: Array[Int] => Boolean) extends Filter {
+class ArcFiltering(checker: Array[Int] => Boolean) extends Filter {
 
   def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
 

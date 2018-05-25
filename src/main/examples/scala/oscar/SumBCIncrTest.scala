@@ -14,7 +14,7 @@ object SumBCIncrTest extends App {
 
   testArguments.setSeed(1000)
   for (i <- -50 to 50 by 5) {
-    val bugFree = new IncrementalFiltering(new BCFiltering(Checkers.sum(i, "=")))
+    val bugFree = new IncrementalFiltering(new BoundZFiltering(Checkers.sum(i, "=")))
     val tested = new FilterWithState {
       override def branchAndFilter(branching: BranchOp): Array[Set[Int]] = sumFiltering(branching)
 

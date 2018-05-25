@@ -4,7 +4,7 @@ import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
 
-class ACPruning(checker: Array[Int] => Boolean) extends Filter {
+class ArcPruning(checker: Array[Int] => Boolean) extends Filter {
 
   def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
 

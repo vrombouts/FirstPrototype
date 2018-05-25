@@ -37,7 +37,7 @@ public class SumCheckBCTest {
         }
         TestArgs parameters = new TestArgs();
         Statistics stats = new Statistics("");
-        CPChecker.check(new BCFiltering(sumChecker()), new MyFilter(), parameters, stats);
+        CPChecker.check(new BoundZFiltering(sumChecker()), new MyFilter(), parameters, stats);
     }
 
     private static Function<Integer[], Boolean> sumChecker() {

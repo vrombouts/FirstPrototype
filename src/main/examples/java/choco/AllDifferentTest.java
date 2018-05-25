@@ -24,7 +24,7 @@ public class AllDifferentTest {
         parameters.setRangeForAll(-5, 5);
         parameters.setSeed(150);
         Statistics stats = new Statistics("");
-        CPChecker.check(new BCPruning(checkerAllDifferent()), new MyFilter(), parameters, stats);
+        CPChecker.check(new BoundZPruning(checkerAllDifferent()), new MyFilter(), parameters, stats);
     }
 
     private static void testAllDifferentAC() {
@@ -37,7 +37,7 @@ public class AllDifferentTest {
         generator.setRangeForAll(-5, 5);
         generator.setSeed(150);
         Statistics stats = new Statistics("");
-        CPChecker.check(new ACPruning(Checkers.allDifferent()), new MyFilter(), generator, stats);
+        CPChecker.check(new ArcPruning(Checkers.allDifferent()), new MyFilter(), generator, stats);
     }
 
     private static Set<Integer>[] filteringAC(Set<Integer>[] variables) {

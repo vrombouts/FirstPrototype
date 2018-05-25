@@ -4,7 +4,7 @@ import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
 
-class RCPruning(checker: Array[Int] => Boolean) extends Filter {
+class RangePruning(checker: Array[Int] => Boolean) extends Filter {
 
   def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
 
@@ -21,12 +21,12 @@ class RCPruning(checker: Array[Int] => Boolean) extends Filter {
 
   private[this] def filterInterval(index: Int, intervals: Array[Interval]): Boolean = {
     val domain: Set[Int] = intervals(index).dom
-    intervals(index).dom = domain.filter(findASolution(index, intervals, _))
+    intervals(index).dom = domain.filter(findASolution(intervals, index, _))
     if (intervals(index).dom.isEmpty) throw NoSolutionException()
     domain.size != intervals(index).dom.size
   }
 
-  private[this] def findASolution(index: Int, intervals: Array[Interval], value: Int): Boolean = {
+  private[this] def findASolution(intervals: Array[Interval], index: Int, value: Int): Boolean = {
     val currentSol: Array[Int] = Array.fill(intervals.length)(0)
     currentSol(index) = value
 
