@@ -112,4 +112,17 @@ class HybridFilteringTests extends FlatSpec{
     assert(hf.filter(a).sameElements(a))
   }
 
+  "a basic hybrid filtering" should "not be able to reduce incomplete solutions" in {
+    val check: Array[Int] => Boolean = x => x.length==4
+    var hf = new HybridFiltering(Array(1,1,1,1), check)
+    val a = Array(Set(1),Set(1),Set(1),Set(1))
+    assert(hf.filter(a).sameElements(a))
+    hf = new HybridFiltering(Array(2,2,2,2), check)
+    assert(hf.filter(a).sameElements(a))
+    hf = new HybridFiltering(Array(3,3,3,3), check)
+    assert(hf.filter(a).sameElements(a))
+    hf = new HybridFiltering(Array(4,4,4,4), check)
+    assert(hf.filter(a).sameElements(a))
+  }
+
 }

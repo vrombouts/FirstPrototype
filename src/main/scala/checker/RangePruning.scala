@@ -19,7 +19,7 @@ class RangePruning(checker: Array[Int] => Boolean) extends Filter {
       filterIntervals(intervals)
   }
 
-  private[this] def filterInterval(index: Int, intervals: Array[Interval]): Boolean = {
+  def filterInterval(index: Int, intervals: Array[Interval]): Boolean = {
     val domain: Set[Int] = intervals(index).dom
     intervals(index).dom = domain.filter(findASolution(intervals, index, _))
     if (intervals(index).dom.isEmpty) throw NoSolutionException()

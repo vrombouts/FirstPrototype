@@ -25,7 +25,7 @@ object ElementTest extends App {
   testArguments.setRange(1, (1, 6))
   testArguments.setDensity(1, 0.5)
   testArguments.setSeed(123456)
-  check(new HybridFiltering(Array(3,1), elementChecker), myFilter)
+  check(new HybridFiltering(Array(4,3), elementChecker), myFilter)
 
   /*
    * This function apply the ElementVarAC constraint of OscaR on the variables
