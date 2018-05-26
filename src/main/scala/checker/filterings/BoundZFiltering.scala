@@ -22,14 +22,12 @@ class BoundZFiltering(checker: Array[Int] => Boolean) extends Filter {
   }
 
   def changeBounds(i: Int, intervals: Array[Interval]): Boolean = {
-    var changed: Boolean = false
-    Array(intervals(i).min, intervals(i).max).foreach { value =>
+    Array(intervals(i).min, intervals(i).max).foldLeft(false) { (acc,value) =>
       if (!findASolution(intervals, i, value)) {
         intervals(i).remove(value)
-        changed = true
-      }
+        true
+      }else acc
     }
-    changed
   }
 
   //Generation of all the solutions to find a solution accepted by `checker´
