@@ -1,8 +1,9 @@
-package checker
+package checker.filterings
 
-import scala.collection.mutable
 import java.util.function.Function
+
 import Conversions.checkerToScalaFunction
+import checker.{Filter, NoSolutionException}
 
 class ArcFiltering(checker: Array[Int] => Boolean) extends Filter {
 

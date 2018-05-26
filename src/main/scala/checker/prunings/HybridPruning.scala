@@ -1,9 +1,9 @@
-package checker
+package checker.prunings
 
 import java.util.function.Function
-import scala.collection.JavaConverters._
 
 import Conversions.checkerToScalaFunction
+import checker._
 
 /**
   * hybrid filtering but which can apply every type of consistencies implemented by CPChecker.
@@ -16,20 +16,20 @@ import Conversions.checkerToScalaFunction
   * @param checker    : the checker function representing the constraint.
   */
 
-class HybridFiltering(filterings: Array[Int], checker: Array[Int] => Boolean) extends Filter {
+class HybridPruning(filterings: Array[Int], checker: Array[Int] => Boolean) extends Filter {
 
   def this(filterings: Array[Integer], checker: Function[Array[Integer], java.lang.Boolean]) = this(filterings.map(x => x.asInstanceOf[Int]), checkerToScalaFunction(checker))
 
 
-  val arc = new ArcFiltering(checker)
-  val boundZ = new BoundZFiltering(checker)
-  val boundD = new BoundDFiltering(checker)
-  val range = new RangeFiltering(checker)
+  val arc = new ArcPruning(checker)
+  val boundZ = new BoundZPruning(checker)
+  val boundD = new BoundDPruning(checker)
+  val range = new RangePruning(checker)
 
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val vars = variables
     //The ac variables can directly be obtained thanks to ACFiltering.
-    if(filterings.contains(1)) {
+    if (filterings.contains(1)) {
       val acVars = arc.filter(variables)
       for (i <- vars.indices) {
         if (filterings(i) == 1) vars(i) = acVars(i)

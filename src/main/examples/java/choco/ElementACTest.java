@@ -2,6 +2,7 @@ package choco;
 
 import checker.*;
 import checker.Statistics;
+import checker.filterings.HybridFiltering;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.variables.IntVar;
@@ -49,10 +50,12 @@ public class ElementACTest {
             }
         }
         TestArgs parameters = new TestArgs();
+        parameters.setSeed(2000);
         parameters.setNVar(7);
         parameters.addVar(1.5 / 7.0, 0, 10);
         parameters.addVar(0.1, -10, 10);
-        ArcFiltering elementary = new ArcFiltering(Checkers.element());
+        Integer[] filterings = {2,2,2,2,2,2,2,2,1};
+        HybridFiltering elementary = new HybridFiltering(filterings, elementChecker());
         Statistics stats = new Statistics("");
         CPChecker.check(elementary, new MyFilter(), parameters, stats);
     }

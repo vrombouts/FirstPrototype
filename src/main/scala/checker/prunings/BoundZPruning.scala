@@ -1,10 +1,11 @@
-package checker
+package checker.prunings
 
 import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
+import checker.{Filter, Interval, NoSolutionException}
 
-class BoundZFiltering(checker: Array[Int] => Boolean) extends Filter {
+class BoundZPruning(checker: Array[Int] => Boolean) extends Filter {
 
   def this(jChecker: Function[Array[Integer], java.lang.Boolean]) = this(checkerToScalaFunction(jChecker))
 
@@ -41,8 +42,9 @@ class BoundZFiltering(checker: Array[Int] => Boolean) extends Filter {
       if (currentIndex == intervals.length) return checker(currentSol)
       for (i <- intervals(currentIndex).getRange) {
         currentSol(currentIndex) = i
-        if (setIthVariable(currentIndex + 1))
-          return true
+        if (checker(currentSol.take(currentIndex + 1)))
+          if (setIthVariable(currentIndex + 1))
+            return true
       }
       false
     }

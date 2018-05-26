@@ -1,6 +1,6 @@
-package checker
+package checker.incremental
 
-import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.{Filter, FilterWithState}
 
 //to do new IncrementalFiltering(myStaticFilter) and have a filterWithState from a static filter.
 class IncrementalFiltering(filter: Filter) extends FilterWithState {

@@ -2,6 +2,7 @@ package oscar
 
 import checker.CPChecker._
 import checker._
+import checker.filterings.HybridFiltering
 import oscar.algo.Inconsistency
 import oscar.cp.{CPIntVar, CPSolver}
 import oscar.cp.constraints.{ElementCst, ElementVarAC}

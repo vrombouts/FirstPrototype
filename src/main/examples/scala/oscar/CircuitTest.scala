@@ -2,6 +2,7 @@ package oscar
 
 import checker._
 import CPChecker._
+import checker.filterings.ArcFiltering
 import oscar.algo.Inconsistency
 import oscar.cp.{CPIntVar, CPSolver}
 import oscar.cp.circuit

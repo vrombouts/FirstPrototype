@@ -2,6 +2,7 @@ package choco;
 
 
 import checker.*;
+import checker.filterings.BoundZFiltering;
 import checker.incremental.*;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;

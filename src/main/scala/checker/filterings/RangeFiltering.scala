@@ -1,8 +1,9 @@
-package checker
+package checker.filterings
 
 import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
+import checker.{Filter, Interval, NoSolutionException}
 
 class RangeFiltering(checker: Array[Int] => Boolean) extends Filter {
 

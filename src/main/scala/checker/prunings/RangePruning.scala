@@ -1,8 +1,9 @@
-package checker
+package checker.prunings
 
 import java.util.function.Function
 
 import Conversions.checkerToScalaFunction
+import checker.{Filter, Interval, NoSolutionException}
 
 class RangePruning(checker: Array[Int] => Boolean) extends Filter {
 

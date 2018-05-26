@@ -1,12 +1,14 @@
-package checker
+package checker.prunings
 
 import java.util.function.Function
 
+import checker.filterings.BoundZFiltering
+import checker.{Checkers, NoSolutionException}
 import org.scalatest.FlatSpec
 
-class BoundDFilteringTests extends FlatSpec {
+class BoundDPruningTests extends FlatSpec {
 
-  val BCAllDiff = new BoundDFiltering(Checkers.allDifferent())
+  val BCAllDiff = new BoundDPruning(Checkers.allDifferent())
 
   val allDifJavaChecker: Function[Array[Integer], java.lang.Boolean] = {
     domains => {
@@ -22,7 +24,7 @@ class BoundDFilteringTests extends FlatSpec {
     }
   }
 
-  val allDiffJava: BoundDFiltering = new BoundDFiltering(allDifJavaChecker)
+  val allDiffJava: BoundDPruning = new BoundDPruning(allDifJavaChecker)
 
 
   "Calling filter for AllDifferent on domains [1] [1]" should "return an exception" in {
@@ -135,4 +137,5 @@ class BoundDFilteringTests extends FlatSpec {
     val b: Array[Set[Int]] = Array(Set(1, 2), Set(1, 2), Set(1, 2), Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
+
 }

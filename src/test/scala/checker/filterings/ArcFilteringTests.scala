@@ -1,7 +1,8 @@
-package checker
+package checker.filterings
 
 import java.util.function.Function
 
+import checker.{Checkers, NoSolutionException}
 import org.scalatest.FlatSpec
 
 class ArcFilteringTests extends FlatSpec {

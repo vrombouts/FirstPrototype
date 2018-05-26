@@ -1,6 +1,7 @@
 package jacop;
 
 import checker.*;
+import checker.filterings.BoundZFiltering;
 import org.jacop.core.*;
 import org.jacop.constraints.*;
 

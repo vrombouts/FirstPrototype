@@ -2,6 +2,7 @@ package oscar
 
 import checker.{NoSolutionException, _}
 import checker.CPChecker._
+import checker.prunings.ArcPruning
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.constraints.AllDiffAC

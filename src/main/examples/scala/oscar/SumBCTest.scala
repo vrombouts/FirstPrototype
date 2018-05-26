@@ -2,6 +2,7 @@ package oscar
 
 import checker.{NoSolutionException, _}
 import CPChecker._
+import checker.filterings.BoundZFiltering
 import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.core.CPPropagStrength

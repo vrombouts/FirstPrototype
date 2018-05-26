@@ -2,6 +2,8 @@ package choco;
 
 import checker.*;
 import checker.Statistics;
+import checker.prunings.ArcPruning;
+import checker.prunings.BoundZPruning;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffAC;
 import org.chocosolver.solver.constraints.nary.alldifferent.PropAllDiffBC;

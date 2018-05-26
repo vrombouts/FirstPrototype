@@ -2,6 +2,7 @@ package choco;
 
 import checker.*;
 import checker.Statistics;
+import checker.filterings.ArcFiltering;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.extension.Tuples;

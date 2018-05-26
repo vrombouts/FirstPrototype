@@ -3,7 +3,8 @@ package checker
 import java.util
 
 import checker.CPChecker._
-import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.filterings.{ArcFiltering, BoundZFiltering}
+import checker.incremental._
 import org.scalatest.FlatSpec
 
 class CPCheckerTests extends FlatSpec {

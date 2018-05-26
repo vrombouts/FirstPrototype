@@ -1,6 +1,7 @@
-package checker
+package checker.incremental
 
-import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
+import checker.filterings.{ArcFiltering, BoundZFiltering, RangeFiltering}
+import checker.{Checkers, Filter}
 import org.scalatest.FlatSpec
 
 import scala.util.Random
