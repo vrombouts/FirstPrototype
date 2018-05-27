@@ -30,6 +30,8 @@ class Statistics(var folderName: String) {
 
   def getAlgo2FoundsNoSol: Int = algo2FoundsNoSol
 
+  def getErrorMsg: String = errorMessage.toString()
+
   private[this] var algo1Equals2: Int = 0
   private[this] var algo1FilterMoreThan2: Int = 0
   private[this] var algo2FilterMoreThan1: Int = 0
@@ -39,6 +41,12 @@ class Statistics(var folderName: String) {
   private[this] var algo1FoundsNoSol: Int = 0
   private[this] var algo2FoundsNoSol: Int = 0
   private[this] var algo1FilterNoVal: Int = 0
+
+  private[this] var errorMessage = new StringBuilder
+
+  private[this] var lastFailed: String = ""
+
+  private[this] var firstFailed: String = ""
 
   private[this] var filenameStats: File = _
 
@@ -151,7 +159,7 @@ class Statistics(var folderName: String) {
     printStats(isInc, prWriterStats)
     prWriterStats.close()
     printTests(prWriterPassed, testsPassed, isInc = isInc)
-    printTests(prWriterFailed, testsFailed, passed = false, isInc = isInc)
+    errorMessage = printTests(prWriterFailed, testsFailed, passed = false, isInc = isInc)
     // store the last test
     if (storedResults.nonEmpty) {
       testsIncPassed = testsIncPassed :+ storedResults.clone()
@@ -195,7 +203,8 @@ class Statistics(var folderName: String) {
     result
   }
 
-  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): Unit = {
+  private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): StringBuilder = {
+    val errMsg: StringBuilder = new StringBuilder
     for (i <- tests.length - 1 to 0 by -1) {
       val (init, bugFreeDom, testedDom) = tests(i)
       var bugFreeTitle: String = "Trusted filtering "
@@ -209,17 +218,24 @@ class Statistics(var folderName: String) {
       var tested: Array[Set[Int]] = testedDom.clone()
       if (tested != null && testedDom.length < init.length)
         tested = tested ++ Array.fill(init.length - tested.length)(null)
-      prWriter.write(extendString("Initial domains ", maxLength) + "|" + extendString(bugFreeTitle, maxLength))
-      prWriter.write("|" + testedTitle)
-      prWriter.write("\n")
+      var str: StringBuilder = new StringBuilder
+      str ++= extendString("Initial domains ", maxLength) + "|" + extendString(bugFreeTitle, maxLength)
+      str ++= "|" + testedTitle
+      str ++= "\n"
       for (i <- init.indices) {
-        prWriter.write(extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(bugFreeDom(i)), maxLength))
-        if (tested != null && tested(i) != null) prWriter.write("|" + domainToString(tested(i)))
-        else prWriter.write("|" + "null")
-        prWriter.write("\n")
+        str ++= extendString(domainToString(init(i)), maxLength) + "|" + extendString(domainToString(bugFreeDom(i)), maxLength)
+        if (tested != null && tested(i) != null) str ++= "|" + domainToString(tested(i))
+        else str ++= "|" + "null"
+        str ++= "\n"
       }
-      prWriter.write("\n")
+      str ++= "\n"
+      if(!isInc) prWriter.write(str.toString())
+      if (!passed) {
+        if (i == tests.length - 1) errMsg ++= "TEST FAILED FOR : \n" + str
+        else if (i == 0) errMsg ++= "ORIGINAL TEST FAILED : \n" + str
+      }
     }
+    errMsg
   }
 
   private[this] def printOnALine(domains: Array[Set[Int]]): String = {
@@ -248,18 +264,26 @@ class Statistics(var folderName: String) {
         if (!passed) prWriter.write("TEST FAILED : \n")
         else prWriter.write("TEST PASSED : \n")
         val (_, initial, _) = tests(i)(0)
-        prWriter.write("Init : " + printOnALine(initial) + "\n")
+        var str: StringBuilder = new StringBuilder
+        str ++= "Init : " + printOnALine(initial) + "\n"
         for (j <- 0 until tests(i).length - 1) {
           val (b, _, curr) = tests(i)(j)
-          prWriter.write(b.toString + ": " + printOnALine(curr) + "\n")
+          str ++= b.toString + ": " + printOnALine(curr) + "\n"
           lastTest = curr
         }
         val (b, unk, curr) = tests(i)(tests(i).length - 1)
         if (!passed) {
           // in this case, unk refers to reducedDomains
-          prWriter.write(b.toString + " failed: \n" + "After the application of " + b.toString + ": \n")
-          printTests(prWriter, Array((lastTest, curr, unk)), isInc = true)
+          str ++= b.toString + " failed: \n" + "After the application of " + b.toString + ": \n"
+          str ++= printTests(prWriter, Array((lastTest, curr, unk)), isInc = true, passed = false)
+          if (i == 0) {
+            errorMessage ++= "ORIGINAL TEST :\n"
+            errorMessage ++= str
+          }
+          else if (i == tests.length - 1)
+            errorMessage ++= str
         }
+        prWriter.write(str.toString())
         prWriter.write("------------------------------\n")
       }
     }

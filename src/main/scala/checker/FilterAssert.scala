@@ -1,12 +1,11 @@
 package checker
 
-import org.assertj.core.api.ObjectAssert
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.{AbstractBooleanAssert, Assertions, ObjectAssert}
 
-class FilterAssert(tested:Filter)
+class FilterAssert(tested: Filter)
   extends ObjectAssert[Filter](tested) {
 
-  def assertThat(tested:Filter) = new FilterAssert(tested)
+  def assertThat(tested: Filter) = new FilterAssert(tested)
 
   /*
   myAssertions.assertThat(myFilter).check(trustedFilter)
@@ -15,37 +14,42 @@ class FilterAssert(tested:Filter)
 
   def filterAs(trusted: Filter)(implicit testArgs: TestArgs): FilterAssert = {
     implicit val stats: Statistics = new Statistics("")
-    val result:Boolean = CPChecker.check(trusted,tested)
+    val result: Boolean = CPChecker.check(trusted, tested)
     var errMsg = ""
-    if(!result){
+    if (!result) {
       //compute error message from statistics
-      //errMsg = stats.getErrorMessage
+      errMsg += "Tested and trusted filterings does not filter the same\n"
+      errMsg += stats.getErrorMsg
     }
-    Assertions.assertThat(result).overridingErrorMessage(errMsg).isTrue
+    val a: AbstractBooleanAssert[_] = Assertions.assertThat(result).overridingErrorMessage(errMsg)
+    a.isTrue
     this
   }
 
-  def strongerThan(trusted: Filter)(implicit testArgs: TestArgs): FilterAssert = {
+  /*def strongerThan(trusted: Filter)(implicit testArgs: TestArgs): FilterAssert = {
     implicit val stats: Statistics = new Statistics("")
     val result:Boolean = CPChecker.stronger(tested,trusted)
     var errMsg = ""
     if(!result){
       //compute error message from statistics
-      //errMsg = stats.getErrorMessage
+      errMsg += "Tested filtering must be stronger than the trusted one"
+      errMsg += stats.getErrorMsg
     }
     Assertions.assertThat(result).overridingErrorMessage(errMsg).isTrue
     this
-  }
+  }*/
 
   def weakerThan(trusted: Filter)(implicit testArgs: TestArgs): FilterAssert = {
     implicit val stats: Statistics = new Statistics("")
-    val result:Boolean = CPChecker.stronger(trusted,tested)
+    val result: Boolean = CPChecker.stronger(trusted, tested)
     var errMsg = ""
-    if(!result){
+    if (!result) {
       //compute error message from statistics
-      //errMsg = stats.getErrorMessage
+      errMsg += "Tested filtering is not weaker than the trusted\n"
+      errMsg += stats.getErrorMsg
     }
-    Assertions.assertThat(result).overridingErrorMessage(errMsg).isTrue
+    val a: AbstractBooleanAssert[_] = Assertions.assertThat(result).overridingErrorMessage(errMsg)
+    a.isTrue
     this
   }
 
