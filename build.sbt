@@ -16,7 +16,7 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 // https://mvnrepository.com/artifact/org.jacop/jacop
 libraryDependencies += "org.jacop" % "jacop" % "4.4.0"
-
+libraryDependencies += "org.assertj" % "assertj-core" % "3.10.0"
 
 unmanagedSourceDirectories in Test += baseDirectory.value / "src" / "main" / "examples" / "java"
 
