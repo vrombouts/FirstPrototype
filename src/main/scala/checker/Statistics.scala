@@ -44,10 +44,6 @@ class Statistics(var folderName: String) {
 
   private[this] var errorMessage = new StringBuilder
 
-  private[this] var lastFailed: String = ""
-
-  private[this] var firstFailed: String = ""
-
   private[this] var filenameStats: File = _
 
   private[this] var filenamePassed: File = _

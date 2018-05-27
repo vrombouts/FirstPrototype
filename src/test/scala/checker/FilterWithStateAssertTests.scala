@@ -8,7 +8,7 @@ class FilterWithStateAssertTests extends FlatSpec{
   val bdct = new IncrementalFiltering(new BoundDPruning(Checkers.trueConstraint _))
   val bdcf = new IncrementalFiltering(new BoundDPruning(Checkers.falseConstraint _))
   val bdca = new IncrementalFiltering(new BoundDPruning(Checkers.allDifferent()))
-  val myAssert = new FilterWithStateAssert(null)
+  val myAssert = new FilterWithStateAssert
   implicit val testArgs: TestArgs = new TestArgs
   testArgs.setRangeForAll(-5,5)
 

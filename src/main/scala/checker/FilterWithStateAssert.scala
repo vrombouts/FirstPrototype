@@ -2,7 +2,7 @@ package checker
 
 import org.assertj.core.api.{AbstractBooleanAssert, Assertions, ObjectAssert}
 
-class FilterWithStateAssert(tested: FilterWithState)
+class FilterWithStateAssert(tested: FilterWithState = null)
   extends ObjectAssert[FilterWithState](tested) {
 
   def assertThat(tested: FilterWithState) = new FilterWithStateAssert(tested)

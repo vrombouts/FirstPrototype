@@ -7,7 +7,7 @@ class FilterAssertTests extends FlatSpec{
   val bdct = new BoundDPruning(Checkers.trueConstraint _)
   val bdcf = new BoundDPruning(Checkers.falseConstraint _)
   val bdca = new BoundDPruning(Checkers.allDifferent())
-  val myAssert = new FilterAssert(null)
+  val myAssert = new FilterAssert
   implicit val testArgs: TestArgs = new TestArgs
   testArgs.setRangeForAll(-5,5)
 
