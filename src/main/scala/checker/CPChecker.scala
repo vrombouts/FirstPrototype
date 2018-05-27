@@ -26,7 +26,7 @@ object CPChecker {
   }
 
   def stronger(strongerFiltering: Filter, filtering: Filter)
-              (implicit testArguments: TestArgs, stats: Statistics): Unit = {
+              (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result: Boolean = true
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
@@ -42,7 +42,7 @@ object CPChecker {
   }
 
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
-           (implicit testArguments: TestArgs, stats: Statistics): Unit = {
+           (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result = true
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
@@ -58,7 +58,7 @@ object CPChecker {
   }
 
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
-              (implicit testArguments: TestArgs, stats: Statistics): Unit = {
+              (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result = true
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
