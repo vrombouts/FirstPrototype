@@ -15,12 +15,9 @@ class FilterWithStateAssert(tested: FilterWithState)
   def filterAs(trusted: FilterWithState)(implicit testArgs: TestArgs): FilterWithStateAssert = {
     implicit val stats: Statistics = new Statistics("")
     val result: Boolean = CPChecker.check(trusted, tested)
-    var errMsg = ""
-    if (!result) {
-      errMsg += "Tested and trusted filtering do not filter the same\n"
-      //compute error message from statistics
-      errMsg += stats.getErrorMsg
-    }
+    var errMsg = "Tested and trusted filtering do not filter the same\n"
+    //compute error message from statistics
+    errMsg += stats.getErrorMsg
     val a: AbstractBooleanAssert[_] = Assertions.assertThat(result).overridingErrorMessage(errMsg)
     a.isTrue
     this
@@ -41,12 +38,9 @@ class FilterWithStateAssert(tested: FilterWithState)
   def weakerThan(trusted: FilterWithState)(implicit testArgs: TestArgs): FilterWithStateAssert = {
     implicit val stats: Statistics = new Statistics("")
     val result: Boolean = CPChecker.stronger(trusted, tested)
-    var errMsg = ""
-    if (!result) {
-      errMsg += "tested filtering is not weaker than the trusted one\n"
-      //compute error message from statistics
-      errMsg += stats.getErrorMsg
-    }
+    var errMsg = "tested filtering is not weaker than the trusted one\n"
+    //compute error message from statistics
+    errMsg += stats.getErrorMsg
     val a: AbstractBooleanAssert[_] = Assertions.assertThat(result).overridingErrorMessage(errMsg)
     a.isTrue
     this
