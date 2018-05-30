@@ -26,11 +26,7 @@ class RestrictDomain(val doms: Array[Set[Int]], val random: Random) extends Bran
   }
 
   def applyRestriction: Array[Set[Int]] = {
-    var domainToReduce: Set[Int] = domains(index)
-    for (i <- domains(index)) {
-      if (!Op.respectOp(op, i, constant)) domainToReduce = domainToReduce - i
-    }
-    domains(index) = domainToReduce
+    domains(index) = domains(index).filter(value => Op.respectOp(op, value, constant))
     domains
   }
 
