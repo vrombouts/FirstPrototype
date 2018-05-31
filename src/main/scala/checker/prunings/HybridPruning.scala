@@ -44,9 +44,10 @@ class HybridPruning(filterings: Array[Int], checker: Array[Int] => Boolean) exte
 
   private[this] def filterIntervals(vars: Array[Set[Int]], intervals: Array[Interval]): Unit = {
     if (intervals.indices.foldLeft(false) { (acc, i) =>
-      if (filterings(i) == 2) if (boundZ.changeBounds(i, intervals)) true else acc
-      else if (filterings(i) == 3) if (boundDChangeBounds(i, intervals)) true else acc
-      else if (filterings(i) == 4) if (range.filterInterval(i, intervals)) true else acc
+      if ((filterings(i) == 2 && boundZ.changeBounds(i, intervals)) ||
+        (filterings(i) == 3 && boundDChangeBounds(i, intervals)) ||
+        (filterings(i) == 4 && range.filterInterval(i, intervals)))
+        true
       else acc
     })
       filterIntervals(vars, intervals)
