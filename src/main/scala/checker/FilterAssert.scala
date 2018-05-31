@@ -2,10 +2,8 @@ package checker
 
 import org.assertj.core.api.{AbstractBooleanAssert, Assertions, ObjectAssert}
 
-class FilterAssert(tested: Filter = null)
+class FilterAssert(tested: Filter)
   extends ObjectAssert[Filter](tested) {
-
-  def assertThat(tested: Filter) = new FilterAssert(tested)
 
   def filterAs(trusted: Filter)(implicit testArgs: TestArgs): FilterAssert = {
     implicit val stats: Statistics = new Statistics("")
@@ -28,4 +26,8 @@ class FilterAssert(tested: Filter = null)
     this
   }
 
+}
+
+object FilterAssert {
+  def assertThat(tested: Filter): FilterAssert = new FilterAssert(tested)
 }

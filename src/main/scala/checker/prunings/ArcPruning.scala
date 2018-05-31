@@ -13,7 +13,7 @@ class ArcPruning(checker: Array[Int] => Boolean) extends Filter {
     applyACPruning(variables)
   }
 
-  protected[this] def toDomains(solutions: Set[Array[Int]]): Array[Set[Int]] = {
+  private[this] def toDomains(solutions: Set[Array[Int]]): Array[Set[Int]] = {
     val variables: Array[Set[Int]] = Array.fill(solutions.head.length)(Set.empty)
     solutions.foreach { sol =>
       for (i <- variables.indices) {

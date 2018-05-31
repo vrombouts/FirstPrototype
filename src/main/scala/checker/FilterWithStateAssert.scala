@@ -2,14 +2,8 @@ package checker
 
 import org.assertj.core.api.{AbstractBooleanAssert, Assertions, ObjectAssert}
 
-class FilterWithStateAssert(tested: FilterWithState = null)
+class FilterWithStateAssert(tested: FilterWithState)
   extends ObjectAssert[FilterWithState](tested) {
-
-  def assertThat(tested: FilterWithState) = new FilterWithStateAssert(tested)
-
-  /*
-  myAssertions.assertThat(myFilter).check(trustedFilter)
-   */
 
 
   def filterAs(trusted: FilterWithState)(implicit testArgs: TestArgs): FilterWithStateAssert = {
@@ -23,18 +17,6 @@ class FilterWithStateAssert(tested: FilterWithState = null)
     this
   }
 
-  /*def strongerThan(trusted: FilterWithState)(implicit testArgs: TestArgs): FilterWithStateAssert = {
-    implicit val stats: Statistics = new Statistics("")
-    val result:Boolean = CPChecker.stronger(tested,trusted)
-    var errMsg = ""
-    if(!result){
-      //compute error message from statistics
-      //errMsg = stats.getErrorMessage
-    }
-    Assertions.assertThat(result).overridingErrorMessage(errMsg).isTrue
-    this
-  }*/
-
   def weakerThan(trusted: FilterWithState)(implicit testArgs: TestArgs): FilterWithStateAssert = {
     implicit val stats: Statistics = new Statistics("")
     val result: Boolean = CPChecker.stronger(trusted, tested)
@@ -46,4 +28,8 @@ class FilterWithStateAssert(tested: FilterWithState = null)
     this
   }
 
+}
+
+object FilterWithStateAssert {
+  def assertThat(tested: FilterWithState) = new FilterWithStateAssert(tested)
 }
