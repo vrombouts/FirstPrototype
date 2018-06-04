@@ -6,18 +6,29 @@ import Conversions.checkerToScalaFunction
 import checker._
 
 /**
-  * hybrid filtering but which can apply every type of consistencies implemented by CPChecker.
+  * This class implements the Filter abstract class to represent
+  * an arc consistent filtering algorithm. The constraint of the
+  * filtering algorithm is defined by the 'checker' function gi-
+  * ven to its constructor.
   *
-  * @param filterings : array corresponding to each variable telling the consistency apply to it.
-  *                   1 for Arc consistency,
-  *                   2 for Bound(Z) consistency,
-  *                   3 for Bound(D) consistency,
-  *                   4 for Range consistency.
-  * @param checker    : the checker function representing the constraint.
+  * @param filterings : an array precising the consistency the va-
+  *                   riable of the same index should reach.
+  *                   - 1 for the arc consistency
+  *                   - 2 for the bound(Z) consistency
+  *                   - 3 for the bound(D) consistency
+  *                   - 4 for the range consistency
+  *                   - ? no filtering
+  * @param checker    : a boolean function taking an instantiation
+  *                   or partial instantiation as argument. It sh-
+  *                   ould return true if the given instantiation
+  *                   respects the constraint it defines. if it r-
+  *                   eturns false for a partial instantiation 'i'
+  *                   , it should return false for all the instan-
+  *                   tiations and partial instantiations contain-
+  *                   ing 'i'.
   */
-
 class HybridPruning(filterings: Array[Int], checker: Array[Int] => Boolean) extends Filter {
-
+  //java constructor
   def this(filterings: Array[Integer], checker: Function[Array[Integer], java.lang.Boolean]) = this(filterings.map(x => x.asInstanceOf[Int]), checkerToScalaFunction(checker))
 
 
@@ -26,16 +37,20 @@ class HybridPruning(filterings: Array[Int], checker: Array[Int] => Boolean) exte
   val boundD = new BoundDPruning(checker)
   val range = new RangePruning(checker)
 
+  /**
+    * @param variables : array of domains
+    * @return the filtered domains respecting their asked consistency
+    *         from 'filterings' according to the 'checker' function
+    */
   override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = {
     val vars = variables
-    //The ac variables can directly be obtained thanks to ACFiltering.
+    //The ac variables can directly be obtained thanks to ArcFiltering.
     if (filterings.contains(1)) {
       val acVars = arc.filter(variables)
-      for (i <- vars.indices) {
+      for (i <- vars.indices)
         if (filterings(i) == 1) vars(i) = acVars(i)
-      }
     }
-    // the BC and RC variable must recursively be reduced.
+    // the bound and range consistent variables must recursively be reduced.
     val intervals = vars.map(x => if (x.nonEmpty) new Interval(x) else throw new NoSolutionException)
     filterIntervals(vars, intervals)
     intervals.map(x => x.dom)

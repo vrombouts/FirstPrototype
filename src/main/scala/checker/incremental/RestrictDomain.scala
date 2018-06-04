@@ -3,6 +3,20 @@ package checker.incremental
 import checker.Op
 import scala.util.Random
 
+/**
+  * branching operation representing the reduction of one
+  * of the domains of 'doms'. This reduction is done by a
+  * constraint in the format : "doms(index) op constant".
+  * 'op' being a string representing a relation between
+  * the 'constant' and the values of the domain. This co-
+  * nstraint is randomly created thanks to the 'random'
+  * object of its constructor.
+  *
+  * @param doms   : array of domains before the restrict-
+  *               ion of domains.
+  * @param random : Random object used to create the con-
+  *               straint this object defines.
+  */
 class RestrictDomain(val doms: Array[Set[Int]], val random: Random) extends BranchOp(doms) {
   var index: Int = getIndex
   var op: String = Op.randomOp(random)
@@ -25,6 +39,13 @@ class RestrictDomain(val doms: Array[Set[Int]], val random: Random) extends Bran
     possibleIndexes(indexOfIndex)
   }
 
+  /**
+    * After a call of this function, the 'domains' field of this
+    * branching operation is set to the return value.
+    *
+    * @return the domains after the application of this branching
+    *         operation.
+    */
   def applyRestriction: Array[Set[Int]] = {
     domains(index) = domains(index).filter(value => Op.respectOp(op, value, constant))
     domains
