@@ -12,10 +12,16 @@ import org.chocosolver.solver.variables.IntVar;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Incrementally testing choco's filtering for the constraint sum(x) == 15.
+ * We will test that it reaches bound(Z) consistency and we will also test
+ * the state restoration using trailing (push/pop).
+ */
 public class SumIncrementalTest {
 
     public static void main(String[] args) {
-        class MyFilter extends JFilterWithState {
+        // choco's filtering for the constraint sum(x)==15
+        class testedFilter extends JFilterWithState {
             private Model model;
             private IntVar[] x;
 
@@ -56,12 +62,19 @@ public class SumIncrementalTest {
                 return transform(x);
             }
         }
+
+        // the trusted filtering with which the choco's filtering will be compared
         IncrementalFiltering trusted = new IncrementalFiltering(new BoundZFiltering(Checkers.sum(15, "=")));
-        CPChecker.check(trusted, new MyFilter(),
+
+        // checking that both algorithms return the same filtered domains over random test instances
+        CPChecker.check(trusted, new testedFilter(),
                 CPChecker.testArguments(), CPChecker.stats());
     }
 
-
+    /*
+     * returns the domains in the type Set<Integer> from the choco
+     * domains' type IntVar
+     */
     private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {

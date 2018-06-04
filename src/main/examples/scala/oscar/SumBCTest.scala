@@ -7,14 +7,26 @@ import oscar.algo.Inconsistency
 import oscar.cp._
 import oscar.cp.core.CPPropagStrength
 
+/*
+ * Testing OscaR's Bound(Z) consistent filtering for the constraint sum(x)>15
+ * Here, we will test that the filtering reached Bound(Z) consistency
+ */
 object SumBCTest extends App {
 
-  val myFilter: Filter = new Filter {
+  // OscaR's filtering to be tested
+  val testedFiltering: Filter = new Filter {
     override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = sumGTFiltering(variables)
   }
-  CPChecker.check(new BoundZFiltering(sumChecker _), myFilter)
+
+  // a trusted bound(Z) filtering algorithm for the comparison
+  val trustedFiltering: Filter = new BoundZFiltering(sumChecker _)
+
+  // checking that the filtered domains returned by both algorithms are the same
+  // i.e. checking that OscaR's filtering reaches bound(Z) consistency
+  CPChecker.check(trustedFiltering, testedFiltering)
 
 
+  // OscaR's filtering algorithm for the sum constraint
   private def sumGTFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val testSolver: CPSolver = CPSolver(CPPropagStrength.Strong)
     val variables = vars.map(x => CPIntVar(x))

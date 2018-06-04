@@ -11,11 +11,18 @@ import org.chocosolver.solver.variables.IntVar;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Testing choco's filtering for the table constraint imposing that any solution belongs to the table
+ * Here we will test that the algorithm reaches arc consistency.
+ */
 public class TableTest {
+
+    // the table of the possible solutions
     private static Set<Integer[]> table = new HashSet();
 
 
     public static void main(String[] args) {
+        // creation of the table
         Integer[] tab1 = {1, 2, 3};
         Integer[] tab2 = {2, 2, 3};
         Integer[] tab3 = {2, 3, 3};
@@ -25,7 +32,7 @@ public class TableTest {
         table.add(tab3);
         table.add(tab4);
 
-        class MyFilter extends JFilter {
+        class testedFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] variables) {
                 Model model = new Model("testing choco's table filtering");
                 IntVar[] x = new IntVar[variables.length];
@@ -53,11 +60,22 @@ public class TableTest {
                 return transform(x);
             }
         }
+
+        // the test parameters
         TestArgs parameters = Generators.table(table);
         Statistics stats = new Statistics("");
-        CPChecker.check(new ArcFiltering(Checkers.table(table)), new MyFilter(), parameters, stats);
+
+        // the trustedFiltering with which choco's filtering will be compared
+        Filter trustedFiltering = new ArcFiltering(Checkers.table(table));
+
+        // checks that the returns domains by both filterings are the same over some random instances
+        CPChecker.check(trustedFiltering, new testedFilter(), parameters, stats);
     }
 
+    /*
+     * returns the domains in the type Set<Integer> from the choco
+     * domains' type IntVar
+     */
     private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {
