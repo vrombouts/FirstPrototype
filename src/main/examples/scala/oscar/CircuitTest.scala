@@ -7,17 +7,30 @@ import oscar.algo.Inconsistency
 import oscar.cp.{CPIntVar, CPSolver}
 import oscar.cp.circuit
 
-
+/*
+ * Testing OscaR's filtering algorithm for the circuit constraint.
+ * Here, we will test that this algorithm does not remove any solution by comparing it
+ * with a trusted arc consistent algorithm using CPChecker's stronger function.
+ */
 object CircuitTest extends App {
 
-  val myFilter: Filter = new Filter {
+  val testedFiltering: Filter = new Filter {
     def filter(variables: Array[Set[Int]]): Array[Set[Int]] = circuitFiltering(variables)
   }
+
+  // setting the test parameters
   testArguments.setRangeForAll((0, 4))
   testArguments.setDensityForAll(0.8)
-  CPChecker.stronger(new ArcFiltering(circuitChecker _), myFilter)
+
+  val trustedFiltering: Filter = new ArcFiltering(circuitChecker _)
+
+  // checking that the trustedFiltering is stronger than the tested one
+  CPChecker.stronger(trustedFiltering, testedFiltering)
 
 
+  /*
+   * OscaR's filtering algorithm for the circuit constraint
+   */
   private def circuitFiltering(vars: Array[Set[Int]]): Array[Set[Int]] = {
     implicit val solver: CPSolver = CPSolver()
     val currentVars: Array[CPIntVar] = vars.map(x => CPIntVar(x))

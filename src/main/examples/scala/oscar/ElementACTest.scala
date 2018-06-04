@@ -16,10 +16,11 @@ import oscar.cp.core.CPPropagStrength
  *  - a variable i with its domain being indices of x
  *  - a variable v
  *  Then the constraint is x[i]=v
+ *  We will check that OscaR's ElementVarAC algorithm reaches arc consistency
  */
 object ElementACTest extends App {
 
-  val myFilter: Filter = new Filter {
+  val testedFiltering: Filter = new Filter {
     override def filter(variables: Array[Set[Int]]): Array[Set[Int]] = elementACFiltering(variables)
   }
   //First we set the seed:
@@ -33,7 +34,13 @@ object ElementACTest extends App {
   testArguments.addVar(0.1, (-11, 11))
   testArguments.setSeed(123456)
   testArguments = Generators.element
-  check(new ArcFiltering(Checkers.element), myFilter)
+
+  // the trusted algorithm serving as reference for the comparison
+  val trustedFiltering: Filter = new ArcFiltering(Checkers.element)
+
+  // checking that the filtered domains by the two algorithms are the same over
+  // random test instances
+  check(trustedFiltering, testedFiltering)
 
   /*
    * This function apply the ElementVarAC constraint of OscaR on the variables

@@ -13,13 +13,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+/*
+ * Testing the choco's filtering algorithm for the constraint x[i] == v for a fixed x.
+ */
 public class ElementTest {
 
+    // The array x considered for the element constraint x[i] == v with a fixed array x
     private static int[] x = {5, 1, 2, 4, 7, 9};
 
     public static void main(String[] args) {
 
-        class MyFilter extends JFilter {
+        // choco's filtering to be tested for the constraint x[i]==v
+        class testedFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] variables) {
                 Model model = new Model("Testing choco's element filtering");
                 int[] b = variables[0].stream().mapToInt(Number::intValue).toArray();
@@ -29,8 +34,6 @@ public class ElementTest {
                 org.chocosolver.solver.constraints.Constraint cstr = new org.chocosolver.solver.constraints.Constraint(ConstraintsName.ELEMENT,
                         new PropElement(v, x, in, 0));
                 model.post(cstr);
-                //model.element(v, x, in, 0).post();
-
                 Solver solver = model.getSolver();
                 try {
                     solver.propagate();
@@ -41,15 +44,20 @@ public class ElementTest {
                 return transform(finalVars);
             }
         }
+        // sets the test parameters
         TestArgs parameters = new TestArgs();
         parameters.setNVar(2);
         parameters.setDensity(0, 0.5);
         parameters.setRange(0, 0, 6);
         parameters.setDensity(1, 0.5);
         parameters.setRange(1, 0, 10);
-        ArcFiltering elementary = new ArcFiltering(elementChecker());
         Statistics stats = new Statistics("");
-        CPChecker.check(elementary, new MyFilter(), parameters, stats);
+
+        // the trusted algorithm to be compared with the choco ones
+        ArcFiltering trusted = new ArcFiltering(elementChecker());
+
+        // checking the equality of both algorithms over some random domains
+        CPChecker.check(trusted, new testedFilter(), parameters, stats);
     }
 
     private static Function<Integer[], Boolean> elementChecker() {
@@ -62,6 +70,10 @@ public class ElementTest {
     }
 
 
+    /*
+     * returns the domains in the type Set<Integer> from the choco
+     * domains' type IntVar
+     */
     private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {

@@ -11,17 +11,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-
+/*
+ * Testing statically that choco's filtering of the constraint sum(x)==5
+ * reaches bound(Z) consistency.
+ */
 public class SumCheckBCTest {
-    private static IntVar[] x;
 
     public static void main(String[] args) {
 
-        class MyFilter extends JFilter {
+        /*
+         * choco's filtering for the sum constraint to be tested
+         */
+        class testedFilter extends JFilter {
             public Set<Integer>[] filterJava(Set<Integer>[] variables) {
 
                 Model model = new Model("Testing choco's sum filtering");
-                x = new IntVar[variables.length];
+                IntVar[] x = new IntVar[variables.length];
                 for (int i = 0; i < variables.length; i++) {
                     int[] b = variables[i].stream().mapToInt(Number::intValue).toArray();
                     x[i] = model.intVar("" + i, b);
@@ -36,9 +41,16 @@ public class SumCheckBCTest {
                 return transform(x);
             }
         }
+
+        // setting the test parameters
         TestArgs parameters = new TestArgs();
         Statistics stats = new Statistics("");
-        CPChecker.check(new BoundZFiltering(sumChecker()), new MyFilter(), parameters, stats);
+
+        // the trusted filtering with which choco's filtering will be tested
+        Filter trusted = new BoundZFiltering(sumChecker());
+
+        // checking that both algorithms filters in the same way over some random test instances
+        CPChecker.check(trusted, new testedFilter(), parameters, stats);
     }
 
     private static Function<Integer[], Boolean> sumChecker() {
@@ -51,7 +63,10 @@ public class SumCheckBCTest {
         };
     }
 
-
+    /*
+     * returns the domains in the type Set<Integer> from the choco
+     * domains' type IntVar
+     */
     private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {

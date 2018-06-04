@@ -14,6 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+/*
+ * Testing Choco's filtering algorithm for the circuit constraint.
+ * Here, we will not test that it achieves a given consistency, but we will
+ * test that it does not remove any solution by comparing it with an arc consistent
+ * algorithm using CPChecker's stronger function.
+ */
 public class CircuitTest {
 
     public static void main(String[] args) {
@@ -22,15 +28,24 @@ public class CircuitTest {
                 return filteringCircuit(variables);
             }
         }
+
+        // set the test parameters
         TestArgs parameters = new TestArgs();
         parameters.setRangeForAll(0, 4);
         parameters.setDensityForAll(0.8);
+        Statistics stats = new Statistics("");
+
+        // creation of the two filtering to be compared
         Filter bugfree = new ArcFiltering(checkerCircuit());
         Filter tested = new MyFilter();
-        Statistics stats = new Statistics("");
+
+        // compares that the bugfree algorithm is stronger than the tested one
         CPChecker.stronger(bugfree, tested, parameters, stats);
     }
 
+    /*
+     * choco's filtering for the circuit constraint
+     */
     private static Set<Integer>[] filteringCircuit(Set<Integer>[] variables) {
         Model model = new Model("Testing choco's circuitSCC filtering");
         IntVar[] currentVars = new IntVar[variables.length];
@@ -63,6 +78,10 @@ public class CircuitTest {
         };
     }
 
+    /*
+     * returns the domains in the type Set<Integer> from the choco
+     * domains' type IntVar
+     */
     private static Set<Integer>[] transform(IntVar[] input) {
         Set<Integer>[] result = new Set[input.length];
         for (int i = 0; i < input.length; i++) {
