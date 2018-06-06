@@ -4,9 +4,19 @@ import java.io._
 
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 
+/**
+  * This class is responsible of the output of CPChecker.
+  * It contains various information about the execution of the tests (which algorithm
+  * filters more than the other, ...)
+  * It allows the creation of three output files in out/statistics :
+  * 'statistics.txt' containts general stats abour the execution of the tests
+  * 'passedTests.txt' contains the list of the tests successfully passed
+  * 'failedTests.txt' contains the list of the failed tests, with the most reduced test as first
+  *
+  * @param folderName : the name of the folder in which to put the output files.
+  */
 class Statistics(var folderName: String) {
 
-  // stats about the number of executed tests
   private[this] var nbExecutedTests: Int = 0
   private[this] var nbFailedTests: Int = 0
 
@@ -42,6 +52,8 @@ class Statistics(var folderName: String) {
   private[this] var algo2FoundsNoSol: Int = 0
   private[this] var algo1FilterNoVal: Int = 0
 
+  // the error message for the assertions (FilterAssert and FilterWithState asserts need
+  // a new error message when a fail occurs)
   private[this] var errorMessage = new StringBuilder
 
   private[this] var filenameStats: File = _
@@ -53,6 +65,7 @@ class Statistics(var folderName: String) {
   // stats about the generator
   private[this] var generatorUsed: TestArgs = _
 
+  // useful information about the incremental testing (dives)
   private[this] var depth: Int = 0
   private[this] var lastPop: Boolean = false
   private[this] var depths: List[Int] = List()
@@ -75,9 +88,12 @@ class Statistics(var folderName: String) {
 
   def setGenerator(gen: TestArgs): Unit = generatorUsed = gen
 
-  /*
-   * This function prints the computed statistics in a table
-   */
+  /**
+    * This function creates a string with the statistics of the performed tests
+    *
+    * @param isInc : true if the stats concern incremental tests and false otherwise
+    * @return A string with a concatenation of all information about the tests
+    */
   private[this] def globalStatsToString(isInc: Boolean): String = {
     val nbTestEx: String = "Number of executed tests : "
     val nbFailedEx: String = "Number of failed tests : "
@@ -113,6 +129,12 @@ class Statistics(var folderName: String) {
 
   private[this] var testsIncFailed: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]] = Array()
 
+  /**
+    * Updates the depth and lastPop variables consequently to the branch operations
+    * that have been performed.
+    *
+    * @param b : the list of branch operations that have been performed
+    */
   private[this] def updateBranching(b: List[BranchOp]): Unit = {
     if (b != null && b.nonEmpty) {
       b.head match {
@@ -133,7 +155,12 @@ class Statistics(var folderName: String) {
     }
   }
 
-
+  /**
+    * Creates a string to be displayed when incremental checking
+    *
+    * @return A string containing the incremental information : the average depth reached
+    *         by the dives and its maximal depth
+    */
   private[this] def branchingStatsToString(): String = {
     var maxDepth: Int = 0
     var avgDepth: Int = 0
@@ -147,6 +174,11 @@ class Statistics(var folderName: String) {
       "The maximum depth reached is " + maxDepth + "\n\n"
   }
 
+  /**
+    * This function is responsible of the printing of all tests information in the output files
+    *
+    * @param isInc : true if the tests performed are incremental tests, false otherwise
+    */
   def print(implicit isInc: Boolean = false): Unit = {
     setFolderName(folderName)
     val prWriterStats = new PrintWriter(filenameStats)
@@ -167,6 +199,12 @@ class Statistics(var folderName: String) {
     prWriterPassed.close()
   }
 
+  /**
+    * The function is responsible of the printing of general information
+    *
+    * @param isInc    : to know if the tests are incremental or not
+    * @param prWriter : the printWriter attached to the file where the results should be printed
+    */
   private[this] def printStats(implicit isInc: Boolean = false, prWriter: PrintWriter): Unit = {
     prWriter.write(globalStatsToString(isInc))
     if (isInc)
@@ -176,6 +214,12 @@ class Statistics(var folderName: String) {
       prWriter.write(generatorUsed.toString)
   }
 
+  /**
+    * This function transforms a domain into a string representation of it
+    *
+    * @param dom : the domain to be display
+    * @return : a string representation of dom
+    */
   private[this] def domainToString(dom: Set[Int]): String = {
     var result: String = "["
     var first: Boolean = true
@@ -190,6 +234,14 @@ class Statistics(var folderName: String) {
     result
   }
 
+  /**
+    * Returns an extension of the string s to be of length l (convenient for the display)
+    *
+    * @param s : the string to be extended
+    * @param l : the length that it has to acquire
+    * @return : a string containing s followed by blank characters to form a new string
+    *         of length l
+    */
   private[this] def extendString(s: String, l: Int): String = {
     var result: String = s
     if (s.length != l) {
@@ -199,21 +251,42 @@ class Statistics(var folderName: String) {
     result
   }
 
+
+  /**
+    * This function is responsible of the display of passed/failed tests
+    *
+    * @param prWriter : the print writer attached to the file where the tests should be printed
+    * @param tests    : the list of tests to be printed
+    * @param isInc    : to know if the tests are incremental or not
+    * @param passed   : to know if the test has been passed or not
+    * @return : a string builder with the error message for the assertions
+    */
   private[this] def printTests(prWriter: PrintWriter, tests: Array[(Array[Set[Int]], Array[Set[Int]], Array[Set[Int]])], isInc: Boolean = false, passed: Boolean = true): StringBuilder = {
     val errMsg: StringBuilder = new StringBuilder
+
+    // tests are displayed in the reverse order in order to display first the most reduced ones
+    // and then the others
     for (i <- tests.length - 1 to 0 by -1) {
       val (init, bugFreeDom, testedDom) = tests(i)
+
+      // title for the display of non incremental tests
       var bugFreeTitle: String = "Trusted filtering "
       var testedTitle: String = "Tested filtering "
+
+      // new titles for the display of incremental tests (no filtering in the name now
+      // since it can be the domains resulting in a pop operation => no filtering)
       if (isInc) {
         bugFreeTitle = "Trusted domains "
         testedTitle = "Tested domains "
       }
+
+      // the length for the printing in a column (others string will be extended to reach this length)
       var maxLength: Int = bugFreeTitle.length
       init.foreach(t => if (t.size > maxLength) maxLength = domainToString(t).length)
       var tested: Array[Set[Int]] = testedDom.clone()
       if (tested != null && testedDom.length < init.length)
         tested = tested ++ Array.fill(init.length - tested.length)(null)
+      // string for the display
       var str: StringBuilder = new StringBuilder
       str ++= extendString("Initial domains ", maxLength) + "|" + extendString(bugFreeTitle, maxLength)
       str ++= "|" + testedTitle
@@ -225,7 +298,9 @@ class Statistics(var folderName: String) {
         str ++= "\n"
       }
       str ++= "\n"
-      if(!isInc) prWriter.write(str.toString())
+      if (!isInc) prWriter.write(str.toString())
+
+      // creation of the error message for the assertions
       if (!passed) {
         if (i == tests.length - 1) errMsg ++= "TEST FAILED FOR : \n" + str
         else if (i == 0) errMsg ++= "ORIGINAL TEST FAILED : \n" + str
@@ -234,6 +309,12 @@ class Statistics(var folderName: String) {
     errMsg
   }
 
+  /**
+    * Creation of a string representing all domains to be printed on a single line
+    *
+    * @param domains : the domains to be printed
+    * @return : a string with all domains on a single line within []
+    */
   private[this] def printOnALine(domains: Array[Set[Int]]): String = {
     var s: String = "["
     for (dom <- domains) {
@@ -250,11 +331,21 @@ class Statistics(var folderName: String) {
     s
   }
 
+  /**
+    * The printing on incremental tests over the 'passedTests.txt' file or the 'failedTests.txt' file
+    *
+    * @param prWriter : the print writer representing the file to be printed on
+    * @param tests    : the list of tests to be printed
+    * @param passed   : to know if the test have been passed successfully or not
+    */
   private[this] def printIncStats(prWriter: PrintWriter, tests: Array[Array[(BranchOp, Array[Set[Int]], Array[Set[Int]])]], passed: Boolean = true): Unit = {
     if (tests.isEmpty) {
       return
     }
     var lastTest: Array[Set[Int]] = null
+
+    // tests are displayed in the reverse order in order to display first the most reduced ones
+    // and then the others
     for (i <- tests.length - 1 to 0 by -1) {
       if (!tests(i).isEmpty) {
         if (!passed) prWriter.write("TEST FAILED : \n")
@@ -272,6 +363,8 @@ class Statistics(var folderName: String) {
           // in this case, unk refers to reducedDomains
           str ++= b.toString + " failed: \n" + "After the application of " + b.toString + ": \n"
           str ++= printTests(prWriter, Array((lastTest, curr, unk)), isInc = true, passed = false)
+
+          // setting of the error message for the assertions
           if (i == 0) {
             errorMessage ++= "ORIGINAL TEST :\n"
             errorMessage ++= str
@@ -285,6 +378,12 @@ class Statistics(var folderName: String) {
     }
   }
 
+  /**
+    *
+    * @param returnValues : the tuple (init, reducedDomains, bugFreeReducedDomains) returned when making a test
+    * @param b            : the list of eventual branch operations if the test is an incremental one
+    * @param result       : to know if the test has been successfully passed or not
+    */
   private[this] def recordPassFailTests(returnValues: Array[Array[Set[Int]]], b: List[BranchOp], result: Boolean): Unit = {
     val init: Array[Set[Int]] = returnValues(0)
     val reducedDomains: Array[Set[Int]] = returnValues(1)
@@ -294,6 +393,8 @@ class Statistics(var folderName: String) {
       testsIncPassed = testsIncPassed :+ storedResults.clone()
       storedResults = Array()
     }
+
+    // record the test as a test succesfully passed
     if (result) {
       if (b == null)
         testsPassed = testsPassed :+ (init, bugFreeReducedDomains, reducedDomains)
@@ -301,6 +402,8 @@ class Statistics(var folderName: String) {
         storedResults = storedResults :+ (b.head, init, bugFreeReducedDomains)
       }
     }
+
+    // record the test as a test that has failed.
     else {
       nbFailedTests += 1
       if (b == null)
@@ -314,6 +417,14 @@ class Statistics(var folderName: String) {
     updateBranching(b)
   }
 
+
+  /**
+    * update all variables such as 'algo1FilterMoreThan2', 'algo1FilterNoVal' based on the result of the test
+    *
+    * @param returnValues : the tuple (init, reducedDomains, bugFreeReducedDomains) returned when making a test
+    * @param b            : the list of eventual branch operations if the test is an incremental one
+    * @param result       : to know if the test has been successfully passed or not
+    */
   def updateStats(returnValues: Array[Array[Set[Int]]], b: List[BranchOp], result: Boolean): Unit = {
     nbExecutedTests += 1
     val init: Array[Set[Int]] = returnValues(0)
