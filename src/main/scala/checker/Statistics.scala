@@ -9,7 +9,7 @@ import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
   * It contains various information about the execution of the tests (which algorithm
   * filters more than the other, ...)
   * It allows the creation of three output files in out/statistics :
-  * 'statistics.txt' containts general stats abour the execution of the tests
+  * 'statistics.txt' contains general stats about the execution of the tests
   * 'passedTests.txt' contains the list of the tests successfully passed
   * 'failedTests.txt' contains the list of the failed tests, with the most reduced test as first
   *
@@ -394,7 +394,7 @@ class Statistics(var folderName: String) {
       storedResults = Array()
     }
 
-    // record the test as a test succesfully passed
+    // record the test as a test successfully passed
     if (result) {
       if (b == null)
         testsPassed = testsPassed :+ (init, bugFreeReducedDomains, reducedDomains)

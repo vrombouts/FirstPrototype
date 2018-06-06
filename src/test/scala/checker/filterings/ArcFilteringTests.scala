@@ -117,7 +117,7 @@ class ArcFilteringTests extends FlatSpec {
     var a: Array[Set[Int]] = ACAllDiff.filter(Array(Set(1, 2)))
     val b: Array[Set[Int]] = Array(Set(1, 2))
     assert((a zip b).forall(x => x._1.equals(x._2)))
-    a = ACAllDiffJava.filter(Array(Set(1,2)))
+    a = ACAllDiffJava.filter(Array(Set(1, 2)))
     assert((a zip b).forall(x => x._1.equals(x._2)))
   }
 

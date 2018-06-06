@@ -3,15 +3,30 @@ package checker
 import checker.incremental.{BranchOp, Pop, Push, RestrictDomain}
 import org.scalacheck.Prop.forAll
 
-
+/**
+  * This object represents the core of the tool. It contains the check and stronger
+  * functions to compare two filtering algorithms.
+  */
 object CPChecker {
 
+  // the test parameters and statistics responsible of the output
   implicit var testArguments: TestArgs = new TestArgs
   implicit var stats: Statistics = new Statistics("")
 
+  /**
+    * Statically check if the reduced domains returned by the testedFiltering and bugFreeFiltering are the same
+    * over some random instances.
+    *
+    * @param bugFreeFiltering : the bug free filtering serving as reference for the comparison
+    * @param testedFiltering  : the filtering that should be tested
+    * @param testArguments    : the test parameters
+    * @param stats            : the statistics responsible of the output
+    * @return true if it passes all tests and false otherwise
+    */
   def check(bugFreeFiltering: Filter, testedFiltering: Filter)
            (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result: Boolean = true
+    // Scalacheck's forall statement to check the inner property
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
       else if (!checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, comparisonCheck(_, null, stats))) {
@@ -21,13 +36,25 @@ object CPChecker {
       else true
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
+    // prints the output
     stats.print
     result
   }
 
+  /**
+    * Statically check if the reduced domains returned by the strongerFiltering are included in the reduced domains
+    * by the filtering over some random instances.
+    *
+    * @param strongerFiltering : the stronger filtering serving as reference for the comparison
+    * @param filtering         : the filtering that should be tested
+    * @param testArguments     : the test parameters
+    * @param stats             : the statistics responsible of the output
+    * @return true if it passes all tests and false otherwise
+    */
   def stronger(strongerFiltering: Filter, filtering: Filter)
               (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result: Boolean = true
+    // ScalaCheck's forall to test the inner property
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
       else if (!checkConstraint(x.toArray, strongerFiltering, filtering, comparisonStronger(_, null, stats))) {
@@ -37,13 +64,25 @@ object CPChecker {
       else true
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
+    // prints the output
     stats.print
     result
   }
 
+  /**
+    * Incrementally check if the reduced domains returned by the testedFiltering and bugFreeFiltering are the same
+    * over some random instances.
+    *
+    * @param bugFreeFiltering : the bug free filtering serving as reference for the comparison
+    * @param testedFiltering  : the filtering that should be tested
+    * @param testArguments    : the test parameters
+    * @param stats            : the statistics responsible of the output
+    * @return true if it passes all tests and false otherwise
+    */
   def check(bugFreeFiltering: FilterWithState, testedFiltering: FilterWithState)
            (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result = true
+    // ScalaCheck's forall statement to check the inner property
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
       else if (!checkConstraint(x.toArray, bugFreeFiltering, testedFiltering, comparisonCheck(_, _, stats), testArguments)) {
@@ -52,14 +91,26 @@ object CPChecker {
       }
       else true
     }.check(testArguments.getTestParameters)
+    // prints the output
     stats.setGenerator(testArguments)
     stats.print(true)
     result
   }
 
+  /**
+    * Incrementallly check if the reduced domains returned by the filtering are included into
+    * the reduced domains returned by the strongerFiltering over some random instances.
+    *
+    * @param strongerFiltering : the stronger filtering serving as reference for the comparison
+    * @param filtering         : the filtering that should be tested
+    * @param testArguments     : the test parameters
+    * @param stats             : the statistics responsible of the output
+    * @return true if it passes all tests and false otherwise
+    */
   def stronger(strongerFiltering: FilterWithState, filtering: FilterWithState)
               (implicit testArguments: TestArgs, stats: Statistics): Boolean = {
     var result = true
+    // ScalaCheck's forall statement to check the inner condition
     forAll(testArguments.gen) { x =>
       if ((x.length < testArguments.getNbVars) || checkEmpty(x)) true
       else if (!checkConstraint(x.toArray, strongerFiltering, filtering, comparisonStronger(_, _, stats), testArguments)) {
@@ -69,11 +120,19 @@ object CPChecker {
       else true
     }.check(testArguments.getTestParameters)
     stats.setGenerator(testArguments)
+    // prints the output
     stats.print(true)
     result
   }
 
-
+  /**
+    *
+    * @param size      : the number of variables
+    * @param parameter : argument for the 'filtering' function
+    * @param filtering : function returning filtered domains
+    * @tparam T : the type of 'parameter'
+    * @return : the filtered domains by the 'filtering' function with 'parameter' as argument1
+    */
   protected[this] def apply[T](size: Int, parameter: T,
                                filtering: T => Array[Set[Int]]): Array[Set[Int]] = {
     try {
@@ -86,9 +145,10 @@ object CPChecker {
     }
   }
 
-  /*
-  * returns true if the domains that have been reduced by our function are the same that the domains being reduced by the user function
-  */
+  /**
+    *
+    * returns true if the domains that have been reduced by the bugFree filtering are the same that the domains being reduced by the tested filtering
+    */
   private[this] def correctFormat(reducedDomains: Array[Set[Int]], bugFreeReducedDomains: Array[Set[Int]]): Boolean = {
     var errorMsg: String = ""
     if (reducedDomains == null)
@@ -99,6 +159,14 @@ object CPChecker {
     errorMsg.isEmpty
   }
 
+
+  /**
+    *
+    * @param returnValues : the values returned after the application of the two filtering algorithms
+    * @param b            : the list of branch operations to be considered
+    * @param stats        : responsible of the output
+    * @return : true if the returned domains by the bugFree filtering are the same as the returned domains bby the tested
+    */
   def comparisonCheck(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null, stats: Statistics): Boolean = {
     val reducedDomains: Array[Set[Int]] = returnValues(1)
     val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
@@ -112,6 +180,13 @@ object CPChecker {
     result
   }
 
+  /**
+    *
+    * @param returnValues : the values returned after the application of the two filtering algorithms
+    * @param b            : the list of branch operations to be considered
+    * @param stats        : responsible of the output
+    * @return : true if the returned domains by the bugFree filtering are included in the returned domains bby the tested
+    */
   def comparisonStronger(returnValues: Array[Array[Set[Int]]], b: List[BranchOp] = null, stats: Statistics): Boolean = {
     val reducedDomains: Array[Set[Int]] = returnValues(1)
     val bugFreeReducedDomains: Array[Set[Int]] = returnValues(2)
@@ -125,6 +200,14 @@ object CPChecker {
 
   ////STATIC LOGIC /////////
 
+  /**
+    *
+    * @param variables        : the variables to which we apply the filtering algorithms
+    * @param bugFreeFiltering : the trusted algorithm serving as reference for the comparison
+    * @param testedFiltering  : the algorithm to be tested
+    * @param comparison       : the function to compare the bugFree filtering and the tested filtering
+    * @return true if after the application of the filtering algorithms, the comparison returns true, false otherwise
+    */
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: Filter,
                       testedFiltering: Filter,
@@ -141,12 +224,26 @@ object CPChecker {
 
   ////////INCREMENTAL LOGIC /////////////
 
-
+  /**
+    *
+    * @param variables : array of domains
+    * @return : true if at least one domain is empty, false otherwise
+    */
   private[this] def checkEmpty(variables: List[Set[Int]]): Boolean = {
     variables.foreach { x => if (x.isEmpty) return true }
     false
   }
 
+  /**
+    *
+    * @param variables        : Array of domains to which the filterings will be applied
+    * @param bugFreeFiltering : the filtering serving as reference for the testing
+    * @param testedFiltering  : the filtering to be tested
+    * @param comparison       : the function making the comparison of the returned domains
+    *                         by the two filtering functions
+    * @param testArguments    : the test parameters
+    * @return : true if the comparison function returns true after all branchings, false otherwise
+    */
   def checkConstraint(variables: Array[Set[Int]],
                       bugFreeFiltering: FilterWithState,
                       testedFiltering: FilterWithState,
@@ -169,6 +266,7 @@ object CPChecker {
       return false
     if (checkEmpty(returnValues(1).toList) || isLeaf(returnValues(2))) return true
     var vars: Array[Set[Int]] = returnValues(2).clone()
+    // Beginning of the algorithm to perform dives
     var nPush: Int = 0
     var branches: List[BranchOp] = List()
     var dives = 0
@@ -191,9 +289,15 @@ object CPChecker {
         if (vars == null) return false
       }
     }
+    // end of the algorithm to perform dives
     true
   }
 
+  /**
+    *
+    * @param variables : array of domains
+    * @return : true if the variables possess one empty domain or if all variables are fixed (of size 1)
+    */
   private[this] def isLeaf(variables: Array[Set[Int]]): Boolean = {
     variables.exists(x => x.isEmpty) || variables.forall(x => x.size == 1)
   }

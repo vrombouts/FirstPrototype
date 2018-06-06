@@ -5,12 +5,12 @@ import checker.prunings.BoundDPruning
 import org.scalatest.FlatSpec
 import checker.FilterWithStateAssert._
 
-class FilterWithStateAssertTests extends FlatSpec{
+class FilterWithStateAssertTests extends FlatSpec {
   val bdct = new IncrementalFiltering(new BoundDPruning(Checkers.trueConstraint _))
   val bdcf = new IncrementalFiltering(new BoundDPruning(Checkers.falseConstraint _))
   val bdca = new IncrementalFiltering(new BoundDPruning(Checkers.allDifferent()))
   implicit val testArgs: TestArgs = new TestArgs
-  testArgs.setRangeForAll(-5,5)
+  testArgs.setRangeForAll(-5, 5)
 
   "FilterAssert" should "not throw an assertion error with filter as against the two same filterings" in {
     assertThat(bdct).filterAs(bdct)
