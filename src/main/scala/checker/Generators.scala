@@ -2,6 +2,10 @@ package checker
 
 import Conversions._
 
+/**
+  * This object contain multiple generators already set
+  * to ease the creation of tests for users.
+  */
 object Generators {
 
   def table(t: Set[Array[Int]]): TestArgs = {

@@ -2,6 +2,10 @@ package checker
 
 import scala.util.Random
 
+/**
+  * this object represent the simple operations supported by CPChecker
+  * for RestrictDomain objects.
+  */
 object Op {
   val equal = "="
   val different = "!="
@@ -10,6 +14,10 @@ object Op {
   val greaterThan = ">"
   val greaterThanOrEqual = ">="
 
+  /**
+    * @param operation : an operation represented as a String
+    * @return the opposite operation. (for example: '<' gives '>=')
+    */
   def opposite(operation: String): String = {
     operation match {
       case `equal` => different
@@ -22,6 +30,12 @@ object Op {
     }
   }
 
+  /**
+    * @param operation : an operation represented as a String
+    * @param sum       : an integer
+    * @param constant  : another integer
+    * @return sum operation constant.
+    */
   def respectOp(operation: String, sum: Int, constant: Int): Boolean = {
     operation match {
       case `equal` => sum == constant
@@ -34,18 +48,11 @@ object Op {
     }
   }
 
-  def condition(operation: String, sMin: Int, sMax: Int, constant: Int): Boolean = {
-    operation match {
-      case `equal` => respectOp(greaterThan, sMin, constant) || respectOp(lesserThan, sMax, constant)
-      case `different` => sMax == sMin && sMin == constant
-      case `lesserThan` => respectOp(opposite(operation), sMin, constant)
-      case `lesserThanOrEqual` => respectOp(opposite(operation), sMin, constant)
-      case `greaterThan` => respectOp(opposite(operation), sMax, constant)
-      case `greaterThanOrEqual` => respectOp(opposite(operation), sMax, constant)
-      case _ => respectOp(lesserThan, sMin, constant) && respectOp(greaterThan, sMax, constant)
-    }
-  }
-
+  /**
+    * @param rd : a Random scala object
+    * @return use 'rd' to return randomly one of the supported
+    *         operations.
+    */
   def randomOp(rd: Random = new Random()): String = {
     val rand = rd
     rand.nextInt(6) match {
